@@ -1,0 +1,6 @@
+Módulos funcionales:
+- Inscripción Inteligente
+- Robot Trader
+- Automatización de Negocios
+- Gestión Global
+- Interfaz de Usuario Autónoma
