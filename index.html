@@ -52,12 +52,22 @@
     <p>Plataforma oficial del proyecto de inteligencia artificial avanzada</p>
     <p>Sistema autónomo para negocios, gobiernos, empresas y usuarios individuales</p>
     
-    <button onclick="iniciarInscripcion()">
+    <button id="btnInscribirse">
       Inscribirse
     </button>
   </div>
 
-  <script src="core/core-init.js"></script>
-  <script src="core/inscription-engine.js"></script>
+  <script src="core/core-init.js" onerror="console.error('Error cargando core-init.js')"></script>
+  <script src="core/inscription-engine.js" onerror="console.error('Error cargando inscription-engine.js')"></script>
+  <script>
+    // Attach event handler after DOM is loaded
+    document.getElementById('btnInscribirse').addEventListener('click', function() {
+      if (typeof iniciarInscripcion === 'function') {
+        iniciarInscripcion();
+      } else {
+        alert('Error: El sistema de inscripción no está disponible. Por favor, recargue la página.');
+      }
+    });
+  </script>
 </body>
 </html>
