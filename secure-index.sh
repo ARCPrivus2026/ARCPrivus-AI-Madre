@@ -73,6 +73,19 @@ print_info "Current file status:"
 ls -l "$FILE"
 echo ""
 
+# Validate that the user and group exist
+if ! id "$OWNER" &>/dev/null; then
+    print_error "User '$OWNER' does not exist on this system."
+    print_info "Please update the OWNER variable in the script to an existing user."
+    exit 1
+fi
+
+if ! getent group "$GROUP" &>/dev/null; then
+    print_error "Group '$GROUP' does not exist on this system."
+    print_info "Please update the GROUP variable in the script to an existing group."
+    exit 1
+fi
+
 # Confirm configuration
 print_info "Configuration:"
 echo "  Owner: $OWNER"
@@ -97,7 +110,10 @@ fi
 
 # Apply ownership (chown)
 print_info "Setting ownership to $OWNER:$GROUP..."
-if chown "$OWNER:$GROUP" "$FILE" 2>/dev/null; then
+CHOWN_OUTPUT=$(chown "$OWNER:$GROUP" "$FILE" 2>&1)
+CHOWN_RESULT=$?
+
+if [ $CHOWN_RESULT -eq 0 ]; then
     print_success "Ownership changed successfully to $OWNER:$GROUP"
 else
     # Check if we need sudo
@@ -111,7 +127,7 @@ else
             exit 1
         fi
     else
-        print_error "Failed to change ownership"
+        print_error "Failed to change ownership: $CHOWN_OUTPUT"
         print_info "Please check if the user '$OWNER' and group '$GROUP' exist on your system"
         exit 1
     fi
