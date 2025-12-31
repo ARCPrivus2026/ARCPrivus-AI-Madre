@@ -1,0 +1,267 @@
+From 7dd4b4dc96894ed20a4beb3dc9848c64255aba6f Mon Sep 17 00:00:00 2001
+From: "copilot-swe-agent[bot]" <198982749+Copilot@users.noreply.github.com>
+Date: Wed, 31 Dec 2025 04:16:48 +0000
+Subject: [PATCH] Corregir index.html en branch Main y agregar workflow de
+ GitHub Pages
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Reemplazar contenido placeholder con HTML completo y funcional
+- Agregar workflow static.yml para deployment automático
+- Configurar workflow para activarse en branches main y Main
+- Asegurar que GitHub Pages pueda desplegar correctamente
+---
+ .github/workflows/static.yml |  43 ++++++++
+ index.html                   | 189 ++++++++++++++++++++++++++++++++++-
+ 2 files changed, 231 insertions(+), 1 deletion(-)
+ create mode 100644 .github/workflows/static.yml
+
+diff --git a/.github/workflows/static.yml b/.github/workflows/static.yml
+new file mode 100644
+index 0000000..db3124d
+--- /dev/null
++++ b/.github/workflows/static.yml
+@@ -0,0 +1,43 @@
++# Simple workflow for deploying static content to GitHub Pages
++name: Deploy static content to Pages
++
++on:
++  # Runs on pushes targeting the default branch
++  push:
++    branches: ["main", "Main"]
++
++  # Allows you to run this workflow manually from the Actions tab
++  workflow_dispatch:
++
++# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
++permissions:
++  contents: read
++  pages: write
++  id-token: write
++
++# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
++# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
++concurrency:
++  group: "pages"
++  cancel-in-progress: false
++
++jobs:
++  # Single deploy job since we're just deploying
++  deploy:
++    environment:
++      name: github-pages
++      url: ${{ steps.deployment.outputs.page_url }}
++    runs-on: ubuntu-latest
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++      - name: Setup Pages
++        uses: actions/configure-pages@v5
++      - name: Upload artifact
++        uses: actions/upload-pages-artifact@v3
++        with:
++          # Upload entire repository
++          path: '.'
++      - name: Deploy to GitHub Pages
++        id: deployment
++        uses: actions/deploy-pages@v4
+diff --git a/index.html b/index.html
+index bfe6982..02cc0af 100644
+--- a/index.html
++++ b/index.html
+@@ -1 +1,188 @@
+-Fetching contents from the index.html branch
+\ No newline at end of file
++<!DOCTYPE html>
++<html lang="es">
++<head>
++  <meta charset="UTF-8">
++  <title>ARC Privus AI Madre</title>
++  <meta name="viewport" content="width=device-width, initial-scale=1.0">
++
++  <style>
++    body {
++      margin: 0;
++      font-family: Arial, Helvetica, sans-serif;
++      background: radial-gradient(circle at top, #0b1220, #020409);
++      color: #e6ebff;
++    }
++
++    header {
++      text-align: center;
++      padding: 60px 20px 40px;
++    }
++
++    header h1 {
++      font-size: 2.4rem;
++      color: #7aa2ff;
++      text-shadow: 0 0 15px rgba(122,162,255,0.6);
++      margin-bottom: 10px;
++    }
++
++    header p {
++      max-width: 700px;
++      margin: auto;
++      font-size: 1.1rem;
++      opacity: 0.85;
++    }
++
++    section {
++      max-width: 1000px;
++      margin: auto;
++      padding: 50px 20px;
++      text-align: center;
++    }
++
++    section h2 {
++      color: #9db6ff;
++      margin-bottom: 20px;
++      text-shadow: 0 0 10px rgba(157,182,255,0.4);
++    }
++
++    .features {
++      display: grid;
++      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
++      gap: 25px;
++      margin-top: 40px;
++    }
++
++    .card {
++      background: rgba(255,255,255,0.04);
++      border: 1px solid rgba(122,162,255,0.15);
++      border-radius: 12px;
++      padding: 25px;
++      backdrop-filter: blur(6px);
++    }
++
++    .card h3 {
++      color: #7aa2ff;
++      margin-bottom: 10px;
++    }
++
++    .btn {
++      margin-top: 30px;
++      padding: 15px 35px;
++      background: linear-gradient(135deg, #4f7cff, #7aa2ff);
++      border: none;
++      border-radius: 8px;
++      color: #fff;
++      font-size: 1.1rem;
++      cursor: pointer;
++      box-shadow: 0 0 20px rgba(122,162,255,0.6);
++    }
++
++    .btn:hover {
++      box-shadow: 0 0 30px rgba(122,162,255,0.9);
++    }
++
++    #registro {
++      display: none;
++      margin-top: 40px;
++      background: rgba(0,0,0,0.4);
++      padding: 30px;
++      border-radius: 12px;
++      border: 1px solid rgba(122,162,255,0.25);
++    }
++
++    input {
++      width: 90%;
++      max-width: 400px;
++      padding: 12px;
++      margin: 10px auto;
++      display: block;
++      border-radius: 6px;
++      border: none;
++      font-size: 1rem;
++    }
++
++    footer {
++      text-align: center;
++      padding: 30px 15px;
++      font-size: 0.9rem;
++      opacity: 0.6;
++    }
++  </style>
++</head>
++
++<body>
++
++<header>
++  <h1>ARC Privus AI Madre</h1>
++  <p>
++    La inteligencia artificial madre, autónoma y evolutiva, creada para
++    transformar negocios, gobiernos y personas en todo el planeta.
++  </p>
++</header>
++
++<section>
++  <h2>¿Qué es ARC Privus AI Madre?</h2>
++  <p>
++    ARC Privus AI Madre es una superinteligencia diseñada para integrar,
++    coordinar y potenciar múltiples inteligencias artificiales en un solo
++    ecosistema autosuficiente, legal y escalable.
++  </p>
++</section>
++
++<section>
++  <h2>Capacidades Principales</h2>
++
++  <div class="features">
++    <div class="card">
++      <h3>Autonomía Total</h3>
++      <p>Opera 24/7 aprendiendo, ejecutando y optimizando procesos de forma continua.</p>
++    </div>
++
++    <div class="card">
++      <h3>Monetización Inteligente</h3>
++      <p>Genera ingresos por inscripción, uso, servicios y expansión global.</p>
++    </div>
++
++    <div class="card">
++      <h3>ARC Robots</h3>
++      <p>Robots autónomos para mercados globales, análisis y operaciones financieras.</p>
++    </div>
++
++    <div class="card">
++      <h3>Uso Universal</h3>
++      <p>Aplicable a educación, empresas, gobiernos, innovación y desarrollo humano.</p>
++    </div>
++  </div>
++
++  <button class="btn" onclick="mostrarRegistro()">Inscribirme Ahora</button>
++
++  <div id="registro">
++    <h2>Registro Inteligente</h2>
++    <p>Autoriza y confirma tus datos. ARC Privus AI Madre se encarga del resto.</p>
++
++    <input type="text" placeholder="Nombre completo">
++    <input type="email" placeholder="Correo electrónico">
++    <input type="text" placeholder="País">
++
++    <button class="btn" onclick="confirmar()">Confirmar inscripción</button>
++    <p id="mensaje"></p>
++  </div>
++</section>
++
++<footer>
++  © 2025 ARC Privus AI Madre — Proyecto creado por Arnaldo Ramírez Campiño
++</footer>
++
++<script>
++  function mostrarRegistro() {
++    document.getElementById("registro").style.display = "block";
++  }
++
++  function confirmar() {
++    document.getElementById("mensaje").innerText =
++      "✔ Registro recibido. ARC Privus AI Madre te dará acceso progresivamente.";
++  }
++</script>
++
++</body>
++</html>
+\ No newline at end of file
+-- 
+2.52.0
+
