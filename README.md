@@ -1,7 +1,27 @@
-
 # ARC Privus AI Madre
 
 Plataforma Inteligente Global Autónoma
+
+---
+
+## 🚀 ¡ACTIVA TU PÁGINA EN 1 CLIC!
+
+**Tu página web está lista pero necesita ser activada.**
+
+### 👉 [HAZ CLIC AQUÍ PARA ACTIVAR](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/compare/Main...copilot/validate-index-html-and-configure-pages?expand=1)
+
+Después de hacer clic:
+1. Clic en "Create pull request" (2 veces)
+2. Clic en "Merge pull request"
+3. Clic en "Confirm merge"
+4. ¡Espera 2 minutos y tu página estará viva!
+
+**📖 Necesitas ayuda?** Lee:
+- `SOLUCION_FACIL.md` - Guía súper simple
+- `TUTORIAL_PASO_A_PASO.md` - Tutorial detallado
+- `GUIA_VISUAL.md` - Guía con diagramas
+
+---
 
 ## Descripción del proyecto
 ARC Privus AI Madre
