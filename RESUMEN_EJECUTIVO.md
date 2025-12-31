@@ -15,6 +15,8 @@ El branch `Main` tenía un `index.html` con solo una línea:
 Fetching contents from the index.html branch
 ```
 
+**Nota**: Este texto placeholder sugiere que hubo un intento previo de copiar contenido desde otro branch llamado "index.html", pero el proceso no se completó correctamente, dejando solo el mensaje de intención en lugar del contenido real.
+
 Mientras que el branch `main` tenía el HTML completo con 187 líneas de código funcional.
 
 ## ✅ Solución Implementada

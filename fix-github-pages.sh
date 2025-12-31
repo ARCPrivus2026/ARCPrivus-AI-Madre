@@ -100,14 +100,13 @@ git add index.html .github/workflows/static.yml
 # Hacer commit
 echo ""
 echo "💾 Creando commit..."
-git commit -m "Corregir index.html y configurar GitHub Pages deployment
-
-- Actualizar index.html con contenido completo y funcional
-- Agregar workflow para deployment automático en GitHub Pages
-- Configurar para activarse en branches main y Main
-- Solucionar problema de página en blanco en GitHub Pages
-
-Fixes deployment issue where Main branch had placeholder content."
+git commit -m "Corregir index.html y configurar GitHub Pages deployment" \
+           -m "- Actualizar index.html con contenido completo y funcional" \
+           -m "- Agregar workflow para deployment automático en GitHub Pages" \
+           -m "- Configurar para activarse en branches main y Main" \
+           -m "- Solucionar problema de página en blanco en GitHub Pages" \
+           -m "" \
+           -m "Fixes deployment issue where Main branch had placeholder content."
 
 # Mostrar el estado
 echo ""
