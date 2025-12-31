@@ -16,7 +16,7 @@ Después de hacer clic:
 3. Clic en "Confirm merge"
 4. ¡Espera 2 minutos y tu página estará viva!
 
-**📖 Necesitas ayuda?** Lee:
+**📖 ¿Necesitas ayuda?** Lee:
 - `SOLUCION_FACIL.md` - Guía súper simple
 - `TUTORIAL_PASO_A_PASO.md` - Tutorial detallado
 - `GUIA_VISUAL.md` - Guía con diagramas

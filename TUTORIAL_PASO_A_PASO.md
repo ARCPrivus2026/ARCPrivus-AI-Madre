@@ -1,6 +1,6 @@
 # 🎥 VIDEO TUTORIAL (En Texto)
 
-## 🚀 Cómo Activar Tu Página en 4 Clics
+## 🚀 Cómo Activar Tu Página en 5 Clics
 
 ### 🟢 CLIC 1: Abrir el Enlace
 
