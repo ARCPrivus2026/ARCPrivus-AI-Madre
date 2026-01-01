@@ -1,4 +1,60 @@
+# ARC Privus AI Madre
 
+**ARC Privus AI Madre** es una plataforma inteligente global autónoma, diseñada para actuar como el núcleo central (“IA Madre”) de un ecosistema modular de herramientas, automatización y servicios digitales.
+
+**Fundador:** Arnaldo Ramírez Campiño  
+**Repositorio oficial:** `ARCPrivus2026/ARCPrivus-AI-Madre`
+
+---
+
+## Visión
+Construir un sistema central que integre módulos especializados (automatización, soporte, análisis, operaciones digitales, etc.) bajo un mismo núcleo inteligente, con enfoque en:
+
+- Privacidad y control de datos
+- Modularidad y escalabilidad global
+- Integración de servicios y monetización
+- Registro y onboarding simple (botón de inscripción integrado)
+
+---
+
+## Componentes principales (alto nivel)
+
+### 1) Núcleo (IA Madre)
+- Coordina módulos y procesos
+- Define flujos y reglas de operación
+- Gestiona acceso, permisos y seguridad
+
+### 2) Registro / Suscripción
+- Botón integrado de inscripción
+- Solicitud de autorización y confirmación de datos
+- Acceso por invitación o aprobación
+
+### 3) Módulos conectables
+- Módulos independientes que se integran al núcleo
+- Se activan/desactivan por configuración
+- Diseñados para evolucionar por fases
+
+### 4) Activo digital respaldado (visión)
+- Activo digital valorizado y respaldado por la plataforma
+- Proyección a integración con mercados (según ruta legal/financiera definida)
+
+---
+
+## Web (GitHub Pages)
+Este repositorio puede publicarse como sitio web estático (landing page) con GitHub Pages.
+
+### Requisitos mínimos
+- Un archivo **`index.html`** en la **raíz** del repositorio (root)
+- GitHub Pages configurado para:
+  - Branch: `main`
+  - Folder: `/(root)`
+
+### URL esperada
+- `https://arcprivus2026.github.io/ARCPrivus-AI-Madre/`
+
+---
+
+## Estructura recomendada del repositorio (a futuro)
 # ARC Privus AI Madre
 
 Plataforma Inteligente Global Autónoma
