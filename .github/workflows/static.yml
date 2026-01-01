@@ -36,8 +36,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # Upload repository content (unnecessary files excluded via .gitignore)
           path: '.'
+          # Retain artifacts for 1 day only
+          retention-days: 1
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
