@@ -1,5 +1,305 @@
 <!doctype html>
+<html lang="es"><!doctype html>
 <html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="ARC Privus AI Madre - Plataforma Inteligente Global Autónoma" />
+  <title>ARC Privus AI Madre</title>
+
+  <style>
+    :root{
+      --bg:#070A12;
+      --card:#0D1222;
+      --text:#EAF0FF;
+      --muted:#A9B3D0;
+      --line:rgba(255,255,255,.12);
+      --gold1:#FFD36A;
+      --gold2:#FFB300;
+      --accent:#6E56CF;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(110,86,207,.35), transparent 60%),
+        radial-gradient(700px 450px at 90% 20%, rgba(255,179,0,.18), transparent 55%),
+        radial-gradient(900px 700px at 40% 100%, rgba(0,200,255,.08), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:inherit}
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:26px 18px 60px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:22px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:260px;
+    }
+    .logo{
+      width:46px;height:46px;border-radius:14px;
+      background:linear-gradient(135deg, rgba(255,211,106,.95), rgba(110,86,207,.9));
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .brand h1{
+      font-size:16px;
+      margin:0;
+      letter-spacing:.3px;
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-size:12px;
+      color:var(--muted);
+      user-select:none;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+      align-items:stretch;
+      margin-top:16px;
+    }
+    .card{
+      background:rgba(13,18,34,.82);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:20px;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+    }
+    .headline{
+      font-size:34px;
+      margin:0 0 10px;
+      line-height:1.1;
+    }
+    .gold{
+      background:linear-gradient(90deg, var(--gold1), var(--gold2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .sub{
+      margin:0 0 16px;
+      color:var(--muted);
+      font-size:14px;
+      max-width:60ch;
+    }
+    .ctaRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+      align-items:center;
+    }
+    .btn{
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:700;
+      letter-spacing:.2px;
+      transition:transform .08s ease, filter .15s ease;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btnPrimary{
+      background:linear-gradient(135deg, var(--gold1), var(--gold2));
+      color:#0B0E17;
+      box-shadow:0 14px 35px rgba(255,179,0,.18);
+    }
+    .btnGhost{
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      color:var(--text);
+    }
+    .mini{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top:12px;
+    }
+    .box{
+      padding:14px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .box h3{
+      margin:0 0 6px;
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    .box p{
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .right .title{
+      font-size:14px;
+      margin:0 0 10px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .list{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .list li{margin:8px 0}
+    footer{
+      margin-top:16px;
+      color:rgba(255,255,255,.55);
+      font-size:12px;
+      text-align:center;
+    }
+    .tag{
+      display:inline-flex;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12px;
+      margin-top:10px;
+    }
+
+    @media (max-width: 920px){
+      .hero{grid-template-columns:1fr}
+      .headline{font-size:30px}
+      .grid{grid-template-columns:1fr}
+      header{flex-direction:column; align-items:flex-start}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>ARC Privus AI Madre</h1>
+          <p>Plataforma Inteligente Global Autónoma</p>
+        </div>
+      </div>
+
+      <div class="pill">Fundador: <strong style="color:var(--text)">Arnaldo Ramírez Campiño</strong></div>
+    </header>
+
+    <section class="hero">
+      <div class="card">
+        <h2 class="headline"><span class="gold">IA Madre</span> que unifica módulos, servicios y automatización</h2>
+        <p class="sub">
+          ARC Privus AI Madre es la base central del ecosistema ARC: una plataforma que integra herramientas,
+          flujos automatizados y módulos inteligentes para ayudar a personas y empresas a operar con eficiencia,
+          seguridad y crecimiento.
+        </p>
+
+        <div class="ctaRow">
+          <a class="btn btnPrimary" target="_blank" rel="noopener"
+             href="TU_LINK_DE_GOOGLE_FORM_AQUI">
+            🚀 INSCRIBIRME AHORA
+          </a>
+
+          <a class="btn btnGhost" href="#sobre">📌 Ver visión</a>
+          <span class="mini">Registro rápido • Confirmación de datos • Acceso por invitación</span>
+        </div>
+
+        <div class="grid">
+          <div class="box">
+            <h3>🔒 Privacidad</h3>
+            <p>Diseño orientado a control de datos y acceso por autorización.</p>
+          </div>
+          <div class="box">
+            <h3>🤖 Automatización</h3>
+            <p>Flujos y módulos conectables para tareas repetitivas y decisiones asistidas.</p>
+          </div>
+          <div class="box">
+            <h3>🌍 Escalabilidad</h3>
+            <p>Arquitectura modular para crecimiento global y monetización.</p>
+          </div>
+        </div>
+
+        <div class="tag">Repositorio oficial: ARCPrivus2026/ARCPrivus-AI-Madre</div>
+      </div>
+
+      <div class="card right" id="sobre">
+        <p class="title">Qué estás construyendo</p>
+        <ul class="list">
+          <li><strong>Núcleo (AI Madre):</strong> coordinación de módulos, usuarios y acciones.</li>
+          <li><strong>Registro:</strong> botón integrado que guía suscripción y autorización.</li>
+          <li><strong>Operación:</strong> módulos conectables (soporte, análisis, automatización, etc.).</li>
+          <li><strong>Monetización:</strong> servicios + activos digitales respaldados por la plataforma.</li>
+        </ul>
+
+        <p class="title" style="margin-top:14px;">Siguiente paso recomendado</p>
+        <ul class="list">
+          <li>Publicar el Form de inscripción.</li>
+          <li>Pegar el link del Form en el botón (arriba).</li>
+          <li>Verificar que GitHub Pages está usando <strong>main</strong> y <strong>/(root)</strong>.</li>
+        </ul>
+
+        <p class="title" style="margin-top:14px;">Soporte</p>
+        <ul class="list">
+          <li>Si aparece 404: casi siempre es porque el archivo no es <strong>index.html</strong> o no está en el root.</li>
+          <li>Si “Save” queda gris: es porque no cambiaste nada en los menús (ya está guardado).</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="y"></span> ARC Privus AI Madre — Diseñada y creada por Arnaldo Ramírez Campiño.
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+
+
+
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
