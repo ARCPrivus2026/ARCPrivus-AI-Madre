@@ -12,6 +12,8 @@ jobs:
   delete-branches:
     runs-on: ubuntu-latest
     if: github.event.inputs.confirm == 'DELETE'
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout repository
