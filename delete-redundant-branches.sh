@@ -2,7 +2,7 @@
 # Script to delete redundant branches from the repository
 # Run this script with proper GitHub authentication
 
-set -e
+set -euo pipefail
 
 echo "=========================================="
 echo "Branch Deletion Script"
