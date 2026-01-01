@@ -39,7 +39,22 @@ Proceso automático donde la IA:
 
 ## 📁 Estructura del proyecto
 
-ARCPrivus-AI-Madre / │ ├── README.md ├── index.html │ ├── core/ │   ├── core-init.js │   ├── inscription-engine.js │   └── system-config.json │ └── ai/ ├── modelo-madre.txt ├── arc-robot-trader.txt └── descripcion-modulos.txt
+```
+ARCPrivus-AI-Madre/
+│
+├── README.md
+├── index.html
+│
+├── core/
+│   ├── core-init.js
+│   ├── inscription-engine.js
+│   └── system-config.json
+│
+└── ai/
+    ├── modelo-madre.txt
+    ├── arc-robot-trader.txt
+    └── descripcion-modulos.txt
+```
 
 ---
 
