@@ -1,1 +1,107 @@
-<!DOCTYPE html> <html lang="en"> <head>   <meta charset="UTF-8">   <meta name="viewport" content="width=device-width, initial-scale=1.0">   <title>ARC Privus AI Madre</title>   <style>     .futuristic-button {       background: linear-gradient(90deg, #000000, #1a1a1a); /* Negro profundo con degradado */       border: 2px solid #0077ff; /* Azul eléctrico */       border-radius: 12px; /* Bordes suaves */       color: #ffffff; /* Texto blanco */       font-family: 'Arial', sans-serif; /* Tipografía moderna y simple */       font-weight: bold;       font-size: 1.2rem; /* Tamaño de letra */       padding: 12px 24px; /* Espaciado interno */       text-transform: uppercase;       cursor: pointer;       transition: background 0.3s, box-shadow 0.3s; /* Efectos al pasar el mouse */       box-shadow: 0 4px 15px rgba(0, 119, 255, 0.75); /* Brillo sutil alrededor */       text-decoration: none; /* Quitar subrayado */     }     .futuristic-button:hover {       background: #0077ff; /* Cambia a azul eléctrico al hover */       color: #000000; /* Texto cambia a negro profundo */       box-shadow: 0 6px 20px rgba(0, 119, 255, 1); /* Más brillo al pasar el mouse */     }   </style> </head> <body style="background-color: #262626; color: #ffffff; font-family: 'Arial', sans-serif; text-align: center; padding: 50px;">   <h1>Bienvenido a ARC Privus AI Madre</h1>   <p>Completa tu registro para habilitar el acceso progresivo a la plataforma.</p>   <a href="FORM_LINK" target="_blank" rel="noopener" class="futuristic-button">     Inscribirme Ahora   </a> </body> </html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="ARC Privus AI Madre - Plataforma Inteligente Global Autónoma" />
+  <title>ARC Privus AI Madre</title>
+
+  <style>
+    :root{
+      --bg:#070A12;
+      --card:#0D1222;
+      --text:#EAF0FF;
+      --muted:#A9B3D0;
+      --line:rgba(255,255,255,.12);
+      --gold1:#FFD36A;
+      --gold2:#FFB300;
+      --accent:#6E56CF;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(110,86,207,.35), transparent 60%),
+        radial-gradient(700px 450px at 90% 20%, rgba(255,179,0,.18), transparent 55%),
+        radial-gradient(900px 700px at 40% 100%, rgba(0,200,255,.08), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    a{color:inherit}
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:26px 18px 60px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:22px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:260px;
+    }
+    .logo{
+      width:46px;height:46px;border-radius:14px;
+      background:linear-gradient(135deg, rgba(255,211,106,.95), rgba(110,86,207,.9));
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .brand h1{
+      font-size:16px;
+      margin:0;
+      letter-spacing:.3px;
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-size:12px;
+      color:var(--muted);
+      user-select:none;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+      align-items:stretch;
+      margin-top:16px;
+    }
+    .card{
+      background:rgba(13,18,34,.82);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:20px;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+    }
+    .headline{
+      font-size:34px;
+      margin:0 0 10px;
+      line-height:1.1;
+    }
+    .gold{
+      background:linear-gradient(90deg, var(--gold1), var(--gold2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .sub{
+      margin:0 0 16px
