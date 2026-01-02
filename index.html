@@ -89,6 +89,58 @@
       border:1px solid var(--line);
       border-radius:22px;
       padding:20px;
+    }
+
+    /* === PANTHER CONTAINER === */
+    .arc-panther-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+    }
+
+    .arc-panther-container img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* === CORE INTERACTIVE ZONE === */
+
+    .arc-core-hit {
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      width: 220px;
+      height: 220px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 3;
+      background: radial-gradient(circle,
+        rgba(0,220,255,0.12),
+        rgba(0,220,255,0.02) 60%,
+        transparent 70%
+      );
+      transition: box-shadow .25s ease, transform .25s ease;
+    }
+
+    .arc-panther-container:hover .arc-core-hit {
+      box-shadow:
+        0 0 28px rgba(0,220,255,.45),
+        inset 0 0 18px rgba(0,220,255,.35);
+      transform: translate(-50%, -50%) scale(1.04);
+    }
+
+    /* Cursor feedback */
+    .arc-core-hit:hover {
+      box-shadow:
+        0 0 36px rgba(0,220,255,.75),
+        inset 0 0 22px rgba(0,220,255,.55);
+    }
 
   </style>
 </head>
@@ -107,6 +159,15 @@
         <h2>Bienvenido a ARC Privus AI Madre</h2>
         <p>Haz clic en el botón para iniciar la inscripción.</p>
         <button onclick="iniciarInscripcion()">Iniciar Inscripción</button>
+      </div>
+      <div class="card arc-panther-container">
+        <img src="pantera-arc.png" alt="ARC Panther - Núcleo Central" />
+        <a
+          href="https://docs.google.com/forms/d/e/TU_FORM_ID_AQUI/viewform"
+          target="_blank"
+          class="arc-core-hit"
+          aria-label="Entrar al núcleo ARC"
+        ></a>
       </div>
     </section>
   </div>
