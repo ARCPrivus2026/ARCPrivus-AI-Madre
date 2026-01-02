@@ -89,7 +89,40 @@
       border:1px solid var(--line);
       border-radius:22px;
       padding:20px;
+    }
 
+    .arc-panther-container{
+      position:relative;
+    }
+
+    .arc-register-btn{
+      display:inline-block;
+      padding:12px 24px;
+      background:linear-gradient(135deg, rgba(110,86,207,.9), rgba(255,179,0,.7));
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    /* === ARC TRANSITION === */
+    .arc-transition{
+      position:absolute;
+      left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(6,14,28,.55);
+      border:1px solid rgba(0,220,255,.35);
+      color:rgba(155,231,255,.95);
+      font-size:12px;
+      letter-spacing:.4px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      backdrop-filter: blur(6px);
+    }
+    .arc-transition.show{opacity:1;}
   </style>
 </head>
 <body>
@@ -101,18 +134,41 @@
     </div>
   </header>
 
-  <div class="wrap">
+  <div class="wrap arc-panther-container">
     <section class="hero">
       <div class="card">
         <h2>Bienvenido a ARC Privus AI Madre</h2>
         <p>Haz clic en el botón para iniciar la inscripción.</p>
-        <button onclick="iniciarInscripcion()">Iniciar Inscripción</button>
+        <a href="https://forms.gle/YourFormLinkHere" class="arc-register-btn">Iniciar Inscripción</a>
       </div>
     </section>
+    <div class="arc-transition">Conectando con ARC…</div>
   </div>
 
   <!-- Enlazar scripts JavaScript -->
   <script src="./core/core-init.js"></script>
   <script src="./core/inscription-engine.js"></script>
+
+  <script>
+  // ARC Transition Handler
+  // Handles clicks on registration button and core element (when implemented)
+  // TODO: Replace 'YourFormLinkHere' in href with actual Google Form URL
+  const transition = document.querySelector('.arc-transition');
+  const targets = ['.arc-register-btn','.arc-core-hit'];
+
+  document.addEventListener('click', e=>{
+    const t = targets.map(s=>e.target.closest(s)).find(Boolean);
+    if(!t) return;
+
+    e.preventDefault();
+    transition.classList.add('show');
+
+    const url = t.getAttribute('href');
+    setTimeout(()=>{
+      transition.classList.remove('show');
+      window.open(url, '_blank');
+    }, 700);
+  });
+  </script>
 </body>
 </html>
