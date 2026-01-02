@@ -95,6 +95,16 @@
       position:relative;
     }
 
+    .arc-register-btn{
+      display:inline-block;
+      padding:12px 24px;
+      background:linear-gradient(135deg, rgba(110,86,207,.9), rgba(255,179,0,.7));
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+    }
+
     /* === ARC TRANSITION === */
     .arc-transition{
       position:absolute;
@@ -129,7 +139,7 @@
       <div class="card">
         <h2>Bienvenido a ARC Privus AI Madre</h2>
         <p>Haz clic en el botón para iniciar la inscripción.</p>
-        <a href="https://forms.gle/YourFormLinkHere" class="arc-register-btn" style="display:inline-block;padding:12px 24px;background:linear-gradient(135deg, rgba(110,86,207,.9), rgba(255,179,0,.7));border-radius:8px;text-decoration:none;font-weight:600;">Iniciar Inscripción</a>
+        <a href="https://forms.gle/YourFormLinkHere" class="arc-register-btn">Iniciar Inscripción</a>
       </div>
     </section>
     <div class="arc-transition">Conectando con ARC…</div>
@@ -140,6 +150,9 @@
   <script src="./core/inscription-engine.js"></script>
 
   <script>
+  // ARC Transition Handler
+  // Handles clicks on registration button and core element (when implemented)
+  // TODO: Replace 'YourFormLinkHere' in href with actual Google Form URL
   const transition = document.querySelector('.arc-transition');
   const targets = ['.arc-register-btn','.arc-core-hit'];
 
