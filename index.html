@@ -182,7 +182,11 @@
       <a 
         href="#"
         onclick="iniciarInscripcion(); return false;"
+        onkeypress="if(event.key === 'Enter' || event.key === ' ') { iniciarInscripcion(); return false; }"
         class="arc-button"
+        role="button"
+        tabindex="0"
+        aria-label="Iniciar registro en ARC"
       >
         ▶ INICIAR REGISTRO ARC
       </a>
