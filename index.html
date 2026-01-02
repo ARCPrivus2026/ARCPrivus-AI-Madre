@@ -77,18 +77,110 @@
       user-select:none;
     }
 
-    .hero{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:18px;
-      align-items:stretch;
-      margin-top:16px;
+    /* === ENTRANCE ANIMATION === */
+
+    .arc-enter {
+      opacity: 0;
+      transform: scale(0.96);
+      animation: arcFadeIn 1.4s ease forwards;
     }
-    .card{
-      background:rgba(13,18,34,.82);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:20px;
+
+    .arc-enter-panther {
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+      animation: pantherAwake 1.8s ease forwards;
+      animation-delay: 0.15s;
+    }
+
+    .arc-enter-btn {
+      opacity: 0;
+      transform: scale(0.85);
+      animation: btnAppear 1.4s ease forwards;
+      animation-delay: 1.2s;
+    }
+
+    .arc-enter-text {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: textAppear 1.2s ease forwards;
+      animation-delay: 1.8s;
+    }
+
+    /* Keyframes */
+
+    @keyframes arcFadeIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes pantherAwake {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes btnAppear {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes textAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* === ARC HERO STYLES === */
+
+    .arc-hero {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .arc-panther-container {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .arc-panther {
+      max-width: 400px;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .arc-register-btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--gold1), var(--gold2));
+      color: #000;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 8px 24px rgba(255, 179, 0, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .arc-register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(255, 179, 0, 0.4);
+    }
+
+    .arc-status {
+      margin-top: 30px;
+      font-size: 14px;
+      color: var(--muted);
+      font-style: italic;
+    }
 
   </style>
 </head>
@@ -102,12 +194,28 @@
   </header>
 
   <div class="wrap">
-    <section class="hero">
-      <div class="card">
-        <h2>Bienvenido a ARC Privus AI Madre</h2>
-        <p>Haz clic en el botón para iniciar la inscripción.</p>
-        <button onclick="iniciarInscripcion()">Iniciar Inscripción</button>
+    <section class="arc-hero">
+      <div class="arc-panther-container arc-enter">
+
+        <img 
+          src="pantera-arc.png" 
+          alt="ARC Privus AI Madre" 
+          class="arc-panther arc-enter-panther"
+        />
+
+        <a 
+          href="https://docs.google.com/forms/d/e/TU_FORM_ID_AQUI/viewform"
+          target="_blank"
+          class="arc-register-btn arc-enter-btn"
+        >
+          <span>INICIAR REGISTRO ARC</span>
+        </a>
+
       </div>
+
+      <p class="arc-status arc-enter-text">
+        Tu identidad fue recibida. ARC Privus AI Madre procesa tu acceso.
+      </p>
     </section>
   </div>
 
