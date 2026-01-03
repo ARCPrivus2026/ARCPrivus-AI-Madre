@@ -89,30 +89,95 @@
       border:1px solid var(--line);
       border-radius:22px;
       padding:20px;
+    }
 
+    /* === ARC PANTHER HERO === */
+
+    .arc-hero {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #050b1a, #02040a);
+    }
+
+    .arc-panther-container {
+      position: relative;
+      max-width: 520px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .arc-panther {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 0 40px rgba(0, 200, 255, 0.35));
+    }
+
+    /* === BUTTON INTEGRATED === */
+
+    .arc-register-btn {
+      position: absolute;
+      right: 8%;
+      top: 38%;
+      transform: translateY(-50%);
+      padding: 14px 22px;
+      border-radius: 14px;
+      background: rgba(0, 200, 255, 0.15);
+      border: 1px solid rgba(0, 200, 255, 0.5);
+      backdrop-filter: blur(8px);
+      color: #9be7ff;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-decoration: none;
+      animation: arcPulse 2.2s infinite;
+      box-shadow: 0 0 25px rgba(0, 200, 255, 0.4);
+    }
+
+    .arc-register-btn span {
+      display: block;
+    }
+
+    .arc-register-btn:hover {
+      background: rgba(0, 200, 255, 0.35);
+      box-shadow: 0 0 40px rgba(0, 220, 255, 0.9);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    /* === PULSE ANIMATION === */
+
+    @keyframes arcPulse {
+      0% {
+        box-shadow: 0 0 15px rgba(0, 200, 255, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 35px rgba(0, 220, 255, 0.9);
+      }
+      100% {
+        box-shadow: 0 0 15px rgba(0, 200, 255, 0.4);
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo"></div>
-      <h1>ARC Privus AI Madre</h1>
-      <p>Plataforma Inteligente Global Autónoma</p>
-    </div>
-  </header>
+<section class="arc-hero">
+  <div class="arc-panther-container">
 
-  <div class="wrap">
-    <section class="hero">
-      <div class="card">
-        <h2>Bienvenido a ARC Privus AI Madre</h2>
-        <p>Haz clic en el botón para iniciar la inscripción.</p>
-        <button onclick="iniciarInscripcion()">Iniciar Inscripción</button>
-      </div>
-    </section>
+    <img 
+      src="pantera-arc.png" 
+      alt="ARC Privus AI Madre" 
+      class="arc-panther"
+    />
+
+    <a 
+      href="https://docs.google.com/forms/d/e/TU_FORM_ID_AQUI/viewform"
+      target="_blank"
+      class="arc-register-btn"
+    >
+      <span>INICIAR REGISTRO ARC</span>
+    </a>
+
   </div>
-
-  <!-- Enlazar scripts JavaScript -->
-  <script src="./core/core-init.js"></script>
-  <script src="./core/inscription-engine.js"></script>
+</section>
 </body>
 </html>
