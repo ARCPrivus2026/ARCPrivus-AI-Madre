@@ -89,7 +89,23 @@
       border:1px solid var(--line);
       border-radius:22px;
       padding:20px;
+    }
 
+    /* === ARC TAGLINE === */
+    .arc-tagline{
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: .6px;
+      color: rgba(155,231,255,.75);
+      opacity: 0;
+      animation: taglineIn 1.2s ease forwards;
+      animation-delay: 2.2s; /* aparece después de la animación principal */
+    }
+
+    @keyframes taglineIn{
+      to{ opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -109,6 +125,7 @@
         <button onclick="iniciarInscripcion()">Iniciar Inscripción</button>
       </div>
     </section>
+    <div class="arc-tagline">ARC Privus AI Madre — Acceso inteligente por invitación.</div>
   </div>
 
   <!-- Enlazar scripts JavaScript -->
