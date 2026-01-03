@@ -147,6 +147,7 @@
         <div class="card">
           <h2>Bienvenido a ARC Privus AI Madre</h2>
           <p>Haz clic en el botón para iniciar la inscripción.</p>
+          <!-- TODO: Replace #registro with actual registration form URL -->
           <a href="#registro" class="arc-register-btn">Iniciar Inscripción</a>
         </div>
       </section>
@@ -167,10 +168,12 @@
       const t = targets.map(s=>e.target.closest(s)).find(Boolean);
       if(!t) return;
 
+      const url = t.getAttribute('href');
+      if(!url) return;
+
       e.preventDefault();
       transition.classList.add('show');
 
-      const url = t.getAttribute('href');
       setTimeout(()=>{
         transition.classList.remove('show');
         window.open(url, '_blank');
