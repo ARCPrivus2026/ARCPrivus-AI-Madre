@@ -30,6 +30,10 @@
       line-height:1.45;
     }
     a{color:inherit}
+    .arc-panther-container{
+      position:relative;
+      min-height:100vh;
+    }
     .wrap{
       max-width:1100px;
       margin:0 auto;
@@ -89,30 +93,92 @@
       border:1px solid var(--line);
       border-radius:22px;
       padding:20px;
+    }
 
+    /* === ARC TRANSITION === */
+    .arc-transition{
+      position:absolute;
+      left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(6,14,28,.55);
+      border:1px solid rgba(0,220,255,.35);
+      color:rgba(155,231,255,.95);
+      font-size:12px;
+      letter-spacing:.4px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      backdrop-filter: blur(6px);
+    }
+    .arc-transition.show{opacity:1;}
+
+    /* === REGISTRATION BUTTON === */
+    .arc-register-btn{
+      display:inline-block;
+      padding:12px 24px;
+      background:linear-gradient(135deg,rgba(110,86,207,.9),rgba(255,179,0,.7));
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      color:#fff;
+      cursor:pointer;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .arc-register-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 20px rgba(110,86,207,.4);
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo"></div>
-      <h1>ARC Privus AI Madre</h1>
-      <p>Plataforma Inteligente Global Autónoma</p>
-    </div>
-  </header>
-
-  <div class="wrap">
-    <section class="hero">
-      <div class="card">
-        <h2>Bienvenido a ARC Privus AI Madre</h2>
-        <p>Haz clic en el botón para iniciar la inscripción.</p>
-        <button onclick="iniciarInscripcion()">Iniciar Inscripción</button>
+  <div class="arc-panther-container">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <h1>ARC Privus AI Madre</h1>
+        <p>Plataforma Inteligente Global Autónoma</p>
       </div>
-    </section>
+    </header>
+
+    <div class="wrap">
+      <section class="hero">
+        <div class="card">
+          <h2>Bienvenido a ARC Privus AI Madre</h2>
+          <p>Haz clic en el botón para iniciar la inscripción.</p>
+          <!-- TODO: Replace #registro with actual registration form URL -->
+          <a href="#registro" class="arc-register-btn">Iniciar Inscripción</a>
+        </div>
+      </section>
+    </div>
+
+    <div class="arc-transition">Conectando con ARC…</div>
   </div>
 
   <!-- Enlazar scripts JavaScript -->
   <script src="./core/core-init.js"></script>
   <script src="./core/inscription-engine.js"></script>
+
+  <script>
+    const transition = document.querySelector('.arc-transition');
+    const targets = ['.arc-register-btn','.arc-core-hit'];
+
+    document.addEventListener('click', e=>{
+      const t = targets.map(s=>e.target.closest(s)).find(Boolean);
+      if(!t) return;
+
+      const url = t.getAttribute('href');
+      if(!url) return;
+
+      e.preventDefault();
+      transition.classList.add('show');
+
+      setTimeout(()=>{
+        transition.classList.remove('show');
+        window.open(url, '_blank');
+      }, 700);
+    });
+  </script>
 </body>
 </html>
