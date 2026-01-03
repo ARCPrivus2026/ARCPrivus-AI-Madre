@@ -113,6 +113,23 @@
       backdrop-filter: blur(6px);
     }
     .arc-transition.show{opacity:1;}
+
+    /* === REGISTRATION BUTTON === */
+    .arc-register-btn{
+      display:inline-block;
+      padding:12px 24px;
+      background:linear-gradient(135deg,rgba(110,86,207,.9),rgba(255,179,0,.7));
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      color:#fff;
+      cursor:pointer;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .arc-register-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 20px rgba(110,86,207,.4);
+    }
   </style>
 </head>
 <body>
@@ -130,7 +147,7 @@
         <div class="card">
           <h2>Bienvenido a ARC Privus AI Madre</h2>
           <p>Haz clic en el botón para iniciar la inscripción.</p>
-          <a href="#registro" class="arc-register-btn" style="display:inline-block;padding:12px 24px;background:linear-gradient(135deg,rgba(110,86,207,.9),rgba(255,179,0,.7));border-radius:8px;text-decoration:none;font-weight:600;color:#fff;cursor:pointer;">Iniciar Inscripción</a>
+          <a href="#registro" class="arc-register-btn">Iniciar Inscripción</a>
         </div>
       </section>
     </div>
