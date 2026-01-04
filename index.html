@@ -1,11 +1,135 @@
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <title>ARCPrivus</title>
+  <meta charset="UTF-8" />
+  <title>ARC Privus AI Madre</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* === RESET === */
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { height:100%; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
+      background: #02040a;
+      color: #eaf0ff;
+      overflow: hidden;
+    }
+    /* === FULL SCREEN ARC === */
+    .arc-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
+      animation: arcBreath 8s ease-in-out infinite;
+    }
+    @keyframes arcBreath {
+      0% { filter: brightness(1) saturate(1); }
+      50% { filter: brightness(1.04) saturate(1.06); }
+      100% { filter: brightness(1) saturate(1); }
+    }
+    /* === LOGO BUTTON === */
+    .arc-logo-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 26px 28px;
+      border-radius: 28px;
+      border: 1px solid rgba(155,231,255,.18);
+      background: rgba(255,255,255,.04);
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .25s ease, background .25s ease;
+      user-select: none;
+    }
+    .arc-logo-btn:hover {
+      background: rgba(0,220,255,.05);
+      box-shadow: 0 0 30px rgba(0,220,255,.25);
+    }
+    .arc-logo {
+      width: 220px;
+      height: 220px;
+      filter: drop-shadow(0 0 18px rgba(0,220,255,.35));
+      animation: arcPulseLogo 3.6s ease-in-out infinite;
+    }
+    @keyframes arcPulseLogo {
+      0% { filter: drop-shadow(0 0 14px rgba(0,220,255,.25)); }
+      50% { filter: drop-shadow(0 0 22px rgba(0,220,255,.55)); }
+      100% { filter: drop-shadow(0 0 14px rgba(0,220,255,.25)); }
+    }
+    /* === TITLES === */
+    .arc-titles {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .arc-title-main, .arc-title-sub {
+      background: linear-gradient(110deg, rgba(155,231,255,.25) 30%, rgba(255,255,255,.75) 45%, rgba(155,231,255,.25) 60%);
+      background-size: 180% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .arc-title-main {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      animation: shimmerMove 5.5s linear infinite;
+    }
+    .arc-title-sub {
+      font-size: 13px;
+      letter-spacing: 1px;
+      animation: shimmerMove 8s linear infinite;
+    }
+    @keyframes shimmerMove {
+      0% { background-position: 180% 0; }
+      100% { background-position: -180% 0; }
+    }
+    .arc-title-subtle {
+      font-size: 11px;
+      letter-spacing: .7px;
+      color: rgba(155,231,255,.55);
+      text-shadow: 0 0 6px rgba(0,220,255,.25), 0 0 14px rgba(0,220,255,.18);
+      animation: glowFloat 9s ease-in-out infinite;
+    }
+    @keyframes glowFloat {
+      0% { opacity: .45; transform: translateY(0); }
+      50% { opacity: .65; transform: translateY(-1px); }
+      100% { opacity: .45; transform: translateY(0); }
+    }
+    /* === MOBILE === */
+    @media (max-width:768px) {
+      .arc-logo { width: 180px; height: 180px; }
+      .arc-title-main { font-size: 16px; }
+    }
+  </style>
 </head>
 <body>
-    <script>
-        // Aquí se inicializa el enlace a ARC
-        const ARC_LINK = "PEGA_AQUI_TU_LINK_REAL_DEL_FORMULARIO";
-    </script>
+  <main class="arc-screen">
+    <button class="arc-logo-btn" id="arcLogoBtn" aria-label="Entrar a ARC">
+      <img src="assets/arc-logo.svg" class="arc-logo" alt="ARC Privus AI Madre Logo">
+      <div class="arc-titles">
+        <div class="arc-title-main">ARC Privus AI Madre</div>
+        <div class="arc-title-sub">Acceso inteligente por invitación</div>
+        <div class="arc-title-subtle">Una inteligencia que observa, protege y decide</div>
+      </div>
+    </button>
+    <div class="arc-boot" id="arcBoot">ARC despertando…</div>
+  </main>
+  <script>
+    const btn = document.getElementById('arcLogoBtn');
+    const boot = document.getElementById('arcBoot');
+    const ARC_LINK = "PEGA_AQUI_TU_LINK_REAL_DEL_FORMULARIO";
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      boot.classList.add('show');
+      setTimeout(() => {
+        boot.classList.remove('show');
+        window.open(ARC_LINK, "_blank");
+      }, 750);
+    });
+  </script>
 </body>
 </html>
