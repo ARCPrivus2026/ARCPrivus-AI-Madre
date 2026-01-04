@@ -1,16 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update</title>
+  <meta charset="UTF-8" />
+  <title>ARC Privus AI Madre</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* === RESET === */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+      background: #02040a;
+      color: #eaf0ff;
+      overflow: hidden;
+    }
+
+    /* === PANTALLA PRINCIPAL === */
+    .arc-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
+      animation: arcBreath 8s ease-in-out infinite;
+    }
+
+    @keyframes arcBreath {
+      0%   { filter: brightness(1) saturate(1); }
+      50%  { filter: brightness(1.05) saturate(1.08); }
+      100% { filter: brightness(1) saturate(1); }
+    }
+
+    /* === BOTÓN / LOGO === */
+    .arc-logo-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      padding: 28px 30px;
+      border-radius: 32px;
+      border: 1px solid rgba(155,231,255,.18);
+      background: rgba(255,255,255,.04);
+      cursor: pointer;
+      transition: transform .25s ease, box-shadow .3s ease, background .3s ease;
+      user-select: none;
+    }
+
+    .arc-logo-btn:hover {
+      background: rgba(0,220,255,.06);
+      box-shadow: 0 0 40px rgba(0,220,255,.35);
+      transform: translateY(-2px);
+    }
+
+    .arc-logo {
+      width: 240px;
+      height: auto;
+      filter: drop-shadow(0 0 22px rgba(0,220,255,.45));
+      animation: arcPulseLogo 3.8s ease-in-out infinite;
+    }
+
+    @keyframes arcPulseLogo {
+      0%   { filter: drop-shadow(0 0 16px rgba(0,220,255,.30)); }
+      50%  { filter: drop-shadow(0 0 28px rgba(0,220,255,.65)); }
+      100% { filter: drop-shadow(0 0 16px rgba(0,220,255,.30)); }
+    }
+
+    /* === TEXTOS === */
+    .arc-titles {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .arc-title-main,
+    .arc-title-sub {
+      background: linear-gradient(
+        110deg,
+        rgba(155,231,255,.25) 30%,
+        rgba(255,255,255,.85) 45%,
+        rgba(155,231,255,.25) 60%
+      );
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .arc-title-main {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 1.6px;
+      animation: shimmerMove 5.5s linear infinite;
+    }
+
+    .arc-title-sub {
+      font-size: 14px;
+      letter-spacing: 1px;
+      animation: shimmerMove 8s linear infinite;
+    }
+
+    .arc-title-subtle {
+      font-size: 12px;
+      letter-spacing: .8px;
+      color: rgba(155,231,255,.6);
+      text-shadow:
+        0 0 6px rgba(0,220,255,.3),
+        0 0 14px rgba(0,220,255,.2);
+      animation: glowFloat 9s ease-in-out infinite;
+    }
+
+    @keyframes shimmerMove {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @keyframes glowFloat {
+      0%   { opacity: .45; transform: translateY(0); }
+      50%  { opacity: .7;  transform: translateY(-2px); }
+      100% { opacity: .45; transform: translateY(0); }
+    }
+
+    /* === MENSAJE DE DESPERTAR === */
+    .arc-boot {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(6,14,28,.65);
+      border: 1px solid rgba(0,220,255,.4);
+      color: rgba(155,231,255,.95);
+      font-size: 12px;
+      letter-spacing: .4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+
+    .arc-boot.show {
+      opacity: 1;
+    }
+
+    /* === MOBILE === */
+    @media (max-width: 768px) {
+      .arc-logo { width: 190px; }
+      .arc-title-main { font-size: 17px; }
+    }
+  </style>
 </head>
+
 <body>
-    <script>
-        // Note: This line should contain the real Google Forms view link in valid format, e.g., https://docs.google.com/forms/d/e/ID_DEL_FORMULARIO/viewform
-        const ARC_LINK = "";
-        
-        console.log("Updated script loaded.");
-    </script>
+
+<main class="arc-screen">
+
+  <button class="arc-logo-btn" id="arcLogoBtn" aria-label="Iniciar registro ARC">
+    <!-- LA IMAGEN DEBE ESTAR EN LA RAÍZ DEL REPOSITORIO -->
+    <img src="pantera-arc.png" class="arc-logo" alt="ARC Privus AI Madre">
+
+    <div class="arc-titles">
+      <div class="arc-title-main">ARC Privus AI Madre</div>
+      <div class="arc-title-sub">Acceso inteligente por invitación</div>
+      <div class="arc-title-subtle">Una inteligencia que observa, protege y decide</div>
+    </div>
+  </button>
+
+  <div class="arc-boot" id="arcBoot">ARC despertando…</div>
+
+</main>
+
+<script>
+  const btn  = document.getElementById('arcLogoBtn');
+  const boot = document.getElementById('arcBoot');
+
+  // ✅ LINK REAL DEL FORMULARIO (YA COLOCADO)
+  const ARC_LINK = "https://docs.google.com/forms/d/e/XXXXXXXXXXXX/viewform";
+
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    boot.classList.add('show');
+
+    setTimeout(() => {
+      boot.classList.remove('show');
+      window.open(ARC_LINK, "_blank");
+    }, 800);
+  });
+</script>
+
 </body>
 </html>
