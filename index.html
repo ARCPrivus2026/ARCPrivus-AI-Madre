@@ -1,3 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ARC Privus AI Madre</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
+  background:#02040a;
+  color:#eaf0ff;
+  overflow:hidden;
+}
+
+.arc-screen{
+  position:relative;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(0,220,255,.18) 0%, rgba(2,4,10,0) 55%),
+    radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
+  animation:breathe 8s ease-in-out infinite;
+}
+
+@keyframes breathe{
+  0%{filter:brightness(1)}
+  50%{filter:brightness(1.08)}
+  100%{filter:brightness(1)}
+}
 
 .arc-guardian{
   position:absolute;
@@ -10,3 +45,58 @@
   pointer-events:none;
   z-index:1;
 }
+
+@keyframes guardian-float{
+  0%{transform:translate(-50%,-50%) translateY(0) scale(1)}
+  50%{transform:translate(-50%,-50%) translateY(-22px) scale(1.04)}
+  100%{transform:translate(-50%,-50%) translateY(0) scale(1)}
+}
+
+.arc-core{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  padding:30px 34px;
+  border-radius:32px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(155,231,255,.18);
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 80px rgba(0,220,255,.25);
+  animation:float 5s ease-in-out infinite;
+  cursor:pointer;
+}
+
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
+  100%{transform:translateY(0)}
+}
+
+.arc-logo{
+  width:min(90vw,420px);
+  filter:drop-shadow(0 0 26px rgba(0,220,255,.6));
+  transition:transform .12s ease, filter .12s ease;
+}
+
+.arc-title{font-size:20px;font-weight:800}
+.arc-sub{font-size:14px;opacity:.85}
+</style>
+</head>
+
+<body>
+
+<main class="arc-screen">
+  <img src="pantera-arc.png" class="arc-guardian" alt="Guardián ARC">
+
+  <div class="arc-core">
+    <img src="Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
+    <div class="arc-title">ARC Privus AI Madre</div>
+    <div class="arc-sub">Acceso inteligente por invitación</div>
+  </div>
+</main>
+
+</body>
+</html>
