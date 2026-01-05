@@ -125,3 +125,39 @@ btn.addEventListener("click",()=>{
 
 </body>
 </html>
+</div>   <!-- aquí termina el container -->
+
+</main>
+
+<script>
+  const arcLogo = document.querySelector('.container');
+
+  arcLogo.style.cursor = 'pointer';
+
+  arcLogo.addEventListener('click', () => {
+    const msg = document.createElement('div');
+    msg.innerText = 'Conectando con ARC…';
+    msg.style.position = 'fixed';
+    msg.style.top = '20px';
+    msg.style.left = '50%';
+    msg.style.transform = 'translateX(-50%)';
+    msg.style.padding = '10px 18px';
+    msg.style.borderRadius = '999px';
+    msg.style.background = 'rgba(6,14,28,.85)';
+    msg.style.color = '#9be7ff';
+    msg.style.fontSize = '14px';
+    msg.style.zIndex = '999';
+    document.body.appendChild(msg);
+
+    setTimeout(() => {
+      window.open(
+        'https://wa.me/573217113389?text=Hola%20ARC%20Privus%20AI%20Madre',
+        '_blank'
+      );
+      msg.remove();
+    }, 900);
+  });
+</script>
+
+</body>
+</html>
