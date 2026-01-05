@@ -1,96 +1,33 @@
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>ARC Privus AI Madre</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+const logo = document.querySelector('.arc-logo');
 
-<style>
-/* ===== RESET ===== */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 30;
+  const y = (e.clientY / window.innerHeight - 0.5) * 30;
 
-/* ===== CUERPO ===== */
-body{
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
-  background:#02040a;
-  color:#eaf0ff;
-  overflow:hidden;
-}
+  logo.style.transform = `
+    translate(${x * 0.15}px, ${y * 0.15}px)
+    scale(1.04)
+  `;
 
-/* ===== ENTORNO VIVO ===== */
-.arc-screen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    radial-gradient(circle at 50% 35%, rgba(0,220,255,.18) 0%, rgba(2,4,10,0) 55%),
-    radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
-  animation: breathe 8s ease-in-out infinite;
-}
+  logo.style.filter = `
+    drop-shadow(${-x}px ${-y}px 28px rgba(0,220,255,.6))
+  `;
+});
 
-@keyframes breathe{
-  0%{filter:brightness(1)}
-  50%{filter:brightness(1.06)}
-  100%{filter:brightness(1)}
-}
+document.addEventListener('touchmove', (e) => {
+  const touch = e.touches[0];
+  const x = (touch.clientX / window.innerWidth - 0.5) * 30;
+  const y = (touch.clientY / window.innerHeight - 0.5) * 30;
 
-/* ===== NÚCLEO ===== */
-.arc-core{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:16px;
-  padding:28px 32px;
-  border-radius:30px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(155,231,255,.18);
-  animation: float 6s ease-in-out infinite;
-}
+  logo.style.transform = `
+    translate(${x * 0.18}px, ${y * 0.18}px)
+    scale(1.04)
+  `;
 
-@keyframes float{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
-  100%{transform:translateY(0)}
-}
-
-/* ===== PANERA / OJO ===== */
-.arc-logo{
-  width:min(90vw,420px);
-  filter:drop-shadow(0 0 24px rgba(0,220,255,.55));
-  animation: pulse 3.6s ease-in-out infinite;
-}
-
-@keyframes pulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.045)}
-  100%{transform:scale(1)}
-}
-
-/* ===== TEXTO ===== */
-.arc-title{
-  font-size:20px;
-  font-weight:800;
-}
-
-.arc-sub{
-  font-size:14px;
-  opacity:.85;
-}
-</style>
-</head>
-
-<body>
-
-<main class="arc-screen">
-  <div class="arc-core">
-    <img src="./Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
-    <div class="arc-title">ARC Privus AI Madre</div>
-    <div class="arc-sub">Acceso inteligente por invitación</div>
-  </div>
-</main>
-
-</body>
-</html>
+  logo.style.filter = `
+    drop-shadow(${-x}px ${-y}px 28px rgba(0,220,255,.6))
+  `;
+});
+</script>
