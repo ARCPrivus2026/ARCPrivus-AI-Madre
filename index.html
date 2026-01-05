@@ -20,6 +20,7 @@ body{
 
 /* ===== ENTORNO ===== */
 .arc-screen{
+  position:relative;
   min-height:100vh;
   display:flex;
   align-items:center;
@@ -36,8 +37,27 @@ body{
   100%{filter:brightness(1)}
 }
 
+/* ===== GUARDIÁN ARC (PANTERA) ===== */
+.arc-guardian{
+  position:absolute;
+  width:min(90vw,520px);
+  opacity:.22;
+  filter:blur(.3px) drop-shadow(0 0 40px rgba(0,220,255,.45));
+  animation:guardian-float 9s ease-in-out infinite;
+  pointer-events:none;
+  z-index:1;
+}
+
+@keyframes guardian-float{
+  0%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-22px) scale(1.04)}
+  100%{transform:translateY(0) scale(1)}
+}
+
 /* ===== NÚCLEO FLOTANTE ===== */
 .arc-core{
+  position:relative;
+  z-index:2;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -46,7 +66,10 @@ body{
   border-radius:32px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(155,231,255,.18);
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 80px rgba(0,220,255,.25);
   animation:float 5s ease-in-out infinite;
+  cursor:pointer;
 }
 
 @keyframes float{
@@ -78,13 +101,17 @@ body{
 <body>
 
 <main class="arc-screen">
-  <div class="arc-core">
-    <!-- EL NOMBRE DEBE COINCIDIR EXACTO -->
-    <img src="Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
 
+  <!-- GUARDIÁN ARC -->
+  <img src="pantera-arc.png" class="arc-guardian" alt="Guardián ARC">
+
+  <!-- NÚCLEO -->
+  <div class="arc-core">
+    <img src="Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
     <div class="arc-title">ARC Privus AI Madre</div>
     <div class="arc-sub">Acceso inteligente por invitación</div>
   </div>
+
 </main>
 
 <script>
@@ -115,15 +142,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+
 <script>
+/* ===== ACCESO WHATSAPP ===== */
 document.addEventListener("DOMContentLoaded", () => {
   const core = document.querySelector(".arc-core");
-  if (!core) return; // protección total
-
-  core.style.cursor = "pointer";
+  if (!core) return;
 
   core.addEventListener("click", () => {
-    // Mensaje visual
     const msg = document.createElement("div");
     msg.innerText = "Conectando con ARC…";
     msg.style.position = "fixed";
@@ -139,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
     msg.style.boxShadow = "0 0 20px rgba(0,220,255,.4)";
     document.body.appendChild(msg);
 
-    // Abrir WhatsApp
     setTimeout(() => {
       window.open(
         "https://wa.me/573217113389?text=Hola%20ARC%20Privus%20AI%20Madre%2C%20solicito%20acceso%20por%20invitación.",
@@ -150,5 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+
 </body>
 </html>
