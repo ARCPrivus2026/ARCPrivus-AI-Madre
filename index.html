@@ -49,9 +49,15 @@ body{
 }
 
 @keyframes guardian-float{
-  0%{transform:translateY(0) scale(1)}
-  50%{transform:translateY(-22px) scale(1.04)}
-  100%{transform:translateY(0) scale(1)}
+  0%{
+    transform:translate(-50%, -50%) translateY(0) scale(1);
+  }
+  50%{
+    transform:translate(-50%, -50%) translateY(-22px) scale(1.04);
+  }
+  100%{
+    transform:translate(-50%, -50%) translateY(0) scale(1);
+  }
 }
 
 /* ===== NÚCLEO FLOTANTE ===== */
