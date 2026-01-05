@@ -15,6 +15,7 @@ body{
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
   background:#02040a;
   color:#eaf0ff;
+  overflow:hidden;
 }
 
 /* ===== ENTORNO ===== */
@@ -31,33 +32,33 @@ body{
 
 @keyframes breathe{
   0%{filter:brightness(1)}
-  50%{filter:brightness(1.06)}
+  50%{filter:brightness(1.08)}
   100%{filter:brightness(1)}
 }
 
-/* ===== NÚCLEO ===== */
+/* ===== NÚCLEO FLOTANTE ===== */
 .arc-core{
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:16px;
-  padding:28px 32px;
-  border-radius:30px;
+  padding:30px 34px;
+  border-radius:32px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(155,231,255,.18);
-  animation:float 6s ease-in-out infinite;
+  animation:float 5s ease-in-out infinite;
 }
 
 @keyframes float{
   0%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
+  50%{transform:translateY(-14px)}
   100%{transform:translateY(0)}
 }
 
 /* ===== LOGO / OJO ===== */
 .arc-logo{
   width:min(90vw,420px);
-  filter:drop-shadow(0 0 24px rgba(0,220,255,.55));
+  filter:drop-shadow(0 0 26px rgba(0,220,255,.6));
   transition:transform .12s ease, filter .12s ease;
 }
 
@@ -78,7 +79,7 @@ body{
 
 <main class="arc-screen">
   <div class="arc-core">
-    <!-- ⚠️ EL NOMBRE DEBE COINCIDIR CON TU IMAGEN REAL -->
+    <!-- EL NOMBRE DEBE COINCIDIR EXACTO -->
     <img src="Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
 
     <div class="arc-title">ARC Privus AI Madre</div>
@@ -86,30 +87,30 @@ body{
   </div>
 </main>
 
-</script>
-/* ===== SCRIPT PROTEGIDO (NO ROMPE LA PÁGINA) ===== */
+<script>
+/* ===== MOVIMIENTO DEL OJO (VIVO) ===== */
 document.addEventListener("DOMContentLoaded", () => {
   const logo = document.querySelector(".arc-logo");
-  if(!logo) return; // 🔒 protección total
+  if(!logo) return;
 
   const move = (x,y)=>{
     logo.style.transform =
-      `translate(${x}px, ${y}px) scale(1.04)`;
+      `translate(${x}px, ${y}px) scale(1.05)`;
     logo.style.filter =
-      `drop-shadow(${-x}px ${-y}px 28px rgba(0,220,255,.6))`;
+      `drop-shadow(${-x}px ${-y}px 32px rgba(0,220,255,.7))`;
   };
 
   document.addEventListener("mousemove", e=>{
-    const x = (e.clientX / innerWidth - .5) * 18;
-    const y = (e.clientY / innerHeight - .5) * 18;
+    const x = (e.clientX / innerWidth - .5) * 22;
+    const y = (e.clientY / innerHeight - .5) * 22;
     move(x,y);
   });
 
   document.addEventListener("touchmove", e=>{
     const t = e.touches[0];
     if(!t) return;
-    const x = (t.clientX / innerWidth - .5) * 22;
-    const y = (t.clientY / innerHeight - .5) * 22;
+    const x = (t.clientX / innerWidth - .5) * 26;
+    const y = (t.clientY / innerHeight - .5) * 26;
     move(x,y);
   });
 });
