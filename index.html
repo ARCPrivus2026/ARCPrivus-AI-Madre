@@ -1,14 +1,17 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>ARC Privus AI Madre</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* ===== RESET ===== */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 
+/* ===== CUERPO ===== */
 body{
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
   background:#02040a;
@@ -16,6 +19,7 @@ body{
   overflow:hidden;
 }
 
+/* ===== ENTORNO VIVO ===== */
 .arc-screen{
   min-height:100vh;
   display:flex;
@@ -24,39 +28,39 @@ body{
   background:
     radial-gradient(circle at 50% 35%, rgba(0,220,255,.18) 0%, rgba(2,4,10,0) 55%),
     radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
-  animation: breathing 8s ease-in-out infinite;
+  animation: breathe 8s ease-in-out infinite;
 }
 
-@keyframes breathing{
+@keyframes breathe{
   0%{filter:brightness(1)}
   50%{filter:brightness(1.06)}
   100%{filter:brightness(1)}
 }
 
-.arc-logo-btn{
+/* ===== NÚCLEO ===== */
+.arc-core{
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:16px;
-  padding:26px 30px;
+  padding:28px 32px;
   border-radius:30px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(155,231,255,.18);
-  cursor:pointer;
-  transition:.3s ease;
+  animation: float 6s ease-in-out infinite;
 }
 
-.arc-logo-btn:hover{
-  box-shadow:0 0 40px rgba(0,220,255,.35);
-  transform:translateY(-2px);
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+  100%{transform:translateY(0)}
 }
 
-/* Capa que late (pulso) */
-.arc-logo-wrap{
+/* ===== PANERA / OJO ===== */
+.arc-logo{
   width:min(90vw,420px);
-  filter:drop-shadow(0 0 22px rgba(0,220,255,.55));
-  animation:pulse 3.6s infinite;
-  will-change:transform;
+  filter:drop-shadow(0 0 24px rgba(0,220,255,.55));
+  animation: pulse 3.6s ease-in-out infinite;
 }
 
 @keyframes pulse{
@@ -65,84 +69,28 @@ body{
   100%{transform:scale(1)}
 }
 
-/* Imagen que mueve el ojo */
-.arc-logo{
-  width:100%;
-  display:block;
-  transition:transform .12s ease-out;
-  will-change:transform;
-}
-
-.arc-title-main{
+/* ===== TEXTO ===== */
+.arc-title{
   font-size:20px;
   font-weight:800;
 }
 
-.arc-title-sub{
+.arc-sub{
   font-size:14px;
   opacity:.85;
 }
-
-.arc-boot{
-  position:fixed;
-  top:22px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:10px 18px;
-  border-radius:999px;
-  background:rgba(6,14,28,.75);
-  color:#9be7ff;
-  font-size:13px;
-  opacity:0;
-  transition:.35s;
-  z-index:10;
-}
-.arc-boot.show{opacity:1}
 </style>
 </head>
 
 <body>
 
 <main class="arc-screen">
-
-  <button class="arc-logo-btn" id="arcLogoBtn" type="button">
-    <div class="arc-logo-wrap">
-      <img src="./Screenshot_20260101-220051.png" class="arc-logo" id="arcLogo" alt="ARC Privus AI Madre" />
-    </div>
-
-    <div class="arc-title-main">ARC Privus AI Madre</div>
-    <div class="arc-title-sub">Acceso inteligente por invitación</div>
-  </button>
-
-  <div class="arc-boot" id="arcBoot">Conectando con ARC…</div>
-
+  <div class="arc-core">
+    <img src="./Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
+    <div class="arc-title">ARC Privus AI Madre</div>
+    <div class="arc-sub">Acceso inteligente por invitación</div>
+  </div>
 </main>
-
-<script>
-const img = document.getElementById('arcLogo');
-const btn = document.getElementById('arcLogoBtn');
-const boot = document.getElementById('arcBoot');
-
-function moveEye(clientX, clientY){
-  const x = (clientX / window.innerWidth  - 0.5) * 10;
-  const y = (clientY / window.innerHeight - 0.5) * 10;
-  img.style.transform = `translate(${x}px, ${y}px)`;
-}
-
-document.addEventListener('mousemove', (e) => {
-  moveEye(e.clientX, e.clientY);
-});
-
-document.addEventListener('touchmove', (e) => {
-  if(!e.touches || !e.touches[0]) return;
-  moveEye(e.touches[0].clientX, e.touches[0].clientY);
-}, {passive:true});
-
-btn.addEventListener('click', () => {
-  boot.classList.add('show');
-  setTimeout(() => boot.classList.remove('show'), 1200);
-});
-</script>
 
 </body>
 </html>
