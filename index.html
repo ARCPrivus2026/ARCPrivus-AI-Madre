@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -105,21 +106,11 @@ body{
   align-items:center;
   justify-content:center;
   z-index:9999;
-  animation:fadeIn .6s ease forwards;
 }
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
 .arc-message{
   font-size:18px;
   color:#9be7ff;
   text-align:center;
-  letter-spacing:.4px;
-  animation:messagePulse 1.8s ease-in-out infinite;
-}
-@keyframes messagePulse{
-  0%{opacity:.6}
-  50%{opacity:1}
-  100%{opacity:.6}
 }
 
 /* ===== TEXTO ===== */
@@ -144,103 +135,9 @@ body{
   </div>
 
 </main>
+
 <script>
-/* ===== FASES DE ACCESO ARC (CON FORMULARIO REAL) ===== */
-document.addEventListener("DOMContentLoaded",()=>{
-  const core=document.querySelector(".arc-core");
-  if(!core) return;
-
-  let arcLevel = 0; // 0=sin iniciar, 1,2,3
-
-  const showOverlayText = (text, duration=1800) => {
-    const overlay=document.createElement("div");
-    overlay.className="arc-overlay";
-    const msg=document.createElement("div");
-    msg.className="arc-message";
-    msg.innerText=text;
-    overlay.appendChild(msg);
-    document.body.appendChild(overlay);
-    setTimeout(()=>overlay.remove(), duration);
-  };
-
-  const showFormOverlay = () => {
-    const overlay=document.createElement("div");
-    overlay.className="arc-overlay";
-
-    overlay.innerHTML = `
-      <div style="
-        width:min(92vw,380px);
-        padding:26px;
-        border-radius:22px;
-        background:rgba(10,18,38,.85);
-        border:1px solid rgba(155,231,255,.25);
-        box-shadow:0 0 60px rgba(0,220,255,.25);
-        text-align:center;">
-        
-        <div class="arc-message" style="margin-bottom:16px;animation:none">
-          Nivel 3 — Autorizado<br>
-          Solicitud de acceso ARC
-        </div>
-
-        <form class="arc-form">
-          <input required placeholder="Nombre completo"
-            style="width:100%;padding:10px;margin-bottom:12px;border-radius:12px;
-                   border:1px solid rgba(155,231,255,.25);background:rgba(0,0,0,.35);
-                   color:#eaf0ff;">
-          
-          <input required type="email" placeholder="Correo electrónico"
-            style="width:100%;padding:10px;margin-bottom:12px;border-radius:12px;
-                   border:1px solid rgba(155,231,255,.25);background:rgba(0,0,0,.35);
-                   color:#eaf0ff;">
-          
-          <textarea rows="3" placeholder="Motivo de acceso"
-            style="width:100%;padding:10px;margin-bottom:12px;border-radius:12px;
-                   border:1px solid rgba(155,231,255,.25);background:rgba(0,0,0,.35);
-                   color:#eaf0ff;resize:none;"></textarea>
-          
-          <button type="submit"
-            style="width:100%;padding:12px;border-radius:999px;border:none;
-                   background:#00dcff;color:#02040a;font-weight:700;cursor:pointer;">
-            Enviar solicitud
-          </button>
-        </form>
-
-        <div style="margin-top:12px;font-size:12px;opacity:.75">
-          ARC registrará tu solicitud y continuará el proceso.
-        </div>
-      </div>
-    `;
-
-    overlay.addEventListener("click",(e)=>{
-      if(e.target === overlay) overlay.remove();
-    });
-
-    document.body.appendChild(overlay);
-  };
-
-  core.addEventListener("click",()=>{
-    const p=document.createElement("div");
-    p.className="arc-pulse";
-    core.appendChild(p);
-    p.addEventListener("animationend",()=>p.remove());
-
-    if(arcLevel===0){
-      arcLevel=1;
-      showOverlayText("Nivel 1 — Observador\nARC te reconoce");
-    }
-    else if(arcLevel===1){
-      arcLevel=2;
-      showOverlayText("Nivel 2 — Invitado\nConfirma tu intención");
-    }
-    else if(arcLevel===2){
-      arcLevel=3;
-      showFormOverlay(); // ✅ AQUÍ NACE EL FORMULARIO
-    }
-  });
-});
-  </script>
-<script>
-/* ===== REACCIÓN GUARDIÁN ===== */
+/* ===== REACCIÓN SUAVE DEL GUARDIÁN ===== */
 document.addEventListener("DOMContentLoaded",()=>{
   const g=document.querySelector(".arc-guardian");
   if(!g) return;
@@ -264,108 +161,75 @@ document.addEventListener("DOMContentLoaded",()=>{
 </script>
 
 <script>
-
+/* ===== FASES DE ACCESO ARC (ÚNICO FLUJO) ===== */
 document.addEventListener("DOMContentLoaded",()=>{
   const core=document.querySelector(".arc-core");
   if(!core) return;
 
-  let arcLevel = 0; // 0=sin iniciar, 1,2,3
+  let arcLevel = 0;
 
-  const showOverlay = (text, duration=1800) => {
-    const overlay=document.createElement("div");
-    overlay.className="arc-overlay";
-    const msg=document.createElement("div");
-    msg.className="arc-message";
-    msg.innerText=text;
-    overlay.appendChild(msg);
-    document.body.appendChild(overlay);
-    setTimeout(()=>overlay.remove(), duration);
+  const showText = (text, time=1600)=>{
+    const o=document.createElement("div");
+    o.className="arc-overlay";
+    o.innerHTML=`<div class="arc-message">${text.replace(/\n/g,"<br>")}</div>`;
+    document.body.appendChild(o);
+    setTimeout(()=>o.remove(), time);
+  };
+
+  const showForm = ()=>{
+    const o=document.createElement("div");
+    o.className="arc-overlay";
+    o.innerHTML=`
+      <div style="width:min(92vw,380px);padding:26px;border-radius:22px;
+      background:rgba(10,18,38,.9);border:1px solid rgba(155,231,255,.25);text-align:center">
+        <div class="arc-message" style="margin-bottom:14px">Solicitud de acceso ARC</div>
+        <form class="arc-form">
+          <input required placeholder="Nombre completo"
+            style="width:100%;padding:10px;margin-bottom:10px;border-radius:10px">
+          <input required type="email" placeholder="Correo electrónico"
+            style="width:100%;padding:10px;margin-bottom:10px;border-radius:10px">
+          <textarea placeholder="Motivo de acceso" rows="3"
+            style="width:100%;padding:10px;margin-bottom:12px;border-radius:10px"></textarea>
+          <button type="submit"
+            style="width:100%;padding:12px;border-radius:999px;border:none;
+            background:#00dcff;font-weight:700">Enviar</button>
+        </form>
+      </div>`;
+    document.body.appendChild(o);
   };
 
   core.addEventListener("click",()=>{
-    // pulso siempre
     const p=document.createElement("div");
     p.className="arc-pulse";
     core.appendChild(p);
     p.addEventListener("animationend",()=>p.remove());
 
-    if(arcLevel===0){
-      arcLevel=1;
-      showOverlay("Nivel 1 — Observador\nARC te reconoce");
-    }
-    else if(arcLevel===1){
-      arcLevel=2;
-      showOverlay("Nivel 2 — Invitado\nConfirma tu intención");
-    }
-    else if(arcLevel===2){
-      arcLevel=3;
-      showOverlay("Nivel 3 — Autorizado\nCanal abierto");
-      setTimeout(()=>{
-        window.open(
-          "https://wa.me/573217113389?text=Hola%20ARC%20Privus%20AI%20Madre%2C%20solicito%20acceso%20autorizado.",
-          "_blank"
-        );
-      },1600);
-    }
+    if(arcLevel===0){arcLevel=1; showText("Nivel 1 — Observador");}
+    else if(arcLevel===1){arcLevel=2; showText("Nivel 2 — Invitado");}
+    else if(arcLevel===2){arcLevel=3; showForm();}
   });
 });
 </script>
-<script>
-/* ===== CAPTURA GLOBAL DEL FORMULARIO ARC (aunque sea dinámico) ===== */
-document.addEventListener("submit", (e) => {
-  const form = e.target;
-  if (!form || !form.classList || !form.classList.contains("arc-form")) return;
 
+<script>
+/* ===== CAPTURA DEL FORMULARIO ARC ===== */
+document.addEventListener("submit",(e)=>{
+  if(!e.target.classList.contains("arc-form")) return;
   e.preventDefault();
 
-  // Intenta leer campos por tipo/orden (robusto)
-  const nameInput  = form.querySelector('input[type="text"], input:not([type]), input[placeholder*="Nombre"], input[placeholder*="nombre"]');
-  const emailInput = form.querySelector('input[type="email"]');
-  const textArea   = form.querySelector("textarea");
+  const [n,c,t]=e.target.querySelectorAll("input,textarea");
+  const casos=JSON.parse(localStorage.getItem("arc_cases")||"[]");
+  casos.push({
+    id:Date.now(),
+    nombre:n.value,
+    correo:c.value,
+    motivo:t.value||"No especificado",
+    fecha:new Date().toISOString().split("T")[0]
+  });
+  localStorage.setItem("arc_cases",JSON.stringify(casos));
+  e.target.innerHTML="<div style='color:#9be7ff'>Solicitud recibida.<br>ARC continúa el proceso.</div>";
+});
+</script>
 
-  const nombre = (nameInput?.value || "").trim();
-  const correo = (emailInput?.value || "").trim();
-  const intencion = (textArea?.value || "").trim();
-
-  if (!nombre || !correo) {
-    // Mensaje corto si falta algo
-    const warn = form.querySelector(".arc-warn") || document.createElement("div");
-    warn.className = "arc-warn";
-    warn.style.marginTop = "10px";
-    warn.style.fontSize = "13px";
-    warn.style.color = "#9be7ff";
-    warn.innerText = "ARC requiere Nombre y Correo para continuar.";
-    form.appendChild(warn);
-    return;
-  }
-
-  const casos = JSON.parse(localStorage.getItem("arc_cases") || "[]");
-
-  const nuevoCaso = {
-    id: Date.now(),
-    nombre,
-    correo,
-    intencion: intencion || "No especificada",
-    perfil: "Explorador",
-    estado: "evaluacion",
-    motivo: "Solicitud inicial",
-    fecha: new Date().toISOString().split("T")[0]
-  };
-
-  casos.push(nuevoCaso);
-  localStorage.setItem("arc_cases", JSON.stringify(casos));
-
-  // Reemplazo elegante dentro del overlay / caja
-  form.innerHTML = `
-    <div style="color:#9be7ff;font-size:16px;line-height:1.4">
-      ARC ha recibido tu solicitud.<br>
-      El proceso continúa en evaluación.
-    </div>
-  `;
-}, true);
-    </script>
 </body>
 </html>
-  
-
-    
