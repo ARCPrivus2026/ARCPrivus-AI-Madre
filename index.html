@@ -89,34 +89,55 @@ body{
   100%{transform:translateY(0)}
 }
 
-/* ===== PULSO DE ENERGÍA ===== */
+/* ===== PULSO ===== */
 .arc-pulse{
   position:absolute;
   inset:0;
   border-radius:50%;
   border:2px solid rgba(0,220,255,.55);
-  animation:pulse 0.9s ease-out forwards;
+  animation:pulse .9s ease-out forwards;
   pointer-events:none;
 }
 
 @keyframes pulse{
-  0%{
-    transform:scale(.4);
-    opacity:.9;
-  }
-  100%{
-    transform:scale(1.8);
-    opacity:0;
-  }
+  0%{transform:scale(.4);opacity:.9}
+  100%{transform:scale(1.8);opacity:0}
 }
 
-/* ===== LOGO ===== */
-.arc-logo{
-  width:min(90vw,420px);
-  filter:drop-shadow(0 0 26px rgba(0,220,255,.6));
+/* ===== OVERLAY RITUAL ===== */
+.arc-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(2,4,10,.88);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  animation:fadeIn .6s ease forwards;
+}
+
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+.arc-message{
+  font-size:18px;
+  color:#9be7ff;
+  text-align:center;
+  letter-spacing:.4px;
+  animation:messagePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes messagePulse{
+  0%{opacity:.6}
+  50%{opacity:1}
+  100%{opacity:.6}
 }
 
 /* ===== TEXTO ===== */
+.arc-logo{width:min(90vw,420px);filter:drop-shadow(0 0 26px rgba(0,220,255,.6))}
 .arc-title{font-size:20px;font-weight:800}
 .arc-sub{font-size:14px;opacity:.85}
 </style>
@@ -141,44 +162,68 @@ body{
 </main>
 
 <script>
-/* ===== REACCIÓN SUTIL DEL GUARDIÁN ===== */
-document.addEventListener("DOMContentLoaded", () => {
-  const guardian = document.querySelector(".arc-guardian");
-  if(!guardian) return;
-
-  let tx=0, ty=0, raf=0;
-
+/* ===== REACCIÓN GUARDIÁN ===== */
+document.addEventListener("DOMContentLoaded",()=>{
+  const g=document.querySelector(".arc-guardian");
+  if(!g) return;
+  let x=0,y=0,raf=0;
   const apply=()=>{
     raf=0;
-    guardian.style.setProperty("--gx", `${tx}px`);
-    guardian.style.setProperty("--gy", `${ty}px`);
+    g.style.setProperty("--gx",`${x}px`);
+    g.style.setProperty("--gy",`${y}px`);
   };
-
-  const setTarget=(x,y)=>{
-    tx=(x/window.innerWidth-.5)*12;
-    ty=(y/window.innerHeight-.5)*12;
+  const set=(cx,cy)=>{
+    x=(cx/innerWidth-.5)*12;
+    y=(cy/innerHeight-.5)*12;
     if(!raf) raf=requestAnimationFrame(apply);
   };
-
-  document.addEventListener("mousemove",e=>setTarget(e.clientX,e.clientY));
+  document.addEventListener("mousemove",e=>set(e.clientX,e.clientY));
   document.addEventListener("touchmove",e=>{
     const t=e.touches[0];
-    if(t) setTarget(t.clientX,t.clientY);
+    if(t) set(t.clientX,t.clientY);
   },{passive:true});
 });
 </script>
 
 <script>
-/* ===== PULSO DE ENERGÍA AL CLIC ===== */
-document.addEventListener("DOMContentLoaded", () => {
-  const core = document.querySelector(".arc-core");
+/* ===== RITUAL DE ACCESO ===== */
+document.addEventListener("DOMContentLoaded",()=>{
+  const core=document.querySelector(".arc-core");
   if(!core) return;
 
-  core.addEventListener("click", () => {
-    const pulse=document.createElement("div");
-    pulse.className="arc-pulse";
-    core.appendChild(pulse);
-    pulse.addEventListener("animationend",()=>pulse.remove());
+  let active=false;
+
+  core.addEventListener("click",()=>{
+    if(active) return;
+    active=true;
+
+    // Pulso
+    const p=document.createElement("div");
+    p.className="arc-pulse";
+    core.appendChild(p);
+    p.addEventListener("animationend",()=>p.remove());
+
+    // Overlay
+    const overlay=document.createElement("div");
+    overlay.className="arc-overlay";
+    const msg=document.createElement("div");
+    msg.className="arc-message";
+    msg.innerText="ARC ha detectado tu presencia";
+    overlay.appendChild(msg);
+    document.body.appendChild(overlay);
+
+    setTimeout(()=>{
+      msg.innerText="Autorización en curso…";
+    },1800);
+
+    setTimeout(()=>{
+      overlay.remove();
+      active=false;
+      window.open(
+        "https://wa.me/573217113389?text=Hola%20ARC%20Privus%20AI%20Madre%2C%20solicito%20acceso%20por%20invitación.",
+        "_blank"
+      );
+    },3600);
   });
 });
 </script>
