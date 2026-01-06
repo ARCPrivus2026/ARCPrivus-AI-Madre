@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,11 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ===== RESET ===== */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 
-/* ===== CUERPO ===== */
 body{
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
   background:#02040a;
@@ -31,7 +28,6 @@ body{
     radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
   animation:breathe 8s ease-in-out infinite;
 }
-
 @keyframes breathe{
   0%{filter:brightness(1)}
   50%{filter:brightness(1.08)}
@@ -47,19 +43,16 @@ body{
   pointer-events:none;
   animation:guardian-float 9s ease-in-out infinite;
 }
-
 @keyframes guardian-float{
   0%{transform:translate(-50%,-50%) translateY(0) scale(1)}
   50%{transform:translate(-50%,-50%) translateY(-22px) scale(1.04)}
   100%{transform:translate(-50%,-50%) translateY(0) scale(1)}
 }
-
 .arc-guardian{
   width:min(90vw,520px);
   opacity:.30;
   filter:blur(.3px) drop-shadow(0 0 40px rgba(0,220,255,.45));
-  --gx:0px;
-  --gy:0px;
+  --gx:0px; --gy:0px;
   transform:translate(var(--gx), var(--gy));
   transition:transform .18s ease-out;
 }
@@ -82,7 +75,6 @@ body{
   cursor:pointer;
   overflow:hidden;
 }
-
 @keyframes float{
   0%{transform:translateY(0)}
   50%{transform:translateY(-14px)}
@@ -98,13 +90,12 @@ body{
   animation:pulse .9s ease-out forwards;
   pointer-events:none;
 }
-
 @keyframes pulse{
   0%{transform:scale(.4);opacity:.9}
   100%{transform:scale(1.8);opacity:0}
 }
 
-/* ===== OVERLAY RITUAL ===== */
+/* ===== OVERLAY ===== */
 .arc-overlay{
   position:fixed;
   inset:0;
@@ -116,11 +107,7 @@ body{
   z-index:9999;
   animation:fadeIn .6s ease forwards;
 }
-
-@keyframes fadeIn{
-  from{opacity:0}
-  to{opacity:1}
-}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
 .arc-message{
   font-size:18px;
@@ -129,7 +116,6 @@ body{
   letter-spacing:.4px;
   animation:messagePulse 1.8s ease-in-out infinite;
 }
-
 @keyframes messagePulse{
   0%{opacity:.6}
   50%{opacity:1}
@@ -147,12 +133,10 @@ body{
 
 <main class="arc-screen">
 
-  <!-- GUARDIÁN -->
   <div class="guardian-wrap" aria-hidden="true">
     <img src="pantera-arc.png" class="arc-guardian" alt="Guardián ARC">
   </div>
 
-  <!-- NÚCLEO -->
   <div class="arc-core">
     <img src="Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
     <div class="arc-title">ARC Privus AI Madre</div>
@@ -186,47 +170,55 @@ document.addEventListener("DOMContentLoaded",()=>{
 </script>
 
 <script>
-/* ===== RITUAL DE ACCESO ===== */
+/* ===== FASES DE ACCESO ARC ===== */
 document.addEventListener("DOMContentLoaded",()=>{
   const core=document.querySelector(".arc-core");
   if(!core) return;
 
-  let active=false;
+  let arcLevel = 0; // 0=sin iniciar, 1,2,3
+
+  const showOverlay = (text, duration=1800) => {
+    const overlay=document.createElement("div");
+    overlay.className="arc-overlay";
+    const msg=document.createElement("div");
+    msg.className="arc-message";
+    msg.innerText=text;
+    overlay.appendChild(msg);
+    document.body.appendChild(overlay);
+    setTimeout(()=>overlay.remove(), duration);
+  };
 
   core.addEventListener("click",()=>{
-    if(active) return;
-    active=true;
-
-    // Pulso
+    // pulso siempre
     const p=document.createElement("div");
     p.className="arc-pulse";
     core.appendChild(p);
     p.addEventListener("animationend",()=>p.remove());
 
-    // Overlay
-    const overlay=document.createElement("div");
-    overlay.className="arc-overlay";
-    const msg=document.createElement("div");
-    msg.className="arc-message";
-    msg.innerText="ARC ha detectado tu presencia";
-    overlay.appendChild(msg);
-    document.body.appendChild(overlay);
-
-    setTimeout(()=>{
-      msg.innerText="Autorización en curso…";
-    },1800);
-
-    setTimeout(()=>{
-      overlay.remove();
-      active=false;
-      window.open(
-        "https://wa.me/573217113389?text=Hola%20ARC%20Privus%20AI%20Madre%2C%20solicito%20acceso%20por%20invitación.",
-        "_blank"
-      );
-    },3600);
+    if(arcLevel===0){
+      arcLevel=1;
+      showOverlay("Nivel 1 — Observador\nARC te reconoce");
+    }
+    else if(arcLevel===1){
+      arcLevel=2;
+      showOverlay("Nivel 2 — Invitado\nConfirma tu intención");
+    }
+    else if(arcLevel===2){
+      arcLevel=3;
+      showOverlay("Nivel 3 — Autorizado\nCanal abierto");
+      setTimeout(()=>{
+        window.open(
+          "https://wa.me/573217113389?text=Hola%20ARC%20Privus%20AI%20Madre%2C%20solicito%20acceso%20autorizado.",
+          "_blank"
+        );
+      },1600);
+    }
   });
 });
 </script>
 
 </body>
 </html>
+  
+
+    
