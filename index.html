@@ -216,7 +216,60 @@ document.addEventListener("DOMContentLoaded",()=>{
   });
 });
 </script>
+<script>
+/* ===== CAPTURA GLOBAL DEL FORMULARIO ARC (aunque sea dinámico) ===== */
+document.addEventListener("submit", (e) => {
+  const form = e.target;
+  if (!form || !form.classList || !form.classList.contains("arc-form")) return;
 
+  e.preventDefault();
+
+  // Intenta leer campos por tipo/orden (robusto)
+  const nameInput  = form.querySelector('input[type="text"], input:not([type]), input[placeholder*="Nombre"], input[placeholder*="nombre"]');
+  const emailInput = form.querySelector('input[type="email"]');
+  const textArea   = form.querySelector("textarea");
+
+  const nombre = (nameInput?.value || "").trim();
+  const correo = (emailInput?.value || "").trim();
+  const intencion = (textArea?.value || "").trim();
+
+  if (!nombre || !correo) {
+    // Mensaje corto si falta algo
+    const warn = form.querySelector(".arc-warn") || document.createElement("div");
+    warn.className = "arc-warn";
+    warn.style.marginTop = "10px";
+    warn.style.fontSize = "13px";
+    warn.style.color = "#9be7ff";
+    warn.innerText = "ARC requiere Nombre y Correo para continuar.";
+    form.appendChild(warn);
+    return;
+  }
+
+  const casos = JSON.parse(localStorage.getItem("arc_cases") || "[]");
+
+  const nuevoCaso = {
+    id: Date.now(),
+    nombre,
+    correo,
+    intencion: intencion || "No especificada",
+    perfil: "Explorador",
+    estado: "evaluacion",
+    motivo: "Solicitud inicial",
+    fecha: new Date().toISOString().split("T")[0]
+  };
+
+  casos.push(nuevoCaso);
+  localStorage.setItem("arc_cases", JSON.stringify(casos));
+
+  // Reemplazo elegante dentro del overlay / caja
+  form.innerHTML = `
+    <div style="color:#9be7ff;font-size:16px;line-height:1.4">
+      ARC ha recibido tu solicitud.<br>
+      El proceso continúa en evaluación.
+    </div>
+  `;
+}, true);
+    </script>
 </body>
 </html>
   
