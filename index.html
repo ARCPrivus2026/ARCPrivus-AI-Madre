@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,9 +7,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* ===== RESET ===== */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 
+/* ===== CUERPO ===== */
 body{
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
   background:#02040a;
@@ -16,6 +19,7 @@ body{
   overflow:hidden;
 }
 
+/* ===== ENTORNO ===== */
 .arc-screen{
   position:relative;
   min-height:100vh;
@@ -34,16 +38,14 @@ body{
   100%{filter:brightness(1)}
 }
 
-.arc-guardian{
+/* ===== GUARDIÁN (PANTERA) - CAPA 1: WRAPPER FLOTA ===== */
+.guardian-wrap{
   position:absolute;
   top:50%;
   left:50%;
-  width:min(90vw,520px);
-  opacity:.30;
-  filter:blur(.3px) drop-shadow(0 0 40px rgba(0,220,255,.45));
-  animation:guardian-float 9s ease-in-out infinite;
-  pointer-events:none;
   z-index:1;
+  pointer-events:none;
+  animation:guardian-float 9s ease-in-out infinite;
 }
 
 @keyframes guardian-float{
@@ -52,6 +54,19 @@ body{
   100%{transform:translate(-50%,-50%) translateY(0) scale(1)}
 }
 
+/* ===== GUARDIÁN (PANTERA) - CAPA 2: IMAGEN REACCIONA ===== */
+.arc-guardian{
+  width:min(90vw,520px);
+  opacity:.30;
+  filter:blur(.3px) drop-shadow(0 0 40px rgba(0,220,255,.45));
+  /* variables de movimiento sutil */
+  --gx: 0px;
+  --gy: 0px;
+  transform:translate(var(--gx), var(--gy));
+  transition:transform .18s ease-out;
+}
+
+/* ===== NÚCLEO FLOTANTE ===== */
 .arc-core{
   position:relative;
   z-index:2;
@@ -66,6 +81,7 @@ body{
   backdrop-filter:blur(8px);
   box-shadow:0 0 80px rgba(0,220,255,.25);
   animation:float 5s ease-in-out infinite;
+  cursor:pointer;
 }
 
 @keyframes float{
@@ -74,11 +90,14 @@ body{
   100%{transform:translateY(0)}
 }
 
+/* ===== LOGO / OJO ===== */
 .arc-logo{
   width:min(90vw,420px);
   filter:drop-shadow(0 0 26px rgba(0,220,255,.6));
+  transition:transform .12s ease, filter .12s ease;
 }
 
+/* ===== TEXTO ===== */
 .arc-title{font-size:20px;font-weight:800}
 .arc-sub{font-size:14px;opacity:.85}
 </style>
@@ -87,17 +106,121 @@ body{
 <body>
 
 <main class="arc-screen">
-  <img src="pantera-arc.png" class="arc-guardian" alt="Guardián ARC">
 
+  <!-- GUARDIÁN (WRAPPER FLOTA + IMG REACCIONA) -->
+  <div class="guardian-wrap" aria-hidden="true">
+    <img src="pantera-arc.png" class="arc-guardian" alt="Guardián ARC">
+  </div>
+
+  <!-- NÚCLEO -->
   <div class="arc-core">
     <img src="Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
     <div class="arc-title">ARC Privus AI Madre</div>
     <div class="arc-sub">Acceso inteligente por invitación</div>
   </div>
+
 </main>
+
+<script>
+/* ===== MOVIMIENTO DEL OJO (VIVO) ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  const logo = document.querySelector(".arc-logo");
+  if(!logo) return;
+
+  const move = (x,y)=>{
+    logo.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
+    logo.style.filter = `drop-shadow(${-x}px ${-y}px 32px rgba(0,220,255,.7))`;
+  };
+
+  document.addEventListener("mousemove", e=>{
+    const x = (e.clientX / innerWidth - .5) * 22;
+    const y = (e.clientY / innerHeight - .5) * 22;
+    move(x,y);
+  });
+
+  document.addEventListener("touchmove", e=>{
+    const t = e.touches[0];
+    if(!t) return;
+    const x = (t.clientX / innerWidth - .5) * 26;
+    const y = (t.clientY / innerHeight - .5) * 26;
+    move(x,y);
+  }, {passive:true});
+});
+</script>
+
+<script>
+/* ===== REACCIÓN SUTIL DEL GUARDIÁN (SIN ROMPER ANIMACIÓN) ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  const guardian = document.querySelector(".arc-guardian");
+  if(!guardian) return;
+
+  let tx = 0, ty = 0;
+  let raf = 0;
+
+  const apply = () => {
+    raf = 0;
+    guardian.style.setProperty("--gx", `${tx}px`);
+    guardian.style.setProperty("--gy", `${ty}px`);
+  };
+
+  const setTarget = (clientX, clientY) => {
+    // Movimiento sutil (no exagerado)
+    tx = (clientX / window.innerWidth  - 0.5) * 12;
+    ty = (clientY / window.innerHeight - 0.5) * 12;
+
+    if(!raf) raf = requestAnimationFrame(apply);
+  };
+
+  document.addEventListener("mousemove", (e) => {
+    setTarget(e.clientX, e.clientY);
+  });
+
+  document.addEventListener("touchmove", (e) => {
+    const t = e.touches && e.touches[0];
+    if(!t) return;
+    setTarget(t.clientX, t.clientY);
+  }, {passive:true});
+
+  // Al salir, vuelve suave al centro
+  document.addEventListener("mouseleave", () => {
+    tx = 0; ty = 0;
+    if(!raf) raf = requestAnimationFrame(apply);
+  });
+});
+</script>
+
+<script>
+/* ===== ACCESO WHATSAPP (click en núcleo) ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  const core = document.querySelector(".arc-core");
+  if (!core) return;
+
+  core.addEventListener("click", () => {
+    const msg = document.createElement("div");
+    msg.innerText = "Conectando con ARC…";
+    msg.style.position = "fixed";
+    msg.style.top = "22px";
+    msg.style.left = "50%";
+    msg.style.transform = "translateX(-50%)";
+    msg.style.padding = "10px 18px";
+    msg.style.borderRadius = "999px";
+    msg.style.background = "rgba(6,14,28,.85)";
+    msg.style.color = "#9be7ff";
+    msg.style.fontSize = "14px";
+    msg.style.zIndex = "9999";
+    msg.style.boxShadow = "0 0 20px rgba(0,220,255,.4)";
+    document.body.appendChild(msg);
+
+    setTimeout(() => {
+      window.open(
+        "https://wa.me/573217113389?text=Hola%20ARC%20Privus%20AI%20Madre%2C%20solicito%20acceso%20por%20invitación.",
+        "_blank"
+      );
+      msg.remove();
+    }, 900);
+  });
+});
+</script>
 
 </body>
 </html>
-
-
-
