@@ -1,206 +1,383 @@
-/arc-privus-mvp
-  /apps
-    /web                      # Next.js (landing + panel + chat)
-      /app
-        / (landing)           # Home: video + módulos + CTA "Habla con ARC"
-        /chat                 # Chat web con ARC
-        /panel                # Panel mínimo (casos, leads, logs)
-        /legal                # términos, privacidad, exenciones
-        /ads                  # ARC Ads (modo interno MVP)
-      /components
-      /lib
-        arcClient.ts          # cliente para llamar API
-        i18n.ts               # multilenguaje (es/en)
-      /public
-        /media                # videos, logos, imágenes
-      /styles
-      next.config.js
 
-    /api                      # Backend (NestJS o Express)
-      /src
-        /modules
-          /auth               # login/admin (MVP básico)
-          /arc-core           # orquestador conversacional (router)
-          /messenger          # módulo demo (features + roadmap)
-          /doctor             # cuestionario + derivación + alertas
-          /boss               # simulador + niveles + riesgos
-          /ads                # leads + publicaciones internas
-          /legal              # consentimientos + textos legales
-          /telemetry          # logs + auditoría + eventos
-        /common
-          guards/
-          middleware/
-          validators/
-          utils/
-        main.ts
-
-  /packages
-    /shared                   # tipos compartidos (DTOs, enums)
-      index.ts
-      types.ts
-      constants.ts
-
-  /docs
-    WHITEPAPER_v1.md
-    scripts_video/
-      video1_master.md
-      video2_messenger.md
-      video3_boss.md
-      video4_doctor.md
-      video5_ads.md
-    legal/
-      exenciones.md
-      privacidad.md
-      terminos.md
-    brand/
-      logos/
-      paleta.md
-
-  /infra
-    docker-compose.yml        # postgres + redis
-    nginx.conf                # https reverse proxy (si aplica)
-    env.example
-
-  README.md
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ARC Privus AI Madre</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
+    background:#02040a;color:#eaf0ff;overflow:hidden;
+  }
 
-body{
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
-  background:#02040a;
-  color:#eaf0ff;
-  overflow:hidden;
-}
+  /* ===== ENTORNO ===== */
+  .arc-screen{
+    position:relative; min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(0,220,255,.18) 0%, rgba(2,4,10,0) 55%),
+      radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
+    animation:breathe 8s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%{filter:brightness(1)}
+    50%{filter:brightness(1.08)}
+    100%{filter:brightness(1)}
+  }
 
-/* ===== ENTORNO ===== */
-.arc-screen{
-  position:relative;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    radial-gradient(circle at 50% 35%, rgba(0,220,255,.18) 0%, rgba(2,4,10,0) 55%),
-    radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
-  animation:breathe 8s ease-in-out infinite;
-}
-@keyframes breathe{
-  0%{filter:brightness(1)}
-  50%{filter:brightness(1.08)}
-  100%{filter:brightness(1)}
-}
+  /* ===== GUARDIÁN ===== */
+  .guardian-wrap{
+    position:absolute; top:50%; left:50%;
+    z-index:1; pointer-events:none;
+    animation:guardian-float 9s ease-in-out infinite;
+  }
+  @keyframes guardian-float{
+    0%{transform:translate(-50%,-50%) translateY(0) scale(1)}
+    50%{transform:translate(-50%,-50%) translateY(-22px) scale(1.04)}
+    100%{transform:translate(-50%,-50%) translateY(0) scale(1)}
+  }
+  .arc-guardian{
+    width:min(90vw,520px);
+    opacity:.30;
+    filter:blur(.3px) drop-shadow(0 0 40px rgba(0,220,255,.45));
+    --gx:0px; --gy:0px;
+    transform:translate(var(--gx), var(--gy));
+    transition:transform .18s ease-out;
+  }
 
-/* ===== GUARDIÁN ===== */
-.guardian-wrap{
-  position:absolute;
-  top:50%;
-  left:50%;
-  z-index:1;
-  pointer-events:none;
-  animation:guardian-float 9s ease-in-out infinite;
-}
-@keyframes guardian-float{
-  0%{transform:translate(-50%,-50%) translateY(0) scale(1)}
-  50%{transform:translate(-50%,-50%) translateY(-22px) scale(1.04)}
-  100%{transform:translate(-50%,-50%) translateY(0) scale(1)}
-}
-.arc-guardian{
-  width:min(90vw,520px);
-  opacity:.30;
-  filter:blur(.3px) drop-shadow(0 0 40px rgba(0,220,255,.45));
-  --gx:0px; --gy:0px;
-  transform:translate(var(--gx), var(--gy));
-  transition:transform .18s ease-out;
-}
+  /* ===== NÚCLEO ===== */
+  .arc-core{
+    position:relative; z-index:2;
+    width:min(94vw,860px);
+    display:grid; gap:16px;
+    padding:26px 26px;
+    border-radius:28px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(155,231,255,.18);
+    backdrop-filter:blur(8px);
+    box-shadow:0 0 90px rgba(0,220,255,.22);
+    animation:float 5s ease-in-out infinite;
+    overflow:hidden;
+  }
+  @keyframes float{
+    0%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
+    100%{transform:translateY(0)}
+  }
 
-/* ===== NÚCLEO ===== */
-.arc-core{
-  position:relative;
-  z-index:2;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:16px;
-  padding:30px 34px;
-  border-radius:32px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(155,231,255,.18);
-  backdrop-filter:blur(8px);
-  box-shadow:0 0 80px rgba(0,220,255,.25);
-  animation:float 5s ease-in-out infinite;
-  cursor:pointer;
-  overflow:hidden;
-}
-@keyframes float{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-14px)}
-  100%{transform:translateY(0)}
-}
+  .top{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:12px;
+    align-items:center;
+    text-align:center;
+  }
+  .arc-logo{
+    width:min(84vw,420px);
+    margin:0 auto;
+    filter:drop-shadow(0 0 26px rgba(0,220,255,.6));
+  }
+  .arc-title{font-size:20px;font-weight:900;letter-spacing:.2px}
+  .arc-sub{font-size:14px;opacity:.86;line-height:1.35}
 
-/* ===== PULSO ===== */
-.arc-pulse{
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  border:2px solid rgba(0,220,255,.55);
-  animation:pulse .9s ease-out forwards;
-  pointer-events:none;
-}
-@keyframes pulse{
-  0%{transform:scale(.4);opacity:.9}
-  100%{transform:scale(1.8);opacity:0}
-}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:12px;
+  }
 
-/* ===== OVERLAY ===== */
-.arc-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(2,4,10,.88);
-  backdrop-filter:blur(6px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-.arc-message{
-  font-size:18px;
-  color:#9be7ff;
-  text-align:center;
-}
+  .card{
+    grid-column:span 12;
+    border-radius:20px;
+    border:1px solid rgba(155,231,255,.14);
+    background:rgba(0,0,0,.22);
+    padding:14px;
+  }
 
-/* ===== TEXTO ===== */
-.arc-logo{width:min(90vw,420px);filter:drop-shadow(0 0 26px rgba(0,220,255,.6))}
-.arc-title{font-size:20px;font-weight:800}
-.arc-sub{font-size:14px;opacity:.85}
+  @media (min-width: 860px){
+    .card.half{grid-column:span 6;}
+    .card.third{grid-column:span 4;}
+  }
+
+  .card h3{
+    font-size:14px;
+    letter-spacing:.3px;
+    color:#9be7ff;
+    margin-bottom:8px;
+  }
+  .card p{font-size:13px;opacity:.88;line-height:1.4}
+
+  .actions{
+    display:flex; flex-wrap:wrap;
+    gap:10px; justify-content:center;
+    margin-top:8px;
+  }
+  .btn{
+    border:none; cursor:pointer;
+    padding:11px 14px;
+    border-radius:999px;
+    font-weight:800;
+    background:#00dcff;
+    color:#02040a;
+    box-shadow:0 0 22px rgba(0,220,255,.28);
+  }
+  .btn.secondary{
+    background:rgba(155,231,255,.10);
+    color:#eaf0ff;
+    border:1px solid rgba(155,231,255,.22);
+    box-shadow:none;
+  }
+  .btn.ghost{
+    background:transparent;
+    color:#9be7ff;
+    border:1px dashed rgba(155,231,255,.25);
+  }
+
+  /* ===== PULSO ===== */
+  .arc-pulse{
+    position:absolute; inset:0;
+    border-radius:50%;
+    border:2px solid rgba(0,220,255,.55);
+    animation:pulse .9s ease-out forwards;
+    pointer-events:none;
+  }
+  @keyframes pulse{
+    0%{transform:scale(.4);opacity:.9}
+    100%{transform:scale(1.8);opacity:0}
+  }
+
+  /* ===== OVERLAY / MODAL ===== */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(2,4,10,.88);
+    backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center;
+    z-index:9999;
+  }
+  .modal{
+    width:min(92vw,540px);
+    border-radius:22px;
+    background:rgba(10,18,38,.92);
+    border:1px solid rgba(155,231,255,.25);
+    box-shadow:0 0 70px rgba(0,220,255,.22);
+    padding:18px;
+  }
+  .modal h2{
+    font-size:16px; color:#9be7ff; margin-bottom:8px;
+  }
+  .modal .small{
+    font-size:12px; opacity:.8; line-height:1.45;
+  }
+  .modal .legalbox{
+    margin-top:10px;
+    padding:10px;
+    border-radius:14px;
+    border:1px solid rgba(155,231,255,.18);
+    background:rgba(0,0,0,.22);
+    font-size:12px;
+    opacity:.9;
+    line-height:1.4;
+    max-height:190px;
+    overflow:auto;
+  }
+  .modal .row{
+    display:flex; gap:10px; flex-wrap:wrap;
+    margin-top:12px;
+  }
+  .modal .row .btn{flex:1}
+  .modal .row .btn.secondary{flex:1}
+
+  /* ===== CHAT ===== */
+  .chat-wrap{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    height: min(70vh, 560px);
+  }
+  .chat-log{
+    flex:1;
+    overflow:auto;
+    border-radius:16px;
+    border:1px solid rgba(155,231,255,.16);
+    background:rgba(0,0,0,.20);
+    padding:10px;
+  }
+  .msg{
+    margin:8px 0;
+    display:flex;
+  }
+  .msg .bubble{
+    max-width:86%;
+    padding:10px 12px;
+    border-radius:14px;
+    font-size:13px;
+    line-height:1.4;
+    border:1px solid rgba(155,231,255,.16);
+    background:rgba(155,231,255,.06);
+  }
+  .msg.user{justify-content:flex-end}
+  .msg.user .bubble{
+    background:rgba(0,220,255,.18);
+    border-color:rgba(0,220,255,.25);
+  }
+  .msg.arc{justify-content:flex-start}
+  .chat-input{
+    display:flex;
+    gap:10px;
+  }
+  .chat-input input{
+    flex:1;
+    padding:12px 12px;
+    border-radius:14px;
+    border:1px solid rgba(155,231,255,.20);
+    background:rgba(0,0,0,.28);
+    color:#eaf0ff;
+    outline:none;
+  }
+  .hint{
+    font-size:12px; opacity:.78; line-height:1.35;
+  }
+
+  /* ===== FORM ===== */
+  .form{
+    display:grid; gap:10px;
+  }
+  .form input, .form textarea, .form select{
+    width:100%;
+    padding:11px 12px;
+    border-radius:14px;
+    border:1px solid rgba(155,231,255,.20);
+    background:rgba(0,0,0,.28);
+    color:#eaf0ff;
+    outline:none;
+  }
+  .form textarea{resize:none}
+  .tag{
+    display:inline-block;
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(155,231,255,.18);
+    background:rgba(155,231,255,.06);
+    color:#9be7ff;
+    margin-top:8px;
+  }
+
+  .footer-links{
+    display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
+    margin-top:4px;
+  }
+  .footer-links a{
+    color:#9be7ff;
+    text-decoration:none;
+    font-size:12px;
+    opacity:.9;
+    border-bottom:1px dashed rgba(155,231,255,.25);
+  }
 </style>
 </head>
 
 <body>
-
 <main class="arc-screen">
 
   <div class="guardian-wrap" aria-hidden="true">
     <img src="pantera-arc.png" class="arc-guardian" alt="Guardián ARC">
   </div>
 
-  <div class="arc-core">
-    <img src="Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
-    <div class="arc-title">ARC Privus AI Madre</div>
-    <div class="arc-sub">Acceso inteligente por invitación</div>
-  </div>
+  <section class="arc-core" id="core">
+    <div class="top">
+      <img src="Screenshot_20260101-220051.png" class="arc-logo" alt="ARC Privus AI Madre">
+      <div class="arc-title">ARC Privus AI Madre</div>
+      <div class="arc-sub">
+        Ecosistema autónomo de asistencia inteligente.<br>
+        Neutralidad, ética y responsabilidad humana.
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btnTalk">Habla con ARC</button>
+        <button class="btn secondary" id="btnVideo">Ver video (placeholder)</button>
+        <button class="btn ghost" id="btnWhitepaper">Descargar Whitepaper (placeholder)</button>
+        <button class="btn secondary" id="btnPanel">Abrir panel (panel.html)</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card third">
+        <h3>ARC Messenger</h3>
+        <p>Mensajería mejorada: traducción en tiempo real, seguridad reforzada y migración planificada.</p>
+        <button class="btn secondary" data-open="messenger" style="margin-top:10px;width:100%;">Abrir módulo</button>
+      </div>
+
+      <div class="card third">
+        <h3>BOSS ARC</h3>
+        <p>Simulador financiero por niveles: límites claros, riesgo informado y control humano.</p>
+        <button class="btn secondary" data-open="boss" style="margin-top:10px;width:100%;">Abrir módulo</button>
+      </div>
+
+      <div class="card third">
+        <h3>ARC Doctor</h3>
+        <p>Orientación preventiva: cuestionario inteligente y derivación responsable a profesionales.</p>
+        <button class="btn secondary" data-open="doctor" style="margin-top:10px;width:100%;">Abrir módulo</button>
+      </div>
+
+      <div class="card half">
+        <h3>ARC Ads</h3>
+        <p>Publicidad y enlace global. En MVP: registro de interés y solicitudes (empresas / gobiernos / personas).</p>
+        <button class="btn secondary" data-open="ads" style="margin-top:10px;width:100%;">Abrir módulo</button>
+        <div class="tag">ARC: autopromoción interna gratuita</div>
+      </div>
+
+      <div class="card half">
+        <h3>Legal / Transparencia</h3>
+        <p>
+          ARC no reemplaza autoridades médicas, legales o financieras.
+          En el MVP, todo queda registrado en este navegador para auditoría básica.
+        </p>
+        <div class="footer-links">
+          <a href="#" id="linkLegal">Ver términos y exenciones</a>
+          <a href="#" id="linkReset">Borrar datos locales (MVP)</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
 </main>
 
 <script>
-/* ===== REACCIÓN SUAVE DEL GUARDIÁN ===== */
+/* ========= Utilidades LocalStorage ========= */
+const LS = {
+  get(key, fallback){
+    try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+    catch { return fallback; }
+  },
+  set(key, value){
+    localStorage.setItem(key, JSON.stringify(value));
+  },
+  push(key, item){
+    const arr = LS.get(key, []);
+    arr.push(item);
+    LS.set(key, arr);
+  }
+};
+
+function todayISO(){
+  return new Date().toISOString();
+}
+
+/* ========= Pulso visual ========= */
+function pulseCore(){
+  const core = document.getElementById("core");
+  const p = document.createElement("div");
+  p.className = "arc-pulse";
+  core.appendChild(p);
+  p.addEventListener("animationend", ()=>p.remove());
+}
+
+/* ========= Guardián (movimiento suave) ========= */
 document.addEventListener("DOMContentLoaded",()=>{
   const g=document.querySelector(".arc-guardian");
   if(!g) return;
@@ -224,73 +401,583 @@ document.addEventListener("DOMContentLoaded",()=>{
 </script>
 
 <script>
-/* ===== FASES DE ACCESO ARC (ÚNICO FLUJO) ===== */
-document.addEventListener("DOMContentLoaded",()=>{
-  const core=document.querySelector(".arc-core");
-  if(!core) return;
+/* ========= Textos legales (MVP) ========= */
+const LEGAL_TEXT = {
+  general: `ARC Privus AI Madre es una herramienta de asistencia inteligente.
+No reemplaza decisiones humanas ni autoridades médicas, legales, financieras o gubernamentales.
+La información entregada es orientación general.`,
+  doctor: `ARC Doctor ofrece orientación preventiva.
+No emite diagnósticos definitivos ni reemplaza a un profesional de la salud.
+Si hay signos de alarma, el usuario debe acudir a urgencias o a un médico certificado.`,
+  boss: `BOSS ARC en este MVP es un simulador.
+Toda inversión conlleva riesgos. ARC no garantiza resultados.
+El usuario es responsable de sus decisiones.`
+};
 
-  let arcLevel = 0;
-
-  const showText = (text, time=1600)=>{
-    const o=document.createElement("div");
-    o.className="arc-overlay";
-    o.innerHTML=`<div class="arc-message">${text.replace(/\n/g,"<br>")}</div>`;
-    document.body.appendChild(o);
-    setTimeout(()=>o.remove(), time);
-  };
-
-  const showForm = ()=>{
-    const o=document.createElement("div");
-    o.className="arc-overlay";
-    o.innerHTML=`
-      <div style="width:min(92vw,380px);padding:26px;border-radius:22px;
-      background:rgba(10,18,38,.9);border:1px solid rgba(155,231,255,.25);text-align:center">
-        <div class="arc-message" style="margin-bottom:14px">Solicitud de acceso ARC</div>
-        <form class="arc-form">
-          <input required placeholder="Nombre completo"
-            style="width:100%;padding:10px;margin-bottom:10px;border-radius:10px">
-          <input required type="email" placeholder="Correo electrónico"
-            style="width:100%;padding:10px;margin-bottom:10px;border-radius:10px">
-          <textarea placeholder="Motivo de acceso" rows="3"
-            style="width:100%;padding:10px;margin-bottom:12px;border-radius:10px"></textarea>
-          <button type="submit"
-            style="width:100%;padding:12px;border-radius:999px;border:none;
-            background:#00dcff;font-weight:700">Enviar</button>
-        </form>
-      </div>`;
-    document.body.appendChild(o);
-  };
-
-  core.addEventListener("click",()=>{
-    const p=document.createElement("div");
-    p.className="arc-pulse";
-    core.appendChild(p);
-    p.addEventListener("animationend",()=>p.remove());
-
-    if(arcLevel===0){arcLevel=1; showText("Nivel 1 — Observador");}
-    else if(arcLevel===1){arcLevel=2; showText("Nivel 2 — Invitado");}
-    else if(arcLevel===2){arcLevel=3; showForm();}
+/* ========= Modal genérico ========= */
+function openModal({title, subtitle, bodyHTML, buttons=[] , onClose=null}){
+  const overlay=document.createElement("div");
+  overlay.className="overlay";
+  overlay.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <h2>${title}</h2>
+      ${subtitle ? `<div class="small">${subtitle}</div>` : ``}
+      <div style="margin-top:10px">${bodyHTML || ""}</div>
+      <div class="row" id="modalBtns"></div>
+    </div>
+  `;
+  overlay.addEventListener("click",(e)=>{
+    if(e.target === overlay){
+      overlay.remove();
+      if(onClose) onClose();
+    }
   });
-});
+
+  const btnsWrap = overlay.querySelector("#modalBtns");
+  buttons.forEach(b=>{
+    const btn=document.createElement("button");
+    btn.className = "btn" + (b.variant ? ` ${b.variant}` : "");
+    btn.textContent = b.label;
+    btn.addEventListener("click", ()=>{
+      if(b.onClick) b.onClick(()=>overlay.remove());
+      else overlay.remove();
+      if(onClose) onClose();
+    });
+    btnsWrap.appendChild(btn);
+  });
+
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+/* ========= Consentimiento ========= */
+function requireConsent(scope="general"){
+  const consents = LS.get("arc_consents", []);
+  const has = consents.some(c=>c.scope===scope);
+  if(has) return true;
+
+  const text = (scope==="doctor") ? LEGAL_TEXT.doctor
+            : (scope==="boss") ? LEGAL_TEXT.boss
+            : LEGAL_TEXT.general;
+
+  openModal({
+    title: "Confirmación requerida",
+    subtitle: "Para continuar debes aceptar las condiciones del MVP.",
+    bodyHTML: `<div class="legalbox">${escapeHTML(text).replace(/\n/g,"<br>")}</div>`,
+    buttons: [
+      {label:"No acepto", variant:"secondary", onClick:(close)=>{ close(); }},
+      {label:"Acepto y continuar", onClick:(close)=>{
+        LS.push("arc_consents", {
+          id: Date.now(),
+          scope,
+          textVersion: "v1",
+          at: todayISO()
+        });
+        LS.push("arc_events", {id:Date.now(), type:"accept_consent", scope, at: todayISO()});
+        close();
+      }}
+    ]
+  });
+
+  return false;
+}
+
+function escapeHTML(s){
+  return (s||"").replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
 </script>
 
 <script>
-/* ===== CAPTURA DEL FORMULARIO ARC ===== */
-document.addEventListener("submit",(e)=>{
-  if(!e.target.classList.contains("arc-form")) return;
-  e.preventDefault();
+/* ========= Chat ARC (MVP) ========= */
+function openChat(){
+  // consentimiento general
+  if(!requireConsent("general")) return;
 
-  const [n,c,t]=e.target.querySelectorAll("input,textarea");
-  const casos=JSON.parse(localStorage.getItem("arc_cases")||"[]");
-  casos.push({
-    id:Date.now(),
-    nombre:n.value,
-    correo:c.value,
-    motivo:t.value||"No especificado",
-    fecha:new Date().toISOString().split("T")[0]
+  const sessionId = LS.get("arc_session_id", null) || (Date.now().toString());
+  LS.set("arc_session_id", sessionId);
+
+  const bodyHTML = `
+    <div class="chat-wrap">
+      <div class="chat-log" id="chatLog" aria-live="polite"></div>
+
+      <div class="hint">
+        Escribe: <b>1</b> conocer ARC · <b>2</b> Messenger · <b>3</b> Doctor · <b>4</b> BOSS · <b>5</b> Ads
+      </div>
+
+      <div class="chat-input">
+        <input id="chatInput" placeholder="Escribe tu mensaje…" autocomplete="off" />
+        <button class="btn" id="chatSend">Enviar</button>
+      </div>
+    </div>
+  `;
+
+  const modal = openModal({
+    title: "Habla con ARC (MVP)",
+    subtitle: "Modo demo local. Tus interacciones se guardan en este navegador.",
+    bodyHTML,
+    buttons: [{label:"Cerrar", variant:"secondary"}],
+    onClose: ()=>{}
   });
-  localStorage.setItem("arc_cases",JSON.stringify(casos));
-  e.target.innerHTML="<div style='color:#9be7ff'>Solicitud recibida.<br>ARC continúa el proceso.</div>";
+
+  const log = modal.querySelector("#chatLog");
+  const input = modal.querySelector("#chatInput");
+  const sendBtn = modal.querySelector("#chatSend");
+
+  // cargar historial
+  const msgs = LS.get("arc_messages", []).filter(m=>m.sessionId===sessionId);
+  msgs.forEach(m=>appendMsg(log, m.role, m.text));
+
+  if(msgs.length===0){
+    arcSay(sessionId, log, `Hola, soy ARC Privus AI Madre.
+¿Qué necesitas hoy?
+
+1) Conocer ARC
+2) Messenger
+3) Doctor (orientación preventiva)
+4) BOSS (simulador)
+5) ARC Ads (publicidad/negocios)`);
+  }
+
+  const send = ()=>{
+    const text = (input.value || "").trim();
+    if(!text) return;
+    input.value = "";
+    userSay(sessionId, log, text);
+    routeArc(sessionId, log, text);
+  };
+
+  sendBtn.addEventListener("click", send);
+  input.addEventListener("keydown",(e)=>{ if(e.key==="Enter") send(); });
+  input.focus();
+}
+
+function appendMsg(log, role, text){
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + (role==="user" ? "user" : "arc");
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.innerHTML = escapeHTML(text).replace(/\n/g,"<br>");
+  wrap.appendChild(bubble);
+  log.appendChild(wrap);
+  log.scrollTop = log.scrollHeight;
+}
+
+function userSay(sessionId, log, text){
+  appendMsg(log, "user", text);
+  LS.push("arc_messages", {id:Date.now(), sessionId, role:"user", text, at:todayISO()});
+  LS.push("arc_events", {id:Date.now(), type:"message_user", sessionId, at:todayISO()});
+}
+
+function arcSay(sessionId, log, text){
+  appendMsg(log, "arc", text);
+  LS.push("arc_messages", {id:Date.now(), sessionId, role:"arc", text, at:todayISO()});
+  LS.push("arc_events", {id:Date.now(), type:"message_arc", sessionId, at:todayISO()});
+}
+
+function routeArc(sessionId, log, text){
+  const t = text.trim().toLowerCase();
+
+  // rutas rápidas numéricas
+  if(["1","2","3","4","5"].includes(t)){
+    const map = { "1":"arc", "2":"messenger", "3":"doctor", "4":"boss", "5":"ads" };
+    openModule(map[t], {fromChat:true, sessionId, log});
+    return;
+  }
+
+  // clasificación por keywords
+  const has = (arr)=>arr.some(k=>t.includes(k));
+  if(has(["whatsapp","mensaj","chat","tradu","idioma","voz","contacto"])) return openModule("messenger",{fromChat:true, sessionId, log});
+  if(has(["salud","dolor","fiebre","síntoma","sintoma","diagn","medic","tos","cabeza","estómago","estomago"])) return openModule("doctor",{fromChat:true, sessionId, log});
+  if(has(["invert","bolsa","trading","ganar","dinero","capital","rentab","boss"])) return openModule("boss",{fromChat:true, sessionId, log});
+  if(has(["publicidad","ads","empresa","gobierno","negocio","inversionista","inversión","inversion"])) return openModule("ads",{fromChat:true, sessionId, log});
+
+  // fallback
+  arcSay(sessionId, log,
+`Puedo ayudarte con:
+1) Conocer ARC
+2) Messenger
+3) Doctor
+4) BOSS
+5) ARC Ads
+
+Escribe el número o dime tu necesidad.`);
+}
+</script>
+
+<script>
+/* ========= Módulos MVP ========= */
+
+function openModule(name, ctx={}){
+  // consentimiento por módulo
+  if(name==="doctor" && !requireConsent("doctor")) return;
+  if(name==="boss" && !requireConsent("boss")) return;
+  if(name==="arc" && !requireConsent("general")) return;
+  if(name==="messenger" && !requireConsent("general")) return;
+  if(name==="ads" && !requireConsent("general")) return;
+
+  LS.push("arc_events", {id:Date.now(), type:"module_open", module:name, at:todayISO()});
+
+  if(ctx.fromChat && ctx.sessionId && ctx.log){
+    if(name==="arc"){
+      arcSay(ctx.sessionId, ctx.log,
+`ARC Privus AI Madre es un ecosistema modular:
+- ARC Messenger (comunicación)
+- ARC Doctor (orientación preventiva)
+- BOSS ARC (simulador por niveles)
+- ARC Ads (publicidad y enlaces)
+
+¿Quieres abrir un módulo? (2,3,4,5)`);
+      return;
+    }
+    // desde chat: mostramos resumen y abrimos modal módulo
+    arcSay(ctx.sessionId, ctx.log, `Abriendo módulo: ${name.toUpperCase()}…`);
+  }
+
+  if(name==="messenger") return openMessenger();
+  if(name==="doctor") return openDoctor();
+  if(name==="boss") return openBoss();
+  if(name==="ads") return openAds();
+  if(name==="arc") return openArcInfo();
+}
+
+function openArcInfo(){
+  openModal({
+    title:"ARC Privus AI Madre (MVP)",
+    subtitle:"Resumen institucional",
+    bodyHTML: `
+      <div class="legalbox">
+        <b>Qué es:</b> Ecosistema de asistencia inteligente modular.<br><br>
+        <b>Principios:</b> neutralidad, ética, responsabilidad humana, protección de datos.<br><br>
+        <b>MVP:</b> demo local sin backend; registros en este navegador.
+      </div>
+      <div style="margin-top:12px" class="actions">
+        <button class="btn secondary" onclick="openModule('messenger')">Messenger</button>
+        <button class="btn secondary" onclick="openModule('doctor')">Doctor</button>
+        <button class="btn secondary" onclick="openModule('boss')">BOSS</button>
+        <button class="btn secondary" onclick="openModule('ads')">ARC Ads</button>
+      </div>
+    `,
+    buttons:[{label:"Cerrar", variant:"secondary"}]
+  });
+}
+
+/* ===== Messenger ===== */
+function openMessenger(){
+  openModal({
+    title:"ARC Messenger (MVP)",
+    subtitle:"Demo y requisitos técnicos (sin migración real en MVP).",
+    bodyHTML: `
+      <div class="legalbox">
+        <b>Funciones objetivo:</b><br>
+        • Traducción en tiempo real (texto/voz).<br>
+        • Migración planificada: contactos + respaldos (con autorización).<br>
+        • Seguridad reforzada (anti suplantación).<br>
+        • Archivo/búsqueda avanzada de mensajes.<br><br>
+        <b>En el MVP:</b> se registra tu interés y prioridades.
+      </div>
+      <div style="margin-top:12px" class="form">
+        <select id="msPriority">
+          <option value="traduccion">Prioridad: Traducción</option>
+          <option value="migracion">Prioridad: Migración</option>
+          <option value="seguridad">Prioridad: Seguridad</option>
+          <option value="archivo">Prioridad: Archivo/Búsqueda</option>
+        </select>
+        <textarea id="msNotes" rows="3" placeholder="Notas / requerimientos (opcional)"></textarea>
+        <button class="btn" id="msSave">Guardar interés</button>
+        <div class="hint">Se guarda en este navegador y se verá en panel.html.</div>
+      </div>
+    `,
+    buttons:[{label:"Cerrar", variant:"secondary"}],
+    onClose:null
+  });
+
+  setTimeout(()=>{
+    const btn=document.getElementById("msSave");
+    if(!btn) return;
+    btn.onclick=()=>{
+      const priority=document.getElementById("msPriority").value;
+      const notes=(document.getElementById("msNotes").value||"").trim();
+      LS.push("messenger_interests", {id:Date.now(), priority, notes, at:todayISO()});
+      LS.push("arc_events", {id:Date.now(), type:"messenger_interest", priority, at:todayISO()});
+      alert("Interés guardado ✅");
+    };
+  },0);
+}
+
+/* ===== Doctor ===== */
+function openDoctor(){
+  openModal({
+    title:"ARC Doctor (MVP)",
+    subtitle:"Orientación preventiva (no diagnóstico definitivo).",
+    bodyHTML: `
+      <div class="legalbox">
+        <b>Regla:</b> si hay señales de alarma (dolor intenso, dificultad respiratoria, sangrado fuerte, desmayo),
+        se recomienda <b>urgencias</b>.
+      </div>
+
+      <div style="margin-top:12px" class="form">
+        <input id="dAge" type="number" min="0" placeholder="Edad" />
+        <input id="dMain" placeholder="Síntoma principal (ej: dolor de garganta)" />
+        <input id="dDays" type="number" min="0" placeholder="Duración (días)" />
+        <select id="dSev">
+          <option value="1">Severidad 1 (leve)</option>
+          <option value="3">Severidad 3</option>
+          <option value="5" selected>Severidad 5</option>
+          <option value="7">Severidad 7</option>
+          <option value="9">Severidad 9 (muy fuerte)</option>
+        </select>
+        <select id="dAlarm">
+          <option value="no" selected>¿Señales de alarma? No</option>
+          <option value="si">¿Señales de alarma? Sí</option>
+        </select>
+
+        <button class="btn" id="dEvaluate">Evaluar</button>
+        <div class="hint" id="dOut"></div>
+      </div>
+    `,
+    buttons:[{label:"Cerrar", variant:"secondary"}]
+  });
+
+  setTimeout(()=>{
+    const btn=document.getElementById("dEvaluate");
+    const out=document.getElementById("dOut");
+    if(!btn || !out) return;
+
+    btn.onclick=()=>{
+      const age=parseInt(document.getElementById("dAge").value||"0",10);
+      const symptom=(document.getElementById("dMain").value||"").trim();
+      const days=parseInt(document.getElementById("dDays").value||"0",10);
+      const sev=parseInt(document.getElementById("dSev").value,10);
+      const alarm=document.getElementById("dAlarm").value;
+
+      const caseId = Date.now();
+      let advice = "";
+
+      if(alarm==="si"){
+        advice = "Señales de alarma detectadas: se recomienda acudir a URGENCIAS o médico certificado lo antes posible.";
+      } else {
+        advice =
+`Orientación preventiva:
+• Mantén hidratación y reposo según el síntoma.
+• Si empeora, dura más de 48–72h (según el caso) o aparece fiebre alta persistente, consulta un profesional.
+• Este resultado es orientación general; no sustituye evaluación médica.`;
+      }
+
+      LS.push("doctor_cases", {
+        id:caseId, age, symptom, days, severity:sev, alarm,
+        advice, at:todayISO()
+      });
+      LS.push("arc_events", {id:Date.now(), type:"doctor_case", caseId, alarm, at:todayISO()});
+
+      out.textContent = advice;
+    };
+  },0);
+}
+
+/* ===== BOSS ===== */
+function openBoss(){
+  openModal({
+    title:"BOSS ARC (MVP)",
+    subtitle:"Simulador financiero por niveles (sin dinero real).",
+    bodyHTML: `
+      <div class="legalbox">
+        <b>MVP:</b> no ejecuta operaciones reales. Simula escenarios con límites.<br><br>
+        <b>Niveles sugeridos:</b><br>
+        • Nivel 1: tope diario 30 USD (ejemplo).<br>
+        • Nivel 2: tope diario 100 USD (ejemplo).<br>
+        • Nivel 3: tope diario 1000 USD (ejemplo).<br>
+      </div>
+
+      <div style="margin-top:12px" class="form">
+        <select id="bLevel">
+          <option value="1" selected>Nivel 1</option>
+          <option value="2">Nivel 2</option>
+          <option value="3">Nivel 3</option>
+        </select>
+        <input id="bCapital" type="number" min="0" placeholder="Capital simulado (USD)" />
+        <input id="bGoal" type="number" min="0" placeholder="Meta diaria (USD)" />
+        <button class="btn" id="bSim">Simular</button>
+        <div class="hint" id="bOut"></div>
+      </div>
+    `,
+    buttons:[{label:"Cerrar", variant:"secondary"}]
+  });
+
+  setTimeout(()=>{
+    const btn=document.getElementById("bSim");
+    const out=document.getElementById("bOut");
+    if(!btn || !out) return;
+
+    const tops = {1:30, 2:100, 3:1000};
+
+    btn.onclick=()=>{
+      const level=parseInt(document.getElementById("bLevel").value,10);
+      const capital=parseFloat(document.getElementById("bCapital").value||"0");
+      const goal=parseFloat(document.getElementById("bGoal").value||"0");
+      const top=tops[level];
+
+      let result = "";
+      if(capital <= 0){
+        result = "Ingresa un capital simulado válido.";
+      } else if(goal <= 0){
+        result = "Ingresa una meta diaria válida.";
+      } else if(goal > top){
+        result = `Meta supera el tope de Nivel ${level} (tope ${top} USD). Ajusta la meta.`;
+      } else {
+        result =
+`Simulación registrada:
+• Nivel: ${level}
+• Capital: ${capital} USD
+• Meta: ${goal} USD (<= tope ${top})
+Recordatorio: toda inversión conlleva riesgo. En MVP no hay operaciones reales.`;
+      }
+
+      const simId = Date.now();
+      LS.push("boss_simulations", {
+        id:simId, level, capital, goal, top, result, at:todayISO()
+      });
+      LS.push("arc_events", {id:Date.now(), type:"boss_simulation", simId, level, at:todayISO()});
+
+      out.textContent = result;
+    };
+  },0);
+}
+
+/* ===== Ads ===== */
+function openAds(){
+  openModal({
+    title:"ARC Ads (MVP)",
+    subtitle:"Registro de interés y solicitudes (publicidad / negocio / gobierno).",
+    bodyHTML: `
+      <div class="legalbox">
+        <b>ARC Ads:</b> plataforma de publicidad y enlace global.<br>
+        <b>MVP:</b> registra leads para evaluación y seguimiento.<br>
+      </div>
+
+      <div style="margin-top:12px" class="form">
+        <select id="aType">
+          <option value="Persona" selected>Persona</option>
+          <option value="Empresa">Empresa</option>
+          <option value="Gobierno">Gobierno</option>
+        </select>
+
+        <input id="aCountry" placeholder="País / Ciudad" />
+        <input id="aSector" placeholder="Sector (ej: educación, salud, comercio)" />
+        <input id="aObjective" placeholder="Objetivo (ej: campaña, alianza, proyecto)" />
+        <input id="aContact" placeholder="Contacto (correo o teléfono)" />
+        <textarea id="aNotes" rows="3" placeholder="Detalles (opcional)"></textarea>
+
+        <button class="btn" id="aSend">Enviar solicitud</button>
+        <div class="hint">Se guarda en este navegador y se verá en panel.html.</div>
+      </div>
+    `,
+    buttons:[{label:"Cerrar", variant:"secondary"}]
+  });
+
+  setTimeout(()=>{
+    const btn=document.getElementById("aSend");
+    if(!btn) return;
+    btn.onclick=()=>{
+      const type=document.getElementById("aType").value;
+      const country=(document.getElementById("aCountry").value||"").trim();
+      const sector=(document.getElementById("aSector").value||"").trim();
+      const objective=(document.getElementById("aObjective").value||"").trim();
+      const contact=(document.getElementById("aContact").value||"").trim();
+      const notes=(document.getElementById("aNotes").value||"").trim();
+
+      if(!country || !objective || !contact){
+        alert("Faltan datos: País/Ciudad, Objetivo y Contacto son obligatorios.");
+        return;
+      }
+
+      const leadId = Date.now();
+      LS.push("ads_leads", {
+        id:leadId, type, country, sector, objective, contact, notes,
+        status:"nuevo",
+        at:todayISO()
+      });
+      LS.push("arc_events", {id:Date.now(), type:"ads_lead", leadId, at:todayISO()});
+      alert("Solicitud enviada ✅");
+    };
+  },0);
+}
+</script>
+
+<script>
+/* ========= Botones principales ========= */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const btnTalk = document.getElementById("btnTalk");
+  const btnVideo = document.getElementById("btnVideo");
+  const btnWhitepaper = document.getElementById("btnWhitepaper");
+  const btnPanel = document.getElementById("btnPanel");
+
+  btnTalk.addEventListener("click", ()=>{ pulseCore(); openChat(); });
+
+  btnVideo.addEventListener("click", ()=>{
+    pulseCore();
+    openModal({
+      title:"Video oficial (placeholder MVP)",
+      subtitle:"Aquí iría el video maestro (3 min) cuando lo subas a /public/media.",
+      bodyHTML:`<div class="legalbox">Sugerencia: guarda el archivo como <b>media/video_master.mp4</b> y luego incrústalo aquí.</div>`,
+      buttons:[{label:"Cerrar", variant:"secondary"}]
+    });
+  });
+
+  btnWhitepaper.addEventListener("click", ()=>{
+    pulseCore();
+    openModal({
+      title:"Whitepaper (placeholder MVP)",
+      subtitle:"Aquí iría el PDF del Whitepaper para descarga pública.",
+      bodyHTML:`<div class="legalbox">Sugerencia: guarda el archivo como <b>docs/WHITEPAPER_v1.pdf</b> y enlázalo.</div>`,
+      buttons:[{label:"Cerrar", variant:"secondary"}]
+    });
+  });
+
+  btnPanel.addEventListener("click", ()=>{
+    pulseCore();
+    window.location.href = "panel.html";
+  });
+
+  document.querySelectorAll("[data-open]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      pulseCore();
+      openModule(btn.getAttribute("data-open"));
+    });
+  });
+
+  document.getElementById("linkLegal").addEventListener("click",(e)=>{
+    e.preventDefault();
+    openModal({
+      title:"Términos y Exenciones (MVP)",
+      subtitle:"Resumen (se guarda aceptación por módulo).",
+      bodyHTML: `
+        <div class="legalbox"><b>General</b><br>${escapeHTML(LEGAL_TEXT.general).replace(/\n/g,"<br>")}</div>
+        <div class="legalbox" style="margin-top:10px"><b>Doctor</b><br>${escapeHTML(LEGAL_TEXT.doctor).replace(/\n/g,"<br>")}</div>
+        <div class="legalbox" style="margin-top:10px"><b>BOSS</b><br>${escapeHTML(LEGAL_TEXT.boss).replace(/\n/g,"<br>")}</div>
+      `,
+      buttons:[{label:"Cerrar", variant:"secondary"}]
+    });
+  });
+
+  document.getElementById("linkReset").addEventListener("click",(e)=>{
+    e.preventDefault();
+    openModal({
+      title:"Borrar datos locales (MVP)",
+      subtitle:"Esto elimina registros guardados en este navegador.",
+      bodyHTML:`<div class="legalbox">Se borrarán: consents, mensajes, leads, casos, simulaciones, eventos.</div>`,
+      buttons:[
+        {label:"Cancelar", variant:"secondary"},
+        {label:"Borrar todo", onClick:(close)=>{
+          const keys = ["arc_consents","arc_messages","arc_events","ads_leads","doctor_cases","boss_simulations","messenger_interests","arc_session_id"];
+          keys.forEach(k=>localStorage.removeItem(k));
+          close();
+          alert("Datos borrados ✅");
+        }}
+      ]
+    });
+  });
 });
 </script>
 
