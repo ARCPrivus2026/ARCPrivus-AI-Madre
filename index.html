@@ -991,6 +991,49 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
 });
 </script>
+<script>
+/* ===== VOZ A TEXTO (MICRÓFONO) ===== */
+const micBtn = document.getElementById("micBtn");
 
+let recognition;
+if ('webkitSpeechRecognition' in window) {
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = 'es-ES';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+} else {
+  alert("Tu navegador no soporta reconocimiento de voz.");
+}
+
+if (micBtn && recognition) {
+  micBtn.addEventListener("click", () => {
+    recognition.start();
+    micBtn.innerText = "🎙️ Escuchando...";
+  });
+
+  recognition.onresult = (event) => {
+    const texto = event.results[0][0].transcript;
+    micBtn.innerText = "🎤 Hablar con ARC";
+
+    // 👉 AQUÍ ENVÍAS EL TEXTO AL CHAT DE ARC
+    enviarMensajeARC(texto);
+  };
+
+  recognition.onerror = () => {
+    micBtn.innerText = "🎤 Hablar con ARC";
+  };
+}
+
+/* FUNCIÓN DE ENVÍO (conecta con tu chat actual) */
+function enviarMensajeARC(texto) {
+  // Ejemplo: mostrar en consola
+  console.log("Usuario dijo:", texto);
+
+  // Aquí conectas con tu sistema actual de respuesta ARC
+  // ejemplo:
+  // mostrarMensajeUsuario(texto);
+  // responderARC(texto);
+}
+</script>
 </body>
 </html>
