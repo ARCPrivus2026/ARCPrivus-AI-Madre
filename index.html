@@ -1033,7 +1033,15 @@ function enviarMensajeARC(texto) {
   // ejemplo:
   // mostrarMensajeUsuario(texto);
   // responderARC(texto);
+}<script>
+function hablarARC(texto){
+  const voz = new SpeechSynthesisUtterance(texto);
+  voz.lang = "es-ES";
+  voz.rate = 1;
+  voz.pitch = 1;
+  speechSynthesis.speak(voz);
 }
+</script>
 </script>
 </body>
 </html>
