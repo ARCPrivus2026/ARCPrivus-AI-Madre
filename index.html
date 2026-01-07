@@ -1,4 +1,67 @@
+/arc-privus-mvp
+  /apps
+    /web                      # Next.js (landing + panel + chat)
+      /app
+        / (landing)           # Home: video + módulos + CTA "Habla con ARC"
+        /chat                 # Chat web con ARC
+        /panel                # Panel mínimo (casos, leads, logs)
+        /legal                # términos, privacidad, exenciones
+        /ads                  # ARC Ads (modo interno MVP)
+      /components
+      /lib
+        arcClient.ts          # cliente para llamar API
+        i18n.ts               # multilenguaje (es/en)
+      /public
+        /media                # videos, logos, imágenes
+      /styles
+      next.config.js
 
+    /api                      # Backend (NestJS o Express)
+      /src
+        /modules
+          /auth               # login/admin (MVP básico)
+          /arc-core           # orquestador conversacional (router)
+          /messenger          # módulo demo (features + roadmap)
+          /doctor             # cuestionario + derivación + alertas
+          /boss               # simulador + niveles + riesgos
+          /ads                # leads + publicaciones internas
+          /legal              # consentimientos + textos legales
+          /telemetry          # logs + auditoría + eventos
+        /common
+          guards/
+          middleware/
+          validators/
+          utils/
+        main.ts
+
+  /packages
+    /shared                   # tipos compartidos (DTOs, enums)
+      index.ts
+      types.ts
+      constants.ts
+
+  /docs
+    WHITEPAPER_v1.md
+    scripts_video/
+      video1_master.md
+      video2_messenger.md
+      video3_boss.md
+      video4_doctor.md
+      video5_ads.md
+    legal/
+      exenciones.md
+      privacidad.md
+      terminos.md
+    brand/
+      logos/
+      paleta.md
+
+  /infra
+    docker-compose.yml        # postgres + redis
+    nginx.conf                # https reverse proxy (si aplica)
+    env.example
+
+  README.md
 <!DOCTYPE html>
 <html lang="es">
 <head>
