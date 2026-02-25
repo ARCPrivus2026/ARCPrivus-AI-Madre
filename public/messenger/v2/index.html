@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ARC Privus Messenger 2.0</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR (lista de chats) -->
+    <aside class="sidebar">
+      <header class="sidebar-header">
+        <div class="profile">
+          <div class="avatar"></div>
+          <div class="profile-info">
+            <div class="profile-name">ARC PRIVUS</div>
+            <div class="profile-status">En línea</div>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="icon-btn" title="Nuevo chat">✚</button>
+          <button class="icon-btn" title="Servicios">☰</button>
+          <button class="icon-btn" id="btnMenu" title="Menú">⋮</button>
+        </div>
+
+        <div class="dropdown" id="menuDropdown" hidden>
+          <button class="dropdown-item" data-action="profile">Perfil</button>
+          <button class="dropdown-item" data-action="states">Estados</button>
+          <button class="dropdown-item" data-action="settings">Ajustes</button>
+          <button class="dropdown-item" data-action="register">Registro</button>
+        </div>
+      </header>
+
+      <div class="search">
+        <input id="searchInput" type="text" placeholder="Buscar o iniciar un nuevo chat" />
+      </div>
+
+      <div class="filters">
+        <button class="chip active" data-filter="all">Todos</button>
+        <button class="chip" data-filter="unread">No leídos</button>
+        <button class="chip" data-filter="groups">Grupos</button>
+      </div>
+
+      <div class="chat-list" id="chatList"></div>
+    </aside>
+
+    <!-- MAIN (conversación) -->
+    <main class="main">
+      <header class="chat-header">
+        <div class="chat-header-left">
+          <div class="avatar small" id="activeAvatar"></div>
+          <div class="chat-title">
+            <div class="chat-name" id="activeName">Selecciona un chat</div>
+            <div class="chat-sub" id="activeSub">—</div>
+          </div>
+        </div>
+
+        <div class="chat-header-actions">
+          <button class="icon-btn" title="Buscar">🔍</button>
+          <button class="icon-btn" title="Adjuntar">📎</button>
+          <button class="icon-btn" title="Opciones">⋮</button>
+        </div>
+      </header>
+
+      <section class="messages" id="messages">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-card">
+            <div class="empty-title">ARC Privus Messenger 2.0</div>
+            <div class="empty-text">
+              Interfaz tipo WhatsApp Web (base).<br/>
+              Luego re-integramos: IA, micrófono con ondas, cámara IA, traductor y asistente.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="composer">
+        <div class="composer-left">
+          <button class="icon-btn" id="btnEmoji" title="Emojis">😊</button>
+          <button class="icon-btn" id="btnCamera" title="Cámara">📷</button>
+          <button class="icon-btn" id="btnMic" title="Micrófono">🎙️</button>
+        </div>
+
+        <input id="messageInput" type="text" placeholder="Escribe un mensaje..." />
+        <button class="send-btn" id="sendBtn">Enviar</button>
+      </footer>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

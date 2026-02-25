@@ -1,0 +1,26 @@
+[
+  {
+    "role": "user",
+    "content": "Hola cómo estás"
+  },
+  {
+    "role": "assistant",
+    "content": "¡Hola! Estoy aquí para ayudarte con lo que necesites. ¿Cómo estás tú? ¿En qué puedo asistirte hoy?"
+  },
+  {
+    "role": "user",
+    "content": "hola estas fucionando"
+  },
+  {
+    "role": "assistant",
+    "content": "¡Sí, estoy funcionando perfectamente! ¿En qué puedo ayudarte hoy?"
+  },
+  {
+    "role": "user",
+    "content": "Hola ark Prius allá madre"
+  },
+  {
+    "role": "assistant",
+    "content": "¡Hola! Parece que quieres hablar conmigo, ARC Privus AI Madre. Estoy aquí para ayudarte con claridad, poder y amabilidad. ¿En qué puedo asistirte hoy?"
+  }
+]

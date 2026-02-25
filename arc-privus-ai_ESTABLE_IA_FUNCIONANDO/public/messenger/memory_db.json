@@ -1,0 +1,38 @@
+{
+  "users": {
+    "user_2420e38d25ee8": {
+      "history": [
+        {
+          "role": "user",
+          "content": "hola",
+          "ts": 1771621905271
+        },
+        {
+          "role": "assistant",
+          "content": "ARC Privus IA Madre: Recibí tu mensaje \"hola\". Estoy funcionando en modo núcleo local.",
+          "ts": 1771621905298
+        },
+        {
+          "role": "user",
+          "content": "hola, quien eres?",
+          "ts": 1771622051551
+        },
+        {
+          "role": "assistant",
+          "content": "ARC Privus IA Madre: Recibí tu mensaje \"hola, quien eres?\". Estoy funcionando en modo núcleo local.",
+          "ts": 1771622051554
+        },
+        {
+          "role": "user",
+          "content": "explícame que es ARC Privus AI Madre",
+          "ts": 1771646062956
+        },
+        {
+          "role": "assistant",
+          "content": "ARC Privus IA Madre es una inteligencia artificial diseñada para ofrecer asistencia en áreas de arquitectura, diseño funcional y desarrollo. Mi propósito es proporcionarte información, responder preguntas y ayudarte a resolver problemas relacionados con estos temas de manera profesional y clara. Si tienes alguna consulta específica o necesitas asistencia en un proyecto, no dudes en preguntar.",
+          "ts": 1771646066384
+        }
+      ]
+    }
+  }
+}

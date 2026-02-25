@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ARC Privus Messenger</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <div class="messenger">
+
+        <div class="header">
+            <div class="avatar"></div>
+            <div class="info">
+                <div class="name">ARC PRIVUS MESSENGER</div>
+                <div class="status">En línea</div>
+            </div>
+        </div>
+
+        <div id="chat" class="chat"></div>
+
+        <div class="input-area">
+
+            <div class="media-buttons">
+                <button id="micBtn" data-feature="mic">🎤</button>
+                <button id="speakerBtn" data-feature="speaker">🔊</button>
+                <button id="cameraBtn" data-feature="camera">📷</button>
+            </div>
+
+            <input type="text" id="messageInput" placeholder="Escribe tu mensaje..."/>
+
+            <button id="sendBtn">Enviar</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="storage.js"></script>
+<script src="memory_store.js"></script>
+<script src="transport.js"></script>
+<script src="assistant.js"></script>
+<script src="arc_madre.js"></script>
+<script src="ui.js"></script>
+<script src="voice.js"></script>
+<script src="features.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
