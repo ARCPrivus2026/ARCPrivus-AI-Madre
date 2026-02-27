@@ -1,0 +1,4 @@
+Robot financiero autónomo.
+Opera mercados globales.
+Gestiona riesgo.
+Genera 3% automático para el dueño del sistema.

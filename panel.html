@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARC Panel (MVP)</title>
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
+    background:#02040a;color:#eaf0ff;
+    min-height:100vh;
+    padding:16px;
+  }
+  .wrap{
+    width:min(98vw,1100px);
+    margin:0 auto;
+    display:grid;
+    gap:12px;
+  }
+  .header{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px;
+    border-radius:18px;
+    border:1px solid rgba(155,231,255,.18);
+    background:rgba(255,255,255,.04);
+    box-shadow:0 0 60px rgba(0,220,255,.16);
+  }
+  .title{
+    font-weight:900;
+    letter-spacing:.2px;
+  }
+  .sub{font-size:12px;opacity:.82}
+  .btn{
+    border:none; cursor:pointer;
+    padding:10px 12px;
+    border-radius:999px;
+    font-weight:800;
+    background:#00dcff;
+    color:#02040a;
+  }
+  .btn.secondary{
+    background:rgba(155,231,255,.10);
+    color:#eaf0ff;
+    border:1px solid rgba(155,231,255,.22);
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:12px;
+  }
+  .card{
+    grid-column:span 12;
+    border-radius:18px;
+    border:1px solid rgba(155,231,255,.14);
+    background:rgba(0,0,0,.22);
+    padding:14px;
+    overflow:auto;
+  }
+  @media(min-width:980px){
+    .card.half{grid-column:span 6;}
+  }
+  h3{
+    font-size:14px; color:#9be7ff;
+    margin-bottom:10px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+  }
+  th,td{
+    text-align:left;
+    padding:8px;
+    border-bottom:1px solid rgba(155,231,255,.10);
+    vertical-align:top;
+  }
+  th{opacity:.9}
+  .pill{
+    display:inline-block;
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:999px;
+    border:1px solid rgba(155,231,255,.18);
+    background:rgba(155,231,255,.06);
+    color:#9be7ff;
+  }
+  .muted{opacity:.78}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+  .filters{
+    display:flex; gap:10px; flex-wrap:wrap;
+    margin-top:10px;
+  }
+  input{
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(155,231,255,.20);
+    background:rgba(0,0,0,.28);
+    color:#eaf0ff;
+    outline:none;
+    flex:1;
+    min-width:220px;
+  }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="header">
+    <div>
+      <div class="title">ARC Panel (MVP)</div>
+      <div class="sub">Lee datos guardados en <span class="mono">localStorage</span> desde index.html.</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn secondary" id="btnHome">Volver a index.html</button>
+      <button class="btn secondary" id="btnRefresh">Actualizar</button>
+      <button class="btn" id="btnExport">Exportar JSON</button>
+    </div>
+  </div>
+
+  <div class="filters">
+    <input id="q" placeholder="Buscar (texto libre en todos los registros)..." />
+  </div>
+
+  <div class="grid">
+    <div class="card half">
+      <h3>Consentimientos</h3>
+      <div class="muted" id="consCount"></div>
+      <div id="consTable"></div>
+    </div>
+
+    <div class="card half">
+      <h3>Leads ARC Ads</h3>
+      <div class="muted" id="leadsCount"></div>
+      <div id="leadsTable"></div>
+    </div>
+
+    <div class="card half">
+      <h3>Casos ARC Doctor</h3>
+      <div class="muted" id="docCount"></div>
+      <div id="docTable"></div>
+    </div>
+
+    <div class="card half">
+      <h3>Simulaciones BOSS</h3>
+      <div class="muted" id="bossCount"></div>
+      <div id="bossTable"></div>
+    </div>
+
+    <div class="card">
+      <h3>Mensajes (Chat)</h3>
+      <div class="muted" id="msgCount"></div>
+      <div id="msgTable"></div>
+    </div>
+
+    <div class="card">
+      <h3>Eventos / Auditoría</h3>
+      <div class="muted" id="evtCount"></div>
+      <div id="evtTable"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const LS = {
+  get(key, fallback){
+    try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+    catch { return fallback; }
+  }
+};
+
+function escapeHTML(s){
+  return (s||"").replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+function fmtDate(iso){
+  try{
+    const d = new Date(iso);
+    if(isNaN(d.getTime())) return iso || "";
+    return d.toLocaleString();
+  } catch { return iso || ""; }
+}
+
+function tableHTML(rows, cols){
+  if(!rows.length) return `<div class="muted">Sin registros.</div>`;
+  const head = cols.map(c=>`<th>${escapeHTML(c.label)}</th>`).join("");
+  const body = rows.map(r=>{
+    const tds = cols.map(c=>{
+      const v = (typeof c.get === "function") ? c.get(r) : r[c.key];
+      return `<td>${v === undefined || v === null ? "" : escapeHTML(String(v))}</td>`;
+    }).join("");
+    return `<tr>${tds}</tr>`;
+  }).join("");
+  return `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+
+function includesQuery(obj, q){
+  if(!q) return true;
+  const s = JSON.stringify(obj).toLowerCase();
+  return s.includes(q.toLowerCase());
+}
+
+function render(){
+  const q = (document.getElementById("q").value || "").trim();
+
+  const cons = LS.get("arc_consents", []).filter(x=>includesQuery(x,q));
+  const leads = LS.get("ads_leads", []).filter(x=>includesQuery(x,q));
+  const doc = LS.get("doctor_cases", []).filter(x=>includesQuery(x,q));
+  const boss = LS.get("boss_simulations", []).filter(x=>includesQuery(x,q));
+  const msgs = LS.get("arc_messages", []).filter(x=>includesQuery(x,q));
+  const evts = LS.get("arc_events", []).filter(x=>includesQuery(x,q));
+
+  document.getElementById("consCount").innerHTML = `${cons.length} registro(s)`;
+  document.getElementById("leadsCount").innerHTML = `${leads.length} registro(s)`;
+  document.getElementById("docCount").innerHTML = `${doc.length} registro(s)`;
+  document.getElementById("bossCount").innerHTML = `${boss.length} registro(s)`;
+  document.getElementById("msgCount").innerHTML = `${msgs.length} mensaje(s)`;
+  document.getElementById("evtCount").innerHTML = `${evts.length} evento(s)`;
+
+  document.getElementById("consTable").innerHTML = tableHTML(
+    cons.slice().sort((a,b)=>b.id-a.id),
+    [
+      {label:"Fecha", get:r=>fmtDate(r.at)},
+      {label:"Scope", key:"scope"},
+      {label:"Versión", key:"textVersion"}
+    ]
+  );
+
+  document.getElementById("leadsTable").innerHTML = tableHTML(
+    leads.slice().sort((a,b)=>b.id-a.id),
+    [
+      {label:"Fecha", get:r=>fmtDate(r.at)},
+      {label:"Tipo", key:"type"},
+      {label:"País/Ciudad", key:"country"},
+      {label:"Sector", key:"sector"},
+      {label:"Objetivo", key:"objective"},
+      {label:"Contacto", key:"contact"},
+      {label:"Estado", key:"status"}
+    ]
+  );
+
+  document.getElementById("docTable").innerHTML = tableHTML(
+    doc.slice().sort((a,b)=>b.id-a.id),
+    [
+      {label:"Fecha", get:r=>fmtDate(r.at)},
+      {label:"Edad", key:"age"},
+      {label:"Síntoma", key:"symptom"},
+      {label:"Días", key:"days"},
+      {label:"Sev", key:"severity"},
+      {label:"Alarma", key:"alarm"},
+      {label:"Orientación", key:"advice"}
+    ]
+  );
+
+  document.getElementById("bossTable").innerHTML = tableHTML(
+    boss.slice().sort((a,b)=>b.id-a.id),
+    [
+      {label:"Fecha", get:r=>fmtDate(r.at)},
+      {label:"Nivel", key:"level"},
+      {label:"Capital", key:"capital"},
+      {label:"Meta", key:"goal"},
+      {label:"Tope", key:"top"},
+      {label:"Resultado", key:"result"}
+    ]
+  );
+
+  document.getElementById("msgTable").innerHTML = tableHTML(
+    msgs.slice().sort((a,b)=>b.id-a.id).slice(0,250),
+    [
+      {label:"Fecha", get:r=>fmtDate(r.at)},
+      {label:"Sesión", key:"sessionId"},
+      {label:"Rol", key:"role"},
+      {label:"Texto", key:"text"}
+    ]
+  );
+
+  document.getElementById("evtTable").innerHTML = tableHTML(
+    evts.slice().sort((a,b)=>b.id-a.id).slice(0,400),
+    [
+      {label:"Fecha", get:r=>fmtDate(r.at)},
+      {label:"Tipo", key:"type"},
+      {label:"Módulo", key:"module"},
+      {label:"Scope", key:"scope"},
+      {label:"IDs", get:r=>`lead:${r.leadId||""} case:${r.caseId||""} sim:${r.simId||""}`},
+      {label:"Sesión", key:"sessionId"}
+    ]
+  );
+}
+
+document.getElementById("btnHome").addEventListener("click", ()=>{ window.location.href="index.html"; });
+document.getElementById("btnRefresh").addEventListener("click", render);
+document.getElementById("q").addEventListener("input", render);
+
+document.getElementById("btnExport").addEventListener("click", ()=>{
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    arc_consents: LS.get("arc_consents", []),
+    ads_leads: LS.get("ads_leads", []),
+    doctor_cases: LS.get("doctor_cases", []),
+    boss_simulations: LS.get("boss_simulations", []),
+    messenger_interests: LS.get("messenger_interests", []),
+    arc_messages: LS.get("arc_messages", []),
+    arc_events: LS.get("arc_events", [])
+  };
+
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "arc_mvp_export.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+render();
+</script>
+</body>
+</html>

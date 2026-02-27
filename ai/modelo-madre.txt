@@ -1,0 +1,3 @@
+ARC Privus AI Madre es la IA central del ecosistema.
+Modelo conceptual inicial para crecimiento modular.
+Controla módulos, robots, asistentes y flujos de monetización.

@@ -1,0 +1,10 @@
+{
+  "nombre_sistema": "ARC Privus AI Madre",
+  "version": "1.0.0",
+  "auto_inscripcion": true,
+  "monetizacion": {
+    "inscripcion": true,
+    "por_uso": true,
+    "participacion": "10%"
+  }
+}

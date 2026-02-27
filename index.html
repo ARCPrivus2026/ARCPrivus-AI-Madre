@@ -1,0 +1,746 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARC Privus AI Madre</title>
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;
+    background:#02040a;color:#eaf0ff;
+  }
+
+  .arc-screen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(0,220,255,.18) 0%, rgba(2,4,10,0) 55%),
+      radial-gradient(circle at center, #0b1636 0%, #070A12 45%, #02040a 75%);
+    padding:18px;
+  }
+
+  .arc-core{
+    width:min(96vw,980px);
+    border-radius:28px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(155,231,255,.18);
+    backdrop-filter:blur(8px);
+    box-shadow:0 0 90px rgba(0,220,255,.22);
+    padding:18px;
+    display:grid;
+    gap:14px;
+  }
+
+  .header{
+    display:grid; gap:8px; text-align:center;
+  }
+  .title{font-size:22px;font-weight:900;color:#9be7ff;letter-spacing:.2px}
+  .sub{font-size:13px;opacity:.86;line-height:1.35}
+
+  .nav{
+    display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+  }
+  .pill{
+    padding:10px 14px; border-radius:999px; cursor:pointer;
+    border:1px solid rgba(155,231,255,.22);
+    background:rgba(155,231,255,.08);
+    color:#eaf0ff; font-weight:800; font-size:12px;
+  }
+  .pill.active{
+    background:#00dcff; color:#02040a; border-color:transparent;
+    box-shadow:0 0 18px rgba(0,220,255,.22);
+  }
+
+  .grid{
+    display:grid; grid-template-columns:repeat(12,1fr); gap:12px;
+  }
+
+  .card{
+    grid-column:span 12;
+    border-radius:20px;
+    border:1px solid rgba(155,231,255,.14);
+    background:rgba(0,0,0,.22);
+    padding:14px;
+  }
+
+  @media(min-width:900px){
+    .card.half{grid-column:span 6}
+    .card.third{grid-column:span 4}
+  }
+
+  .card h3{color:#9be7ff;font-size:14px;margin-bottom:8px;letter-spacing:.3px}
+  .card p{font-size:13px;opacity:.88;line-height:1.4}
+
+  .btnRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .btn{
+    padding:12px 16px; border-radius:999px; border:none; cursor:pointer;
+    background:#00dcff; color:#02040a; font-weight:900;
+  }
+  .btn.secondary{
+    background:rgba(155,231,255,.12);
+    color:#eaf0ff; border:1px solid rgba(155,231,255,.22);
+    font-weight:800;
+  }
+  .btn.ghost{
+    background:transparent;
+    border:1px dashed rgba(155,231,255,.28);
+    color:#9be7ff;
+    font-weight:900;
+  }
+
+  /* CHAT */
+  .chatWrap{display:flex;flex-direction:column;gap:10px;height: min(68vh, 520px);}
+  .chatLog{
+    flex:1; overflow:auto;
+    border-radius:16px;
+    border:1px solid rgba(155,231,255,.16);
+    background:rgba(0,0,0,.20);
+    padding:10px;
+  }
+  .msg{margin:8px 0; display:flex}
+  .msg.user{justify-content:flex-end}
+  .msg.arc{justify-content:flex-start}
+  .bubble{
+    max-width:86%;
+    padding:10px 12px;
+    border-radius:14px;
+    font-size:13px;
+    line-height:1.4;
+    border:1px solid rgba(155,231,255,.16);
+    background:rgba(155,231,255,.06);
+    white-space:pre-wrap;
+  }
+  .msg.user .bubble{
+    background:rgba(0,220,255,.18);
+    border-color:rgba(0,220,255,.25);
+  }
+  .chatInputRow{display:flex;gap:10px}
+  .chatInputRow input{
+    flex:1; padding:12px;
+    border-radius:14px;
+    border:1px solid rgba(155,231,255,.20);
+    background:rgba(0,0,0,.28);
+    color:#eaf0ff;
+    outline:none;
+  }
+  .hint{font-size:12px;opacity:.78;line-height:1.35;text-align:center}
+
+  /* FORM */
+  .form{display:grid;gap:10px}
+  .form input,.form textarea,.form select{
+    width:100%; padding:11px 12px;
+    border-radius:14px;
+    border:1px solid rgba(155,231,255,.20);
+    background:rgba(0,0,0,.28);
+    color:#eaf0ff;
+    outline:none;
+  }
+  .form textarea{resize:none}
+
+  /* PANEL TABLE */
+  .tableWrap{overflow:auto;border-radius:16px;border:1px solid rgba(155,231,255,.14);background:rgba(0,0,0,.20)}
+  table{width:100%;border-collapse:collapse;min-width:820px}
+  th,td{padding:10px;border-bottom:1px solid rgba(155,231,255,.12);font-size:12px;vertical-align:top}
+  th{color:#9be7ff;text-align:left}
+  td{opacity:.9}
+
+  .tag{
+    display:inline-block;
+    font-size:11px;padding:6px 10px;border-radius:999px;
+    border:1px solid rgba(155,231,255,.18);
+    background:rgba(155,231,255,.06);
+    color:#9be7ff;
+  }
+
+  .smallNote{font-size:12px;opacity:.8;line-height:1.4}
+</style>
+</head>
+
+<body>
+<main class="arc-screen">
+  <section class="arc-core">
+
+    <div class="header">
+      <div class="title">ARC Privus AI Madre</div>
+      <div class="sub">
+        MVP Local Autónomo · Chat + Voz · Módulos · Panel · Registro<br>
+        (Todo queda guardado en este navegador)
+      </div>
+
+      <div class="nav">
+        <button class="pill active" data-tab="home">Inicio</button>
+        <button class="pill" data-tab="chat">Hablar con ARC</button>
+        <button class="pill" data-tab="messenger">Messenger</button>
+        <button class="pill" data-tab="doctor">Doctor</button>
+        <button class="pill" data-tab="boss">BOSS</button>
+        <button class="pill" data-tab="ads">Ads</button>
+        <button class="pill" data-tab="panel">Panel</button>
+      </div>
+    </div>
+
+    <!-- INICIO -->
+    <div class="tab" id="tab-home">
+      <div class="grid">
+        <div class="card third">
+          <h3>ARC Messenger</h3>
+          <p>Traducción en tiempo real (plan), migración segura (plan), archivo inteligente de mensajes (plan). En MVP: registramos prioridades.</p>
+          <div class="btnRow">
+            <button class="btn secondary" onclick="goTab('messenger')">Abrir</button>
+          </div>
+        </div>
+
+        <div class="card third">
+          <h3>ARC Doctor</h3>
+          <p>Orientación preventiva responsable. En MVP: captura de síntomas y recomendación general con derivación.</p>
+          <div class="btnRow">
+            <button class="btn secondary" onclick="goTab('doctor')">Abrir</button>
+          </div>
+        </div>
+
+        <div class="card third">
+          <h3>BOSS ARC</h3>
+          <p>Simulador por niveles con topes. En MVP: registra simulaciones y metas (sin dinero real).</p>
+          <div class="btnRow">
+            <button class="btn secondary" onclick="goTab('boss')">Abrir</button>
+          </div>
+        </div>
+
+        <div class="card half">
+          <h3>ARC Ads</h3>
+          <p>Publicidad/enlace global. En MVP: captura leads (persona/empresa/gobierno) para evaluación.</p>
+          <div class="btnRow">
+            <button class="btn secondary" onclick="goTab('ads')">Abrir</button>
+          </div>
+          <div class="tag">ARC: autopromoción interna gratuita</div>
+        </div>
+
+        <div class="card half">
+          <h3>Acciones rápidas</h3>
+          <p class="smallNote">
+            • Habla con ARC (voz) desde el chat.<br>
+            • Revisa todo en Panel.<br>
+            • Exporta o borra datos locales cuando quieras.
+          </p>
+          <div class="btnRow">
+            <button class="btn" onclick="goTab('chat')">💬 Abrir Chat</button>
+            <button class="btn secondary" onclick="goTab('panel')">📊 Abrir Panel</button>
+            <button class="btn ghost" onclick="exportAll()">⬇️ Exportar JSON</button>
+            <button class="btn secondary" onclick="resetAll()">🧹 Borrar datos locales</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="tab" id="tab-chat" style="display:none;">
+      <div class="card">
+        <h3>Hablar con ARC (Chat + Voz)</h3>
+        <p class="smallNote">
+          Usa 🎤 Micrófono para dictar. ARC responde por texto y por voz.<br>
+          Nota: en celular, abre en Chrome y acepta permisos de micrófono.
+        </p>
+
+        <div class="btnRow" style="margin:10px 0 0;">
+          <button class="btn" id="btnMic">🎤 Micrófono</button>
+          <button class="btn secondary" onclick="speak('Estoy listo. Háblame o escríbeme.')">🔊 Probar voz</button>
+          <button class="btn ghost" onclick="clearChat()">🗑️ Limpiar chat (solo visual)</button>
+        </div>
+
+        <div class="chatWrap" style="margin-top:12px;">
+          <div class="chatLog" id="chatLog" aria-live="polite"></div>
+
+          <div class="hint">
+            Escribe: <b>1</b> ARC · <b>2</b> Messenger · <b>3</b> Doctor · <b>4</b> BOSS · <b>5</b> Ads
+          </div>
+
+          <div class="chatInputRow">
+            <input id="chatInput" placeholder="Escribe tu mensaje…" autocomplete="off" />
+            <button class="btn" id="chatSend">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSENGER -->
+    <div class="tab" id="tab-messenger" style="display:none;">
+      <div class="card">
+        <h3>ARC Messenger (MVP)</h3>
+        <p class="smallNote">
+          Aquí registramos qué mejora es más importante para tu visión del Messenger.
+          (Traducción, migración, seguridad, archivo).
+        </p>
+        <div class="form" style="margin-top:12px;">
+          <select id="msPriority">
+            <option value="traduccion">Prioridad: Traducción en tiempo real</option>
+            <option value="migracion">Prioridad: Migración sin perder nada</option>
+            <option value="seguridad">Prioridad: Anti clonación / identidad fuerte</option>
+            <option value="archivo">Prioridad: Archivo y búsqueda avanzada</option>
+          </select>
+          <textarea id="msNotes" rows="3" placeholder="Notas (ej: estados 10 min, intérprete voz a voz, memoria interna, etc.)"></textarea>
+          <button class="btn" onclick="saveMessenger()">Guardar interés</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCTOR -->
+    <div class="tab" id="tab-doctor" style="display:none;">
+      <div class="card">
+        <h3>ARC Doctor (MVP)</h3>
+        <p class="smallNote">
+          Orientación preventiva general. No reemplaza un médico.
+          Si hay señales de alarma, recomienda urgencias.
+        </p>
+
+        <div class="form" style="margin-top:12px;">
+          <input id="dAge" type="number" min="0" placeholder="Edad" />
+          <input id="dMain" placeholder="Síntoma principal (ej: dolor de garganta)" />
+          <input id="dDays" type="number" min="0" placeholder="Duración (días)" />
+          <select id="dSev">
+            <option value="1">Severidad 1 (leve)</option>
+            <option value="3">Severidad 3</option>
+            <option value="5" selected>Severidad 5</option>
+            <option value="7">Severidad 7</option>
+            <option value="9">Severidad 9 (muy fuerte)</option>
+          </select>
+          <select id="dAlarm">
+            <option value="no" selected>¿Señales de alarma? No</option>
+            <option value="si">¿Señales de alarma? Sí</option>
+          </select>
+
+          <button class="btn" onclick="evalDoctor()">Evaluar</button>
+          <div class="smallNote" id="dOut" style="margin-top:6px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOSS -->
+    <div class="tab" id="tab-boss" style="display:none;">
+      <div class="card">
+        <h3>BOSS ARC (MVP Simulador)</h3>
+        <p class="smallNote">
+          En este MVP no hay operaciones reales. Solo registro de simulaciones por nivel con topes.
+        </p>
+
+        <div class="form" style="margin-top:12px;">
+          <select id="bLevel">
+            <option value="1" selected>Nivel 1 (tope 30 USD/día)</option>
+            <option value="2">Nivel 2 (tope 100 USD/día)</option>
+            <option value="3">Nivel 3 (tope 1000 USD/día)</option>
+          </select>
+          <input id="bCapital" type="number" min="0" placeholder="Capital simulado (USD)" />
+          <input id="bGoal" type="number" min="0" placeholder="Meta diaria (USD)" />
+          <button class="btn" onclick="simBoss()">Simular</button>
+          <div class="smallNote" id="bOut" style="margin-top:6px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADS -->
+    <div class="tab" id="tab-ads" style="display:none;">
+      <div class="card">
+        <h3>ARC Ads (MVP)</h3>
+        <p class="smallNote">
+          Registro de interés/solicitudes para publicidad y enlace global.
+        </p>
+
+        <div class="form" style="margin-top:12px;">
+          <select id="aType">
+            <option value="Persona" selected>Persona</option>
+            <option value="Empresa">Empresa</option>
+            <option value="Gobierno">Gobierno</option>
+          </select>
+          <input id="aCountry" placeholder="País / Ciudad" />
+          <input id="aSector" placeholder="Sector (ej: educación, comercio, salud)" />
+          <input id="aObjective" placeholder="Objetivo (ej: campaña, alianza, proyecto)" />
+          <input id="aContact" placeholder="Contacto (correo o teléfono)" />
+          <textarea id="aNotes" rows="3" placeholder="Detalles (opcional)"></textarea>
+          <button class="btn" onclick="saveAds()">Enviar solicitud</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL -->
+    <div class="tab" id="tab-panel" style="display:none;">
+      <div class="card">
+        <h3>Panel ARC (MVP Local)</h3>
+        <p class="smallNote">
+          Aquí ves lo guardado: mensajes, intereses, casos doctor, simulaciones BOSS, leads Ads.
+        </p>
+
+        <div class="btnRow" style="margin-top:10px;">
+          <button class="btn ghost" onclick="exportAll()">⬇️ Exportar JSON</button>
+          <button class="btn secondary" onclick="refreshPanel()">🔄 Actualizar panel</button>
+          <button class="btn secondary" onclick="resetAll()">🧹 Borrar datos</button>
+        </div>
+
+        <div style="margin-top:12px; display:grid; gap:12px;">
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tipo</th><th>Fecha</th><th>Detalle</th>
+                </tr>
+              </thead>
+              <tbody id="panelRows"></tbody>
+            </table>
+          </div>
+          <div class="smallNote" id="panelStats"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<script>
+/* =======================
+   STORAGE
+======================= */
+const LS = {
+  get(key, fallback){
+    try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+    catch { return fallback; }
+  },
+  set(key, value){ localStorage.setItem(key, JSON.stringify(value)); },
+  push(key, item){
+    const arr = LS.get(key, []);
+    arr.push(item);
+    LS.set(key, arr);
+  }
+};
+
+function nowISO(){ return new Date().toISOString(); }
+
+/* =======================
+   TABS
+======================= */
+function goTab(name){
+  document.querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));
+  document.querySelector(`.pill[data-tab="${name}"]`)?.classList.add("active");
+
+  document.querySelectorAll(".tab").forEach(t=>t.style.display="none");
+  document.getElementById(`tab-${name}`)!.style.display="block";
+
+  if(name==="panel") refreshPanel();
+  if(name==="chat") setTimeout(()=>document.getElementById("chatInput")?.focus(), 50);
+}
+
+document.querySelectorAll(".pill").forEach(p=>{
+  p.addEventListener("click", ()=>goTab(p.getAttribute("data-tab")));
+});
+
+/* =======================
+   VOZ (TTS)
+======================= */
+function speak(text){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "es-ES";
+    u.rate = 1;
+    u.pitch = 1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* =======================
+   CHAT
+======================= */
+const chatLog = document.getElementById("chatLog");
+const chatInput = document.getElementById("chatInput");
+const chatSend = document.getElementById("chatSend");
+
+function addMsg(role, text){
+  const w = document.createElement("div");
+  w.className = "msg " + (role==="user" ? "user" : "arc");
+  const b = document.createElement("div");
+  b.className = "bubble";
+  b.textContent = text;
+  w.appendChild(b);
+  chatLog.appendChild(w);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function saveChat(role, text){
+  LS.push("arc_messages", {id:Date.now(), role, text, at:nowISO()});
+}
+
+function arcReply(userText){
+  const t = (userText || "").trim().toLowerCase();
+
+  // rutas rápidas
+  if(["1","2","3","4","5"].includes(t)){
+    const map = { "1":"home", "2":"messenger", "3":"doctor", "4":"boss", "5":"ads" };
+    addMsg("arc", `Abriendo módulo…`);
+    speak("Abriendo módulo");
+    goTab(map[t]);
+    return;
+  }
+
+  // mini-intérprete local
+  let response =
+`Soy ARC Privus AI Madre.
+Recibí: "${userText}"
+
+En este MVP puedo:
+1) Registrar y organizar proyectos (Messenger, Doctor, BOSS, Ads)
+2) Guardar información en Panel
+3) Responder por voz y texto
+
+Dime qué módulo quieres abrir (2,3,4,5) o explícame tu objetivo.`;
+
+  addMsg("arc", response);
+  saveChat("arc", response);
+  speak(response);
+}
+
+function sendChat(text){
+  const msg = (text || chatInput.value || "").trim();
+  if(!msg) return;
+  chatInput.value = "";
+  addMsg("user", msg);
+  saveChat("user", msg);
+  arcReply(msg);
+}
+
+chatSend.addEventListener("click", ()=>sendChat());
+chatInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter") sendChat(); });
+
+function clearChat(){
+  chatLog.innerHTML = "";
+  addMsg("arc","Chat limpiado (solo visual). Historial real sigue en Panel hasta que borres datos.");
+}
+
+/* mensaje inicial */
+(function boot(){
+  const prev = LS.get("arc_messages", []);
+  if(prev.length){
+    // cargar últimas 25
+    const last = prev.slice(-25);
+    last.forEach(m=>addMsg(m.role, m.text));
+  } else {
+    const hello = "Hola, soy ARC Privus AI Madre. Puedes hablarme o escribirme. (1=Inicio, 2=Messenger, 3=Doctor, 4=BOSS, 5=Ads)";
+    addMsg("arc", hello);
+    saveChat("arc", hello);
+    speak("Hola, soy ARC Privus AI Madre. Puedes hablarme o escribirme.");
+  }
+})();
+</script>
+
+<script>
+/* =======================
+   MICRÓFONO (STT)
+   Nota: en Chrome funciona con webkitSpeechRecognition
+======================= */
+const btnMic = document.getElementById("btnMic");
+let recognition = null;
+
+if("webkitSpeechRecognition" in window){
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = "es-ES";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  btnMic.addEventListener("click", ()=>{
+    try{
+      recognition.start();
+      btnMic.textContent = "🎙️ Escuchando…";
+    }catch(e){}
+  });
+
+  recognition.onresult = (e)=>{
+    const texto = e.results[0][0].transcript;
+    btnMic.textContent = "🎤 Micrófono";
+    sendChat(texto);
+  };
+
+  recognition.onerror = ()=>{
+    btnMic.textContent = "🎤 Micrófono";
+    addMsg("arc","No pude escuchar. Revisa permisos del micrófono en Chrome.");
+    speak("No pude escuchar. Revisa permisos del micrófono.");
+  };
+
+  recognition.onend = ()=>{
+    btnMic.textContent = "🎤 Micrófono";
+  };
+} else {
+  btnMic.disabled = true;
+  btnMic.textContent = "❌ Mic no soportado";
+  addMsg("arc","Tu navegador no soporta reconocimiento de voz. Usa Chrome.");
+}
+</script>
+
+<script>
+/* =======================
+   MÓDULOS MVP
+======================= */
+
+/* Messenger */
+function saveMessenger(){
+  const priority = document.getElementById("msPriority").value;
+  const notes = (document.getElementById("msNotes").value || "").trim();
+  LS.push("messenger_interests", {id:Date.now(), priority, notes, at:nowISO()});
+  addMsg("arc", "✅ Guardado en Panel: interés de Messenger.");
+  saveChat("arc", "✅ Guardado en Panel: interés de Messenger.");
+  speak("Guardado en panel. Interés de messenger.");
+}
+
+/* Doctor */
+function evalDoctor(){
+  const age = parseInt(document.getElementById("dAge").value || "0", 10);
+  const symptom = (document.getElementById("dMain").value || "").trim();
+  const days = parseInt(document.getElementById("dDays").value || "0", 10);
+  const sev = parseInt(document.getElementById("dSev").value, 10);
+  const alarm = document.getElementById("dAlarm").value;
+
+  let advice = "";
+  if(!symptom){
+    advice = "Escribe un síntoma principal para evaluar.";
+  } else if(alarm==="si"){
+    advice = "⚠️ Señales de alarma: se recomienda URGENCIAS o médico certificado lo antes posible.";
+  } else {
+    advice =
+`Orientación preventiva:
+• Hidratación y reposo según el síntoma.
+• Si empeora o dura más de 48–72h, consulta un profesional.
+• Esto NO es diagnóstico definitivo.`;
+  }
+
+  const caseId = Date.now();
+  LS.push("doctor_cases", {
+    id:caseId, age, symptom, days, severity:sev, alarm, advice, at:nowISO()
+  });
+
+  document.getElementById("dOut").textContent = advice;
+  speak(advice);
+}
+
+/* BOSS */
+function simBoss(){
+  const level = parseInt(document.getElementById("bLevel").value, 10);
+  const capital = parseFloat(document.getElementById("bCapital").value || "0");
+  const goal = parseFloat(document.getElementById("bGoal").value || "0");
+  const tops = {1:30, 2:100, 3:1000};
+  const top = tops[level];
+
+  let result = "";
+  if(capital <= 0) result = "Ingresa un capital simulado válido.";
+  else if(goal <= 0) result = "Ingresa una meta diaria válida.";
+  else if(goal > top) result = `Meta supera el tope del Nivel ${level} (tope ${top} USD/día).`;
+  else result =
+`Simulación registrada:
+• Nivel: ${level}
+• Capital: ${capital} USD
+• Meta: ${goal} USD (<= tope ${top})
+Recordatorio: MVP sin operaciones reales.`;
+
+  const simId = Date.now();
+  LS.push("boss_simulations", {id:simId, level, capital, goal, top, result, at:nowISO()});
+  document.getElementById("bOut").textContent = result;
+  speak(result);
+}
+
+/* Ads */
+function saveAds(){
+  const type = document.getElementById("aType").value;
+  const country = (document.getElementById("aCountry").value || "").trim();
+  const sector = (document.getElementById("aSector").value || "").trim();
+  const objective = (document.getElementById("aObjective").value || "").trim();
+  const contact = (document.getElementById("aContact").value || "").trim();
+  const notes = (document.getElementById("aNotes").value || "").trim();
+
+  if(!country || !objective || !contact){
+    alert("Faltan datos: País/Ciudad, Objetivo y Contacto son obligatorios.");
+    return;
+  }
+
+  const leadId = Date.now();
+  LS.push("ads_leads", {id:leadId, type, country, sector, objective, contact, notes, status:"nuevo", at:nowISO()});
+  speak("Solicitud enviada y guardada en panel.");
+  alert("Solicitud enviada ✅ (ver Panel)");
+}
+
+/* =======================
+   PANEL
+======================= */
+function refreshPanel(){
+  const rows = document.getElementById("panelRows");
+  const stats = document.getElementById("panelStats");
+  rows.innerHTML = "";
+
+  const messages = LS.get("arc_messages", []);
+  const ms = LS.get("messenger_interests", []);
+  const dc = LS.get("doctor_cases", []);
+  const bs = LS.get("boss_simulations", []);
+  const ads = LS.get("ads_leads", []);
+
+  // Unificar en feed
+  const feed = [];
+  messages.forEach(x=>feed.push({type:"CHAT", at:x.at, detail:`${x.role.toUpperCase()}: ${x.text}`}));
+  ms.forEach(x=>feed.push({type:"MESSENGER", at:x.at, detail:`Prioridad: ${x.priority} | ${x.notes||"(sin notas)"}`}));
+  dc.forEach(x=>feed.push({type:"DOCTOR", at:x.at, detail:`Edad:${x.age} | ${x.symptom} | Alarm:${x.alarm} | ${x.advice}`}));
+  bs.forEach(x=>feed.push({type:"BOSS", at:x.at, detail:`Nivel:${x.level} | Capital:${x.capital} | Meta:${x.goal} | ${x.result}`}));
+  ads.forEach(x=>feed.push({type:"ADS", at:x.at, detail:`${x.type} | ${x.country} | ${x.objective} | ${x.contact} | ${x.notes||"(sin notas)"}`}));
+
+  feed.sort((a,b)=> (a.at>b.at ? -1 : 1));
+
+  feed.slice(0, 120).forEach(item=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML = `
+      <td>${item.type}</td>
+      <td>${(item.at||"").replace("T"," ").slice(0,19)}</td>
+      <td>${escapeHTML(item.detail)}</td>
+    `;
+    rows.appendChild(tr);
+  });
+
+  stats.textContent =
+`Totales guardados (en este navegador):
+Chat=${messages.length} · Messenger=${ms.length} · Doctor=${dc.length} · BOSS=${bs.length} · Ads=${ads.length}
+(El panel muestra los últimos 120 registros.)`;
+}
+
+function escapeHTML(s){
+  return (s||"").replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+/* =======================
+   EXPORT / RESET
+======================= */
+function exportAll(){
+  const data = {
+    exportedAt: nowISO(),
+    arc_messages: LS.get("arc_messages", []),
+    messenger_interests: LS.get("messenger_interests", []),
+    doctor_cases: LS.get("doctor_cases", []),
+    boss_simulations: LS.get("boss_simulations", []),
+    ads_leads: LS.get("ads_leads", [])
+  };
+
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ARC_MVP_export.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function resetAll(){
+  const ok = confirm("¿Seguro? Esto borra todos los datos guardados en ESTE navegador.");
+  if(!ok) return;
+  ["arc_messages","messenger_interests","doctor_cases","boss_simulations","ads_leads"].forEach(k=>localStorage.removeItem(k));
+  alert("Datos borrados ✅");
+  location.reload();
+}
+</script>
+
+</body>
+</html>
