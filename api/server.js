@@ -1,16 +1,15 @@
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export default async function handler(req, res) {
-
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método no permitido" });
   }
 
   try {
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const { message } = req.body;
 
     if (!message) {
@@ -22,9 +21,12 @@ export default async function handler(req, res) {
       input: message,
     });
 
-    return res.status(200).json({
-      reply: response.output_text || "Sin respuesta.",
-    });
+    const reply =
+      response.output_text ||
+      response.output?.[0]?.content?.[0]?.text ||
+      "Sin respuesta.";
+
+    return res.status(200).json({ reply });
 
   } catch (error) {
     console.error("Error IA:", error);
