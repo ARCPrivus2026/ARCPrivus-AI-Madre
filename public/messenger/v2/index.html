@@ -1,94 +1,292 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ARC Privus Messenger 2.0</title>
-  <link rel="stylesheet" href="./style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARC Privus Messenger</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+height:100vh;
+background: radial-gradient(circle at center,
+#2f4dff 0%,
+#1a2ccf 40%,
+#0d1a7a 70%,
+#061225 100%);
+display:flex;
+flex-direction:column;
+color:white;
+overflow:hidden;
+}
+
+/* 🔷 TOPBAR */
+.topbar{
+height:65px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+background:rgba(0,0,0,0.3);
+backdrop-filter:blur(20px);
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.logo-area{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo-area img{
+width:45px;
+}
+
+.brand{
+font-weight:600;
+letter-spacing:1px;
+}
+
+.icon-btn{
+font-size:24px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.icon-btn:hover{
+transform:scale(1.15);
+color:#4e6fff;
+}
+
+/* 🔷 SIDEMENU */
+.side-menu{
+position:fixed;
+left:-280px;
+top:0;
+width:280px;
+height:100%;
+background:rgba(0,0,40,0.95);
+backdrop-filter:blur(25px);
+padding:20px;
+transition:0.4s;
+z-index:20;
+}
+
+.side-menu.active{
+left:0;
+}
+
+.side-menu h3{
+margin-bottom:20px;
+}
+
+.side-menu button{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+border:none;
+border-radius:10px;
+background:#1a2ccf;
+color:white;
+cursor:pointer;
+}
+
+/* 🔷 CHAT AREA */
+.chat-area{
+flex:1;
+padding:20px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.message{
+max-width:60%;
+padding:12px 18px;
+border-radius:18px;
+background:rgba(255,255,255,0.15);
+}
+
+.message.user{
+align-self:flex-end;
+background:#1a2ccf;
+}
+
+/* 🔷 BOTTOM BAR */
+.bottom-bar{
+height:70px;
+display:flex;
+align-items:center;
+padding:0 15px;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(20px);
+gap:10px;
+}
+
+input{
+flex:1;
+padding:10px 15px;
+border-radius:20px;
+border:none;
+outline:none;
+}
+
+/* 🔷 WAVE */
+.wave{
+display:flex;
+gap:3px;
+align-items:flex-end;
+height:20px;
+}
+
+.bar{
+width:3px;
+background:#4e6fff;
+animation:wave 1s infinite;
+}
+
+.bar:nth-child(2){animation-delay:0.2s;}
+.bar:nth-child(3){animation-delay:0.4s;}
+
+@keyframes wave{
+0%{height:5px;}
+50%{height:18px;}
+100%{height:5px;}
+}
+
+/* 🔷 FLOAT AI */
+.ai-button{
+position:absolute;
+right:20px;
+bottom:100px;
+width:65px;
+height:65px;
+border-radius:50%;
+background:#4e6fff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+cursor:pointer;
+box-shadow:0 0 30px rgba(0,120,255,0.9);
+transition:0.3s;
+}
+
+.ai-button:hover{
+transform:scale(1.1);
+}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(6px);
+display:none;
+z-index:10;
+}
+
+.overlay.active{
+display:block;
+}
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <!-- SIDEBAR (lista de chats) -->
-    <aside class="sidebar">
-      <header class="sidebar-header">
-        <div class="profile">
-          <div class="avatar"></div>
-          <div class="profile-info">
-            <div class="profile-name">ARC PRIVUS</div>
-            <div class="profile-status">En línea</div>
-          </div>
-        </div>
 
-        <div class="top-actions">
-          <button class="icon-btn" title="Nuevo chat">✚</button>
-          <button class="icon-btn" title="Servicios">☰</button>
-          <button class="icon-btn" id="btnMenu" title="Menú">⋮</button>
-        </div>
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
-        <div class="dropdown" id="menuDropdown" hidden>
-          <button class="dropdown-item" data-action="profile">Perfil</button>
-          <button class="dropdown-item" data-action="states">Estados</button>
-          <button class="dropdown-item" data-action="settings">Ajustes</button>
-          <button class="dropdown-item" data-action="register">Registro</button>
-        </div>
-      </header>
+<!-- 🔷 SIDEMENU -->
+<div class="side-menu" id="sideMenu">
+<h3>Menú ARC</h3>
+<button>Perfil</button>
+<button>Estados</button>
+<button>Configuración</button>
+<button>Traductor Global</button>
+<button>IA Avanzada</button>
+</div>
 
-      <div class="search">
-        <input id="searchInput" type="text" placeholder="Buscar o iniciar un nuevo chat" />
-      </div>
+<!-- 🔷 TOPBAR -->
+<div class="topbar">
 
-      <div class="filters">
-        <button class="chip active" data-filter="all">Todos</button>
-        <button class="chip" data-filter="unread">No leídos</button>
-        <button class="chip" data-filter="groups">Grupos</button>
-      </div>
+<div class="icon-btn" onclick="openMenu()">☰</div>
 
-      <div class="chat-list" id="chatList"></div>
-    </aside>
+<div class="logo-area">
+<img src="logo-arc.png">
+<div class="brand">ARCTribune Inc</div>
+</div>
 
-    <!-- MAIN (conversación) -->
-    <main class="main">
-      <header class="chat-header">
-        <div class="chat-header-left">
-          <div class="avatar small" id="activeAvatar"></div>
-          <div class="chat-title">
-            <div class="chat-name" id="activeName">Selecciona un chat</div>
-            <div class="chat-sub" id="activeSub">—</div>
-          </div>
-        </div>
+<div class="icon-btn">⋮</div>
 
-        <div class="chat-header-actions">
-          <button class="icon-btn" title="Buscar">🔍</button>
-          <button class="icon-btn" title="Adjuntar">📎</button>
-          <button class="icon-btn" title="Opciones">⋮</button>
-        </div>
-      </header>
+</div>
 
-      <section class="messages" id="messages">
-        <div class="empty-state" id="emptyState">
-          <div class="empty-card">
-            <div class="empty-title">ARC Privus Messenger 2.0</div>
-            <div class="empty-text">
-              Interfaz tipo WhatsApp Web (base).<br/>
-              Luego re-integramos: IA, micrófono con ondas, cámara IA, traductor y asistente.
-            </div>
-          </div>
-        </div>
-      </section>
+<!-- 🔷 CHAT -->
+<div class="chat-area" id="chatArea">
+<div class="message">Bienvenido a ARC Privus Messenger.</div>
+</div>
 
-      <footer class="composer">
-        <div class="composer-left">
-          <button class="icon-btn" id="btnEmoji" title="Emojis">😊</button>
-          <button class="icon-btn" id="btnCamera" title="Cámara">📷</button>
-          <button class="icon-btn" id="btnMic" title="Micrófono">🎙️</button>
-        </div>
+<!-- 🔷 BOTTOM -->
+<div class="bottom-bar">
 
-        <input id="messageInput" type="text" placeholder="Escribe un mensaje..." />
-        <button class="send-btn" id="sendBtn">Enviar</button>
-      </footer>
-    </main>
-  </div>
+<div class="icon-btn">📷</div>
+<div class="icon-btn">🔊</div>
 
-  <script src="./app.js"></script>
+<div class="wave">
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+</div>
+
+<input type="text" id="messageInput" placeholder="Escribe un mensaje...">
+
+<div class="icon-btn">🎙️</div>
+<div class="icon-btn" onclick="sendMessage()">➤</div>
+
+</div>
+
+<div class="ai-button" onclick="activateAI()">🧠</div>
+
+<script>
+
+function sendMessage(){
+const input = document.getElementById("messageInput");
+const chat = document.getElementById("chatArea");
+
+if(input.value.trim() !== ""){
+let msg = document.createElement("div");
+msg.classList.add("message","user");
+msg.innerText = input.value;
+chat.appendChild(msg);
+input.value="";
+chat.scrollTop = chat.scrollHeight;
+}
+}
+
+function openMenu(){
+document.getElementById("sideMenu").classList.add("active");
+document.getElementById("overlay").classList.add("active");
+}
+
+function closeMenu(){
+document.getElementById("sideMenu").classList.remove("active");
+document.getElementById("overlay").classList.remove("active");
+}
+
+function activateAI(){
+alert("Conexión IA lista para integrar backend seguro con ChatGPT.");
+}
+
+</script>
+
 </body>
 </html>
