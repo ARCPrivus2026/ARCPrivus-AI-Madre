@@ -1,25 +1,15 @@
-import "dotenv/config";
-import express from "express";
 import OpenAI from "openai";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const app = express();
-
-app.use(express.json());
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "public")));
 
 const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-const PORT = process.env.PORT || 3000;
-const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+export default async function handler(req, res) {
 
-app.post("/api/chat", async (req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Método no permitido" });
+  }
+
   try {
     const { message } = req.body;
 
@@ -28,20 +18,16 @@ app.post("/api/chat", async (req, res) => {
     }
 
     const response = await client.responses.create({
-      model: MODEL,
-      input: message
+      model: "gpt-4o-mini",
+      input: message,
     });
 
-    const reply = response.output_text || "Sin respuesta.";
+    return res.status(200).json({
+      reply: response.output_text || "Sin respuesta.",
+    });
 
-    res.json({ reply });
-
-  } catch (err) {
-    console.error("Error IA:", err);
-    res.status(500).json({ error: "Error con la IA" });
+  } catch (error) {
+    console.error("Error IA:", error);
+    return res.status(500).json({ error: "Error con la IA" });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`Servidor activo en http://localhost:${PORT}/`);
-});
+}
