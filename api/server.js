@@ -6,6 +6,9 @@ export default async function handler(req, res) {
   }
 
   try {
+     console.log("API KEY EXISTE:", !!
+     process.env.OPENAI_API_KEY);
+
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
