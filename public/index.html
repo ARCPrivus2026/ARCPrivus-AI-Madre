@@ -1,172 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ARC Privus Messenger</title>
-  <link rel="stylesheet" href="/style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ARC Privus Messenger</title>
+<link rel="stylesheet" href="style.css"/>
 </head>
+
 <body>
-  <div class="app">
 
-    <!-- TOP BAR -->
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">ARC</div>
-        <div>
-          <div class="title">ARC Privus Messenger</div>
-          <div class="subtitle">IA integrada • Traducción • Cámara</div>
-        </div>
-      </div>
+<div class="app-container">
 
-      <div class="top-actions">
-        <button class="icon-btn" id="btnCamera" title="Cámara">📷</button>
-        <button class="icon-btn" id="btnCalls" title="Videollamada">🎥</button>
+    <div class="messenger">
 
-        <!-- 3 punticos -->
-        <div class="menu-wrap">
-          <button class="icon-btn" id="btnMenu" title="Menú">⋮</button>
-          <div class="menu" id="menu">
-            <button class="menu-item" data-view="chat">💬 Chat</button>
-            <button class="menu-item" data-view="status">🟦 Estados</button>
-            <button class="menu-item" data-view="settings">⚙️ Ajustes</button>
-            <div class="menu-sep"></div>
-            <button class="menu-item" id="btnPromo">🚀 Autopublicidad</button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- MAIN -->
-    <main class="main">
-
-      <!-- CHAT VIEW -->
-      <section class="view" id="viewChat">
-        <div class="chat-window" id="chatWindow"></div>
-
-        <div class="tools">
-          <label class="toggle">
-            <input type="checkbox" id="toggleTranslate" />
-            <span>Traducir respuesta</span>
-          </label>
-
-          <select id="targetLang" class="select">
-            <option value="es">ES (Español)</option>
-            <option value="en">EN (English)</option>
-            <option value="pt">PT (Português)</option>
-            <option value="fr">FR (Français)</option>
-            <option value="it">IT (Italiano)</option>
-            <option value="de">DE (Deutsch)</option>
-          </select>
-
-          <span class="hint">Tip: Traducción solo cuando la activas.</span>
+        <div class="header">
+            <div class="avatar"></div>
+            <div class="info">
+                <div class="name">ARC PRIVUS MESSENGER</div>
+                <div class="status">En línea</div>
+            </div>
         </div>
 
-        <div class="composer">
-          <button class="icon-btn" id="btnAttach" title="Adjuntar">📎</button>
-          <button class="icon-btn" id="btnMic" title="Micrófono (MVP)">🎙️</button>
-          <input id="messageInput" class="input" placeholder="Escribe tu mensaje…" />
-          <button class="send" id="btnSend">Enviar</button>
-        </div>
-      </section>
+        <div id="chat" class="chat"></div>
 
-      <!-- STATUS VIEW -->
-      <section class="view hidden" id="viewStatus">
-        <h2>Estados (MVP)</h2>
-        <p class="muted">
-          Aquí queda listo el módulo para subir estados hasta <b>5 minutos</b> y elegir duración <b>24 horas</b> o <b>8 días</b>.
-        </p>
+        <div class="input-area">
 
-        <div class="card">
-          <label class="label">Archivo de estado (video o imagen)</label>
-          <input type="file" id="statusFile" accept="image/*,video/*" />
-
-          <div class="row">
-            <div class="col">
-              <label class="label">Duración del estado</label>
-              <select id="statusDuration" class="select">
-                <option value="24h">24 horas</option>
-                <option value="8d">8 días</option>
-              </select>
+            <div class="media-buttons">
+                <button id="micBtn" data-feature="mic">🎤</button>
+                <button id="speakerBtn" data-feature="speaker">🔊</button>
+                <button id="cameraBtn" data-feature="camera">📷</button>
             </div>
 
-            <div class="col">
-              <label class="label">Límite video</label>
-              <div class="pill">Hasta 5:00 min (MVP)</div>
-            </div>
-          </div>
+            <input type="text" id="messageInput" placeholder="Escribe tu mensaje..."/>
 
-          <button class="primary" id="btnPublishStatus">Publicar estado</button>
-          <div class="muted" id="statusResult"></div>
+            <button id="sendBtn">Enviar</button>
+
         </div>
 
-        <div class="card">
-          <h3>Estados publicados (local)</h3>
-          <div id="statusList" class="status-list"></div>
-        </div>
-      </section>
-
-      <!-- SETTINGS VIEW -->
-      <section class="view hidden" id="viewSettings">
-        <h2>Ajustes (MVP)</h2>
-        <div class="card">
-          <p><b>Monetización (estructura):</b></p>
-          <ul>
-            <li>Base gratuita como WhatsApp (chat + llamadas básicas en el futuro).</li>
-            <li>Servicios Premium: traductor voz/llamadas, IA copiloto, GPS inteligente, herramientas extra.</li>
-            <li>Plan Combo económico (volumen masivo) + planes por módulo.</li>
-          </ul>
-          <p class="muted">Aquí luego conectamos pagos (Stripe/MercadoPago) cuando tú decidas.</p>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- CAMERA MODAL -->
-    <div class="modal hidden" id="cameraModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div class="modal-title">Cámara (MVP)</div>
-          <button class="icon-btn" id="btnCloseCamera">✖</button>
-        </div>
-
-        <video id="video" autoplay playsinline class="video"></video>
-
-        <div class="row">
-          <button class="primary" id="btnStartCam">Activar cámara</button>
-          <button class="secondary" id="btnSnap">Tomar foto</button>
-          <button class="secondary" id="btnStopCam">Detener</button>
-        </div>
-
-        <canvas id="canvas" class="hidden"></canvas>
-        <img id="photo" class="photo hidden" alt="captura" />
-
-        <div class="muted" id="camMsg"></div>
-      </div>
     </div>
 
-    <!-- CALLS MODAL (estructura) -->
-    <div class="modal hidden" id="callsModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div class="modal-title">Videollamada (MVP)</div>
-          <button class="icon-btn" id="btnCloseCalls">✖</button>
-        </div>
+</div>
 
-        <p class="muted">
-          Hoy dejamos la interfaz lista. Para videollamada real tipo WhatsApp/Zoom falta el “servidor de señalización”.
-          Si quieres, lo hacemos en fase 2 con un microservicio (Render/Fly) o integración Jitsi.
-        </p>
+<script src="storage.js"></script>
+<script src="memory_store.js"></script>
+<script src="transport.js"></script>
+<script src="assistant.js"></script>
+<script src="arc_madre.js"></script>
+<script src="ui.js"></script>
+<script src="voice.js"></script>
+<script src="features.js"></script>
+<script src="app.js"></script>
 
-        <div class="card">
-          <button class="primary" id="btnPrepareCall">Preparar llamada (cámara/mic)</button>
-          <div class="muted" id="callMsg"></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <script src="/app.js"></script>
 </body>
 </html>
