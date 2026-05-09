@@ -1,0 +1,6 @@
+<h1>✅ Pago exitoso</h1>
+
+<script>
+const user = new URLSearchParams(location.search).get("user");
+fetch("/api/success?user=" + user);
+</script>

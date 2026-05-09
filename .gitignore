@@ -4,3 +4,7 @@ node_modules/
 database.db
 arc-privus.db
 public/messenger/node_modules/
+
+uploads/
+logs/
+config/secrets.js

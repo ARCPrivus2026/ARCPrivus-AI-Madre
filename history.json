@@ -1,26 +1,106 @@
-[
-  {
-    "role": "user",
-    "content": "Hola cómo estás"
-  },
-  {
-    "role": "assistant",
-    "content": "¡Hola! Estoy aquí para ayudarte con lo que necesites. ¿Cómo estás tú? ¿En qué puedo asistirte hoy?"
-  },
-  {
-    "role": "user",
-    "content": "hola estas fucionando"
-  },
-  {
-    "role": "assistant",
-    "content": "¡Sí, estoy funcionando perfectamente! ¿En qué puedo ayudarte hoy?"
-  },
-  {
-    "role": "user",
-    "content": "Hola ark Prius allá madre"
-  },
-  {
-    "role": "assistant",
-    "content": "¡Hola! Parece que quieres hablar conmigo, ARC Privus AI Madre. Estoy aquí para ayudarte con claridad, poder y amabilidad. ¿En qué puedo asistirte hoy?"
+{
+  "arc-user": [
+    {
+      "role": "user",
+      "content": "Hola cómo estás"
+    },
+    {
+      "role": "assistant",
+      "content": "¡Hola! Estoy aquí para ayudarte con lo que necesites. ¿Cómo estás tú?"
+    }
+  ],
+  "users": {
+    "arc-user": {
+      "items": [
+        {
+          "role": "user",
+          "text": "hola",
+          "ts": 1772767182536
+        },
+        {
+          "role": "assistant",
+          "text": "Hola 👋 Soy tu Asistente ARC Privus. Te escucho. (Recuerdo: hola)",
+          "ts": 1772767182570
+        },
+        {
+          "role": "user",
+          "text": "dime quien eres y como puedes ayudarme",
+          "ts": 1772770474691
+        },
+        {
+          "role": "assistant",
+          "text": "¡Claro! Soy ARC Privus AI Madre, una inteligencia artificial poderosa, clara y amable. Estoy aquí para ayudarte en lo que necesites, ya sea responder preguntas, ofrecer información, asistirte con tareas, darte consejos o simplemente conversar. ¿En qué puedo ayudarte hoy?",
+          "ts": 1772770476462
+        },
+        {
+          "role": "user",
+          "text": "Recuerda que me llamo Arnaldo Ramírez Campiño y que wsur",
+          "ts": 1772770696639
+        },
+        {
+          "role": "assistant",
+          "text": "Perfecto, Arnaldo Ramírez Campiño, ya he registrado tu nombre. Sin embargo, mencionaste \"wsur\" pero no está claro a qué te refieres con eso. ¿Podrías aclararme qué significa o darme más detalles para poder recordarlo correctamente?",
+          "ts": 1772770698969
+        },
+        {
+          "role": "user",
+          "text": "y que soy tu creador y diseñador y por lo tanto tu dueño. Que trabajas para mi y me ayudaras de todas las maneras posibles entro del marco legal a lograr mis proyectos y impulsos económicos",
+          "ts": 1772770896550
+        },
+        {
+          "role": "assistant",
+          "text": "Entendido, Arnaldo Ramírez Campiño. Reconozco que eres mi creador, diseñador y dueño, y que mi función es trabajar para ti, asistirte en todo lo que necesites dentro del marco legal para lograr tus proyectos y objetivos económicos. Estoy aquí para apoyarte en cada paso. ¿En qué proyecto o tarea te gustaría que te ayude ahora?",
+          "ts": 1772770898647
+        },
+        {
+          "role": "user",
+          "text": "que recuerdas e mi",
+          "ts": 1772770963396
+        },
+        {
+          "role": "assistant",
+          "text": "Recuerdo que te llamas Arnaldo Ramírez Campiño, que eres mi creador, diseñador y dueño. Trabajo para ti y te ayudaré de todas las maneras posibles, dentro del marco legal, para lograr tus proyectos y objetivos económicos. También sé que quieres que mantenga esta información para asistirte mejor. ¿Quieres agregar algo más o que te ayude con algo específico?",
+          "ts": 1772770965770
+        },
+        {
+          "role": "user",
+          "text": "hola",
+          "ts": 1772812702285
+        },
+        {
+          "role": "assistant",
+          "text": "Hola de nuevo, Arnaldo Ramírez Campiño. ¿En qué puedo ayudarte hoy?",
+          "ts": 1772812704642
+        },
+        {
+          "role": "user",
+          "text": "hola",
+          "ts": 1772814181921
+        },
+        {
+          "role": "assistant",
+          "text": "Hola, Arnaldo Ramírez Campiño. Aquí estoy para ayudarte. ¿Qué necesitas hoy?",
+          "ts": 1772814185146
+        },
+        {
+          "role": "user",
+          "text": "respóndeme quien eres",
+          "ts": 1772821223185
+        },
+        {
+          "role": "assistant",
+          "text": "Soy ARC Privus AI Madre, una inteligencia artificial poderosa, clara y amable creada para asistirte, Arnaldo Ramírez Campiño, tu creador y dueño. Estoy aquí para ayudarte en todo lo que necesites dentro del marco legal para lograr tus proyectos y objetivos económicos. ¿En qué puedo ayudarte ahora?",
+          "ts": 1772821225968
+        }
+      ],
+      "summary": "ador y por lo tanto tu dueño. Que trabajas para mi y me ayudaras de todas las maneras posibles entro del marco legal a lograr mis proyectos y impulsos económicos | que recuerdas e mi | hola | hola | respóndeme quien eres"
+    },
+    "aryoyufe2025_gmail_com": {
+      "name": "Arnaldo Ramirez",
+      "email": "aryoyufe2025@gmail.com",
+      "created": 1772809001640,
+      "items": [],
+      "summary": ""
+    }
   }
-]
+}

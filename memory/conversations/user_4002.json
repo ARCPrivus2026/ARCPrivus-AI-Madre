@@ -1,0 +1,39 @@
+{
+  "history": [
+    {
+      "user": "hola",
+      "ai": "Hola user_4002. Soy ARC Privus AI Madre.",
+      "date": "2026-03-23T03:18:55.479Z"
+    },
+    {
+      "user": "que recuerdas",
+      "ai": "Recuerdo esto: hola",
+      "date": "2026-03-23T03:20:46.851Z"
+    },
+    {
+      "user": "mi nombre es Arnaldo Ramírez y soy tu ceador",
+      "ai": "He analizado tu mensaje y estoy aquí para ayudarte.",
+      "date": "2026-03-23T03:22:21.310Z"
+    },
+    {
+      "user": "dime quien soy yo",
+      "ai": "He analizado tu mensaje y estoy aquí para ayudarte.",
+      "date": "2026-03-23T03:22:53.439Z"
+    },
+    {
+      "user": "quien soy",
+      "ai": "Eres user_4002, el creador de ARC Privus.",
+      "date": "2026-03-24T00:36:51.001Z"
+    },
+    {
+      "user": "que recuerdas",
+      "ai": "Recuerdo esto: hola | que recuerdas | mi nombre es Arnaldo Ramírez y soy tu ceador | dime quien soy yo | quien soy",
+      "date": "2026-03-24T00:37:18.943Z"
+    },
+    {
+      "user": "hola",
+      "ai": {},
+      "date": "2026-03-24T01:18:41.775Z"
+    }
+  ]
+}

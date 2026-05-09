@@ -1,0 +1,62 @@
+{
+  "nodes": {
+    "privus": [
+      "madre"
+    ],
+    "sientes": [
+      "falta"
+    ],
+    "falta": [
+      "sentirte"
+    ],
+    "sentirte": [
+      "completa"
+    ],
+    "completa": [
+      "profecional"
+    ],
+    "puedes": [
+      "desir",
+      "estructurar"
+    ],
+    "desir": [
+      "problema"
+    ],
+    "problema": [
+      "encontro"
+    ],
+    "prius": [
+      "madre"
+    ],
+    "madre": [
+      "prius"
+    ],
+    "estructurar": [
+      "puedes",
+      "fondo"
+    ],
+    "fondo": [
+      "estructurar",
+      "panel"
+    ],
+    "panel": [
+      "fondo",
+      "galaxia"
+    ],
+    "galaxia": [
+      "panel",
+      "conectada"
+    ],
+    "conectada": [
+      "galaxia",
+      "inteligencia"
+    ],
+    "inteligencia": [
+      "conectada",
+      "artificial"
+    ],
+    "artificial": [
+      "inteligencia"
+    ]
+  }
+}

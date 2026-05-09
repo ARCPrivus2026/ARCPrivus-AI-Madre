@@ -1,0 +1,136 @@
+{
+  "modules": [
+    {
+      "name": "ai_orchestrator",
+      "role": "coordination",
+      "createdAt": "2026-04-05T22:35:57.879Z"
+    },
+    {
+      "name": "ai_learning",
+      "role": "learning",
+      "createdAt": "2026-04-05T22:35:57.902Z"
+    },
+    {
+      "name": "ai_brain_map",
+      "role": "knowledge_map",
+      "createdAt": "2026-04-05T22:35:57.904Z"
+    },
+    {
+      "name": "ai_goals_engine",
+      "role": "goals",
+      "createdAt": "2026-04-05T22:35:57.905Z"
+    },
+    {
+      "name": "ai_global_knowledge",
+      "role": "knowledge",
+      "createdAt": "2026-04-05T22:35:57.907Z"
+    },
+    {
+      "name": "ai_absorption_engine",
+      "role": "absorption",
+      "createdAt": "2026-04-05T22:35:57.908Z"
+    },
+    {
+      "name": "ai_capability_synthesizer",
+      "role": "synthesis",
+      "createdAt": "2026-04-05T22:35:57.910Z"
+    },
+    {
+      "name": "ai_civilization_builder",
+      "role": "system_design",
+      "createdAt": "2026-04-05T22:35:57.911Z"
+    },
+    {
+      "name": "ai_strategic_brain",
+      "role": "strategy",
+      "createdAt": "2026-04-05T22:35:57.913Z"
+    },
+    {
+      "name": "ai_conscious_monitor",
+      "role": "monitoring",
+      "createdAt": "2026-04-05T22:35:57.915Z"
+    },
+    {
+      "name": "ai_global_observer",
+      "role": "world_observer",
+      "createdAt": "2026-04-05T22:35:57.916Z"
+    },
+    {
+      "name": "ai_self_expansion_engine",
+      "role": "expansion",
+      "createdAt": "2026-04-05T22:35:57.918Z"
+    },
+    {
+      "name": "ai_recursive_intelligence",
+      "role": "self_analysis",
+      "createdAt": "2026-04-05T22:35:57.920Z"
+    },
+    {
+      "name": "ai_universal_integrator",
+      "role": "integration",
+      "createdAt": "2026-04-05T22:35:57.922Z"
+    }
+  ],
+  "apps": [
+    {
+      "name": "ARC Privus Messenger",
+      "type": "messaging",
+      "createdAt": "2026-04-05T22:35:56.302Z"
+    },
+    {
+      "name": "ARC Privus AI Madre",
+      "type": "core_ai",
+      "createdAt": "2026-04-05T22:35:57.851Z"
+    },
+    {
+      "name": "ARC Privus Trading",
+      "type": "finance",
+      "createdAt": "2026-04-05T22:35:57.858Z"
+    },
+    {
+      "name": "ARC Privus Publicidad",
+      "type": "ads",
+      "createdAt": "2026-04-05T22:35:57.859Z"
+    }
+  ],
+  "links": [
+    {
+      "from": "ARC Privus AI Madre",
+      "to": "ARC Privus Messenger",
+      "relation": "controls",
+      "createdAt": "2026-04-05T22:35:57.924Z"
+    },
+    {
+      "from": "ARC Privus AI Madre",
+      "to": "ARC Privus Trading",
+      "relation": "controls",
+      "createdAt": "2026-04-05T22:35:58.021Z"
+    },
+    {
+      "from": "ARC Privus AI Madre",
+      "to": "ARC Privus Publicidad",
+      "relation": "controls",
+      "createdAt": "2026-04-05T22:35:58.046Z"
+    },
+    {
+      "from": "ai_orchestrator",
+      "to": "ARC Privus AI Madre",
+      "relation": "coordinates",
+      "createdAt": "2026-04-05T22:35:58.053Z"
+    },
+    {
+      "from": "ai_learning",
+      "to": "ARC Privus AI Madre",
+      "relation": "feeds",
+      "createdAt": "2026-04-05T22:35:58.058Z"
+    },
+    {
+      "from": "ai_brain_map",
+      "to": "ARC Privus AI Madre",
+      "relation": "supports",
+      "createdAt": "2026-04-05T22:35:58.060Z"
+    }
+  ],
+  "status": "active",
+  "updatedAt": "2026-04-05T22:35:58.060Z"
+}

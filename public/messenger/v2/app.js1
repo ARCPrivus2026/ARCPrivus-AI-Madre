@@ -1,0 +1,223 @@
+/* ===============================
+   CONEXIÓN SOCKET
+================================ */
+
+const socket = typeof io !== "undefined" ? io() : null;
+
+console.log("Conectado al servidor en tiempo real");
+console.log("ARC PRIVUS OK");
+
+/* ===============================
+   INICIO
+================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+const messages = document.getElementById("messages");
+const input = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+
+if(!messages || !input || !sendBtn){
+console.error("Elementos del chat no encontrados");
+return;
+}
+
+/* ===============================
+   USUARIO REAL
+================================ */
+
+let currentUser = localStorage.getItem("arcUser");
+
+async function registerIfNeeded(){
+
+if(!currentUser){
+
+const name = prompt("Ingresa tu nombre:");
+const email = prompt("Ingresa tu correo:");
+
+try{
+
+const res = await fetch("/api/register",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({name,email})
+});
+
+const data = await res.json();
+
+currentUser = name;
+localStorage.setItem("arcUser",name);
+
+console.log("Usuario registrado:",data);
+
+}catch(e){
+
+currentUser = "user_" + Math.floor(Math.random()*10000);
+localStorage.setItem("arcUser",currentUser);
+
+}
+
+}
+
+}
+
+registerIfNeeded();
+
+/* ===============================
+   UI MENSAJES
+================================ */
+
+function addMessage(text,type="bot"){
+
+const div=document.createElement("div");
+div.className="bubble "+type;
+div.innerHTML=text;
+
+messages.appendChild(div);
+messages.scrollTop=messages.scrollHeight;
+
+}
+
+/* ===============================
+   ENVIAR MENSAJE
+================================ */
+
+async function sendMessage(){
+
+const msg=input.value.trim();
+
+if(!msg) return;
+
+addMessage(msg,"me");
+input.value="";
+
+/* guardar actividad */
+fetch("/api/activity",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+user:currentUser,
+action:"send_message"
+})
+}).catch(()=>{});
+
+/* IA */
+
+try{
+
+const res = await fetch("/api/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+userId:currentUser,
+message:msg
+})
+});
+
+const data = await res.json();
+
+if(data && data.reply){
+
+addMessage(data.reply,"bot");
+
+}else{
+
+addMessage("IA no respondió","bot");
+
+}
+
+}catch(err){
+
+console.error("Error IA:",err);
+addMessage("Error conectando con IA","bot");
+
+}
+
+}
+
+/* ===============================
+   BOTÓN PRO
+================================ */
+
+async function upgradePlan(){
+
+try{
+
+const res = await fetch("/api/upgrade",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+user:currentUser,
+plan:"pro"
+})
+});
+
+const data = await res.json();
+
+addMessage("🔥 Plan PRO activado","bot");
+
+}catch(e){
+
+addMessage("Error activando PRO","bot");
+
+}
+
+}
+
+/* ===============================
+   EVENTOS
+================================ */
+
+sendBtn.addEventListener("click",sendMessage);
+
+input.addEventListener("keydown",(e)=>{
+
+if(e.key==="Enter"){
+e.preventDefault();
+sendMessage();
+}
+
+});
+
+/* ===============================
+   SOCKET
+================================ */
+
+if(socket){
+
+socket.on("connect",()=>{
+console.log("Socket conectado");
+});
+
+socket.on("chat-message",(data)=>{
+if(data.message){
+addMessage(data.message,"bot");
+}
+});
+
+}
+
+/* ===============================
+   LOGO DINÁMICO
+================================ */
+
+fetch("/api/ui/logo")
+.then(res=>res.json())
+.then(data=>{
+const logo = document.getElementById("logo");
+if(logo){
+logo.src = data.logo;
+}
+});
+
+/* ===============================
+   MENSAJE INICIAL
+================================ */
+
+addMessage("ARC Privus IA lista 🚀","bot");
+
+window.upgradePlan = upgradePlan;
+
+});

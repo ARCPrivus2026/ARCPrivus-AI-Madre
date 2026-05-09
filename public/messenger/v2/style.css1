@@ -1,0 +1,390 @@
+/* =====================================================
+CONFIGURACIÓN GENERAL
+===================================================== */
+
+body{
+margin:0;
+font-family:Arial;
+background:url("./assets/fondo-azul.jpg");
+background-size:cover;
+background-position:center;
+color:white;
+overflow:hidden;
+}
+
+/* =====================================================
+LANDING PRINCIPAL
+===================================================== */
+
+.landing{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+position:relative;
+}
+
+.center{
+text-align:center;
+z-index:2;
+}
+
+.title{
+font-size:32px;
+font-weight:bold;
+margin-top:20px;
+}
+
+.subtitle{
+opacity:0.7;
+margin-top:10px;
+}
+
+/* =====================================================
+PANTERA
+===================================================== */
+
+#pantera{
+width:260px;
+cursor:pointer;
+transition:0.4s;
+}
+
+#pantera:hover{
+transform:scale(1.1);
+}
+
+/* =====================================================
+LOGO
+===================================================== */
+
+.logo{
+width:120px;
+margin-top:20px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.logo.zoom{
+transform:scale(1.5);
+}
+
+.logo-img{
+width:44px;
+height:44px;
+border-radius:12px;
+object-fit:cover;
+}
+
+/* =====================================================
+BOTONES
+===================================================== */
+
+.buttons{
+margin-top:30px;
+display:flex;
+gap:20px;
+justify-content:center;
+}
+
+.btn{
+background:#00a884;
+border:none;
+padding:14px 22px;
+border-radius:8px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+text-decoration:none;
+}
+
+.btn.glow{
+box-shadow:0 0 15px #00a884;
+}
+
+/* =====================================================
+TIERRA ANIMADA
+===================================================== */
+
+.earth{
+position:absolute;
+bottom:-200px;
+width:600px;
+height:600px;
+background:url("./assets/earth.png");
+background-size:cover;
+border-radius:50%;
+animation:rotate 120s linear infinite;
+opacity:0.4;
+}
+
+@keyframes rotate{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
+}
+
+/* =====================================================
+FONDO IA
+===================================================== */
+
+#bgAI{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* =====================================================
+PANEL IA
+===================================================== */
+
+.ai-control-panel{
+position:absolute;
+top:90px;
+right:20px;
+width:320px;
+background:rgba(5,15,40,0.65);
+border-radius:14px;
+padding:15px;
+backdrop-filter:blur(6px);
+box-shadow:0 0 20px rgba(0,255,255,0.15);
+z-index:5;
+}
+
+.ai-panel-title{
+font-size:13px;
+font-weight:bold;
+margin-bottom:10px;
+color:#00ffff;
+}
+
+.ai-panel-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.ai-panel-card{
+background:rgba(255,255,255,0.06);
+border-radius:10px;
+padding:10px;
+text-align:center;
+transition:0.3s;
+}
+
+.ai-panel-card:hover{
+background:rgba(0,255,255,0.12);
+transform:scale(1.05);
+}
+
+.ai-card-title{
+font-size:11px;
+opacity:0.7;
+}
+
+.ai-card-value{
+font-size:18px;
+font-weight:bold;
+margin-top:4px;
+color:#5cff9a;
+}
+
+/* =====================================================
+ESTRUCTURA GENERAL
+===================================================== */
+
+.main{
+display:grid;
+grid-template-columns:260px 360px 1fr;
+height:100vh;
+overflow:hidden;
+gap:10px;
+padding:10px;
+}
+
+.sidebar{
+grid-column:1;
+}
+
+.chat-area{
+grid-column:3;
+display:flex;
+flex-direction:column;
+}
+
+/* =====================================================
+PANEL DEL MESSENGER
+===================================================== */
+
+#messengerPanel{
+position:absolute;
+top:160px;
+left:320px;
+right:40px;
+bottom:120px;
+background:rgba(0,0,0,0.35);
+border-radius:20px;
+overflow-y:auto;
+padding:20px;
+}
+
+#chat{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+/* =====================================================
+NÚCLEO IA
+===================================================== */
+
+.ai-core{
+position:absolute;
+left:50%;
+top:60%;
+transform:translate(-50%,-50%);
+width:120px;
+height:120px;
+border-radius:50%;
+background:radial-gradient(circle,#00f2ff,#0044ff);
+box-shadow:
+0 0 40px #00e5ff,
+0 0 80px #0088ff,
+0 0 120px #0044ff;
+animation:corePulse 3s infinite;
+z-index:3;
+}
+
+@keyframes corePulse{
+0%{
+transform:translate(-50%,-50%) scale(1);
+box-shadow:0 0 30px #00e5ff,0 0 60px #0088ff;
+}
+50%{
+transform:translate(-50%,-50%) scale(1.2);
+box-shadow:0 0 80px #00e5ff,0 0 140px #0088ff,0 0 200px #0044ff;
+}
+100%{
+transform:translate(-50%,-50%) scale(1);
+box-shadow:0 0 30px #00e5ff,0 0 60px #0088ff;
+}
+}
+
+/* =====================================================
+PANTERA RESPIRACIÓN
+===================================================== */
+
+.ai-panther-bg{
+animation:pantherBreath 8s ease-in-out infinite;
+}
+
+@keyframes pantherBreath{
+0%{transform:scale(1);filter:drop-shadow(0 0 15px #00e5ff);}
+50%{transform:scale(1.03);filter:drop-shadow(0 0 35px #00e5ff);}
+100%{transform:scale(1);filter:drop-shadow(0 0 15px #00e5ff);}
+}
+
+/* =====================================================
+PANEL USUARIOS EN LÍNEA
+===================================================== */
+
+.users-box{
+margin:12px;
+padding:12px;
+background:rgba(255,255,255,0.06);
+border-radius:14px;
+backdrop-filter:blur(4px);
+max-height:180px;
+overflow-y:auto;
+box-shadow:0 0 10px rgba(0,255,255,0.15);
+}
+
+.users-title{
+font-size:13px;
+font-weight:bold;
+margin-bottom:10px;
+color:#00ffff;
+}
+
+.users-panel{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.user-online{
+padding:8px 10px;
+border-radius:10px;
+background:rgba(0,255,180,0.08);
+color:#7dffbf;
+font-size:13px;
+}
+
+.user-online::before{
+content:"● ";
+color:#00ff9c;
+font-weight:bold;
+margin-right:4px;
+}
+
+/* =====================================================
+ESTRUCTURA CHAT
+===================================================== */
+
+#app{
+width:100%;
+height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+header{
+background:#0a1c3a;
+padding:15px;
+display:flex;
+justify-content:space-between;
+}
+
+#messages{
+flex:1;
+padding:20px;
+overflow-y:auto;
+}
+
+.msg{
+background:#132850;
+padding:10px;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.ai{
+background:#0b3b2e;
+}
+
+.user{
+background:#2b2b2b;
+}
+
+#inputArea{
+display:flex;
+padding:10px;
+background:#08152b;
+}
+
+#messageInput{
+flex:1;
+padding:10px;
+border:none;
+outline:none;
+}
+
+button{
+padding:10px 20px;
+background:#0078ff;
+color:white;
+border:none;
+}

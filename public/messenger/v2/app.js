@@ -1,248 +1,196 @@
-document.addEventListener("DOMContentLoaded", () => {
+let currentUser = null;
+let currentChat = null;
 
-  const chatList = document.getElementById("chatList");
-  const messages = document.getElementById("messages");
-  const emptyState = document.getElementById("emptyState");
+const socket = io();
 
-  const activeName = document.getElementById("activeName");
-  const activeSub = document.getElementById("activeSub");
+// =====================
+// AUTH
+// =====================
 
-  const messageInput = document.getElementById("messageInput");
-  const sendBtn = document.getElementById("sendBtn");
+async function register() {
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
 
-  const btnMenu = document.getElementById("btnMenu");
-  const menuDropdown = document.getElementById("menuDropdown");
-
-  const searchInput = document.getElementById("searchInput");
-  const chips = document.querySelectorAll(".chip");
-
-  // ======================
-  // DATOS DEMO
-  // ======================
-
-  let chats = [
-    { id: "c1", name: "Natalia", type: "contact", last: "¿Listo el diseño 2.0?", time: "19:55", unread: 2, online: true, messages: [
-      { from:"them", text:"¿Listo el diseño 2.0?", time:"19:55", checks:"" }
-    ]},
-    { id: "c2", name: "Grupo ARC Privus", type: "group", last: "Revisar logo y fondo", time: "18:40", unread: 0, online: false, messages: [
-      { from:"them", text:"Revisar logo y fondo", time:"18:40", checks:"" }
-    ]},
-    { id: "c3", name: "Asistente (IA)", type: "contact", last: "Pregúntame lo que quieras.", time: "17:10", unread: 0, online: true, messages: [
-      { from:"them", text:"Pregúntame lo que quieras.", time:"17:10", checks:"" }
-    ]},
-  ];
-
-  let activeChatId = null;
-  let activeFilter = "all";
-
-  // ======================
-  // UTILIDADES
-  // ======================
-
-  function escapeHtml(str){
-    return str.replace(/[&<>"']/g, m => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      "\"":"&quot;",
-      "'":"&#039;"
-    })[m]);
-  }
-
-  function nowTime(){
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2,"0");
-    const mm = String(now.getMinutes()).padStart(2,"0");
-    return `${hh}:${mm}`;
-  }
-
-  // ======================
-  // RENDER CHAT LIST
-  // ======================
-
-  function renderChatList(){
-
-    const q = (searchInput.value || "").toLowerCase().trim();
-
-    let filtered = chats.filter(c => c.name.toLowerCase().includes(q));
-
-    if (activeFilter === "unread") filtered = filtered.filter(c => c.unread > 0);
-    if (activeFilter === "groups") filtered = filtered.filter(c => c.type === "group");
-
-    chatList.innerHTML = filtered.map(c => {
-
-      const isActive = c.id === activeChatId;
-
-      return `
-        <div class="chat-item ${isActive ? "active" : ""}" data-id="${c.id}">
-          <div class="avatar"></div>
-          <div class="chat-meta">
-            <div class="chat-name">${escapeHtml(c.name)}</div>
-            <div class="chat-last">${escapeHtml(c.last)}</div>
-          </div>
-          <div class="chat-right">
-            <div class="chat-time">${escapeHtml(c.time)}</div>
-            ${c.unread > 0 ? `<div class="badge">${c.unread}</div>` : ``}
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    chatList.querySelectorAll(".chat-item").forEach(item => {
-      item.addEventListener("click", () => openChat(item.dataset.id));
-    });
-  }
-
-  // ======================
-  // ABRIR CHAT
-  // ======================
-
-  function openChat(chatId){
-
-    activeChatId = chatId;
-    const chat = chats.find(c => c.id === chatId);
-    if (!chat) return;
-
-    chat.unread = 0;
-
-    activeName.textContent = chat.name;
-    activeSub.textContent = chat.online ? "En línea" : "Visto recientemente";
-
-    emptyState.style.display = "none";
-
-    renderMessages(chat);
-    renderChatList();
-    messages.scrollTop = messages.scrollHeight;
-  }
-
-  // ======================
-  // RENDER MENSAJES
-  // ======================
-
-  function renderMessages(chat){
-
-    const html = chat.messages.map(m => {
-
-      const checks = m.from === "me"
-        ? `<span class="checks">${m.checks || "✓✓"}</span>`
-        : "";
-
-      return `
-        <div class="bubble ${m.from === "me" ? "me" : "them"}">
-          <div>${escapeHtml(m.text)}</div>
-          <div class="meta">
-            <span>${escapeHtml(m.time)}</span>
-            ${checks}
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    messages.innerHTML = html;
-  }
-
-  // ======================
-  // ENVIAR MENSAJE
-  // ======================
-
-  async function sendMessage(){
-
-    if (!activeChatId) return;
-
-    const txt = messageInput.value.trim();
-    if (!txt) return;
-
-    const chat = chats.find(c => c.id === activeChatId);
-    if (!chat) return;
-
-    const time = nowTime();
-
-    // Agregar mensaje del usuario
-    chat.messages.push({
-      from:"me",
-      text: txt,
-      time,
-      checks:"✓✓"
-    });
-
-    chat.last = txt;
-    chat.time = time;
-
-    messageInput.value = "";
-
-    renderMessages(chat);
-    renderChatList();
-    messages.scrollTop = messages.scrollHeight;
-
-    // ======================
-    // SOLO SI ES IA
-    // ======================
-
-    if (chat.name === "Asistente (IA)") {
-
-      try {
-
-        const response = await fetch("/api/server", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ message: txt })
-        });
-
-        const data = await response.json();
-
-        const replyTime = nowTime();
-
-        chat.messages.push({
-          from:"them",
-          text: data.reply || "Sin respuesta.",
-          time: replyTime
-        });
-
-        chat.last = data.reply || "Sin respuesta.";
-        chat.time = replyTime;
-
-        renderMessages(chat);
-        renderChatList();
-        messages.scrollTop = messages.scrollHeight;
-
-      } catch (err) {
-        console.error("Error IA:", err);
-      }
-    }
-  }
-
-  // ======================
-  // EVENTOS
-  // ======================
-
-  sendBtn.addEventListener("click", sendMessage);
-
-  messageInput.addEventListener("keypress", e => {
-    if (e.key === "Enter") sendMessage();
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ user, pass })
   });
 
-  chips.forEach(ch => ch.addEventListener("click", () => {
-    chips.forEach(x => x.classList.remove("active"));
-    ch.classList.add("active");
-    activeFilter = ch.dataset.filter;
-    renderChatList();
-  }));
+  const data = await res.json();
 
-  searchInput.addEventListener("input", renderChatList);
+  if (data.error) return alert(data.error);
 
-  btnMenu.addEventListener("click", (e) => {
-    e.stopPropagation();
-    menuDropdown.hidden = !menuDropdown.hidden;
+  alert("Cuenta creada. Ahora inicia sesión.");
+}
+
+async function login() {
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ user, pass })
   });
 
-  document.addEventListener("click", () => menuDropdown.hidden = true);
+  const data = await res.json();
 
-  // ======================
-  // INIT
-  // ======================
+  if (data.error) return alert(data.error);
 
-  renderChatList();
+  currentUser = data.user;
 
+  document.getElementById("login").style.display = "none";
+  document.getElementById("app").style.display = "flex";
+
+  loadPlan();
+  loadChats();
+}
+
+// =====================
+// PLAN
+// =====================
+
+async function loadPlan() {
+  const res = await fetch(`/api/plan?userId=${currentUser}`);
+  const data = await res.json();
+
+  document.getElementById("planText").innerText = "Plan: " + data.plan;
+}
+
+// =====================
+// CHATS
+// =====================
+
+async function loadChats() {
+  const res = await fetch(`/api/chats?userId=${currentUser}`);
+  const data = await res.json();
+
+  const list = document.getElementById("chatList");
+  list.innerHTML = "";
+
+  data.chats.forEach(chat => {
+    const div = document.createElement("div");
+    div.innerText = chat.name;
+
+    div.onclick = () => openChat(chat._id, chat.name);
+
+    list.appendChild(div);
+  });
+
+  if (data.chats.length > 0) {
+    openChat(data.chats[0]._id, data.chats[0].name);
+  }
+}
+
+async function newChat() {
+  const name = prompt("Nombre del chat:");
+  if (!name) return;
+
+  const res = await fetch("/api/chats", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ userId: currentUser, name })
+  });
+
+  const data = await res.json();
+
+  loadChats();
+}
+
+// =====================
+// CHAT
+// =====================
+
+async function openChat(chatId, name) {
+  currentChat = chatId;
+
+  document.getElementById("chatName").innerText = name;
+
+  socket.emit("join", chatId);
+
+  const res = await fetch(`/api/chat/history?userId=${currentUser}&chatId=${chatId}`);
+  const data = await res.json();
+
+  const box = document.getElementById("messages");
+  box.innerHTML = "";
+
+  data.history.forEach(m => {
+    addMessage(m.role === "user" ? "user" : "ai", m.content);
+  });
+}
+
+// =====================
+// SEND
+// =====================
+
+async function send() {
+  const input = document.getElementById("input");
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  // ⚠️ VALIDACIÓN CLAVE
+  if (!currentChat) {
+    alert("Primero selecciona o crea un chat");
+    return;
+  }
+
+  addMessage("user", text);
+  input.value = "";
+
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      message: text,
+      userId: currentUser,
+      chatId: currentChat
+    })
+  });
+
+  const data = await res.json();
+
+  addMessage("ai", data.reply);
+}
+
+// =====================
+// QUICK ASK
+// =====================
+
+function quickAsk(text) {
+  document.getElementById("input").value = text;
+  send();
+}
+
+// =====================
+// UI
+// =====================
+
+function addMessage(type, text) {
+  const box = document.getElementById("messages");
+
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+
+  div.innerText = text;
+
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+// =====================
+// LOGOUT
+// =====================
+
+function logout() {
+  location.reload();
+}
+
+// =====================
+// SOCKET (opcional)
+// =====================
+
+socket.on("message", (data) => {
+  // puedes usar esto para mensajes en tiempo real
 });

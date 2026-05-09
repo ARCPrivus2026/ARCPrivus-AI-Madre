@@ -1,0 +1,26 @@
+.ai-body {
+    margin: 0;
+    height: 100vh;
+
+    background: url("./assets/fondo-ai-madre.png") no-repeat center center fixed;
+    background-size: cover;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* PANEL CENTRAL */
+.ai-container {
+    text-align: center;
+    color: white;
+    background: rgba(0,0,0,0.6);
+    padding: 40px;
+    border-radius: 15px;
+}
+
+/* LOGO */
+.ai-logo {
+    width: 100px;
+    margin-bottom: 20px;
+}

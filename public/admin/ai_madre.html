@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<title>ARC Privus AI Madre</title>
+
+<style>
+
+body{
+background:#061225;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+h1{
+color:#00eaff;
+}
+
+.panel{
+width:80%;
+margin:auto;
+margin-top:30px;
+padding:20px;
+background:#0b1f3a;
+border-radius:10px;
+}
+
+.box{
+margin:20px;
+padding:15px;
+background:#132b4f;
+border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>ARC PRIVUS AI MADRE</h1>
+
+<div class="panel">
+
+<div class="box">
+<h2>Estado del sistema</h2>
+<p id="status">Cargando...</p>
+</div>
+
+<div class="box">
+<h2>Evolución</h2>
+<pre id="evolution"></pre>
+</div>
+
+<div class="box">
+<h2>Capacidades detectadas</h2>
+<pre id="capabilities"></pre>
+</div>
+
+</div>
+
+<script>
+
+async function loadEvolution(){
+
+const res = await fetch("/api/evolution");
+
+const data = await res.json();
+
+document.getElementById("evolution").textContent =
+JSON.stringify(data,null,2);
+
+}
+
+async function loadCapabilities(){
+
+const res = await fetch("/api/capabilities");
+
+const data = await res.json();
+
+document.getElementById("capabilities").textContent =
+JSON.stringify(data,null,2);
+
+}
+
+function setStatus(){
+
+document.getElementById("status").textContent =
+"AI Madre activa";
+
+}
+
+setStatus();
+
+loadEvolution();
+
+loadCapabilities();
+
+</script>
+
+</body>
+</html>

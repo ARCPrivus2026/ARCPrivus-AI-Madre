@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "ARC Privus Messenger - API REST",
+    "description": "Colección de endpoints para ARC Privus Messenger",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Registro de usuario",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/users/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Arnaldo\",\n  \"email\": \"arnaldo@arcprivus.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Inicio de sesión",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/users/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"arnaldo@arcprivus.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Perfil de usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/api/users/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Planes",
+      "item": [
+        {
+          "name": "Listar planes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/plans"
+          }
+        },
+        {
+          "name": "Activar plan",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/plans/activate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"planId\": 2\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mensajes",
+      "item": [
+        {
+          "name": "Enviar mensaje",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/messages",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipientId\": 2,\n  \"content\": \"Hola Lucía, ¿cómo va todo?\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar mensajes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/messages/:chatId"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Traducción",
+      "item": [
+        {
+          "name": "Traducción de texto",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/translate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Hola, ¿cómo estás?\",\n  \"targetLang\": \"en\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Multimedia",
+      "item": [
+        {
+          "name": "Subir archivo",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/media/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "token", "value": "" }
+  ]
+}

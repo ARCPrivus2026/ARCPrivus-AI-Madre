@@ -1,0 +1,49 @@
+{
+  "history": [
+    {
+      "user": "hola",
+      "ai": "Hola usuario. Soy ARC Privus AI Madre.",
+      "date": "2026-03-29T04:30:14.833Z"
+    },
+    {
+      "user": "como puedes ayudadme",
+      "ai": "Estoy aquí para ayudarte dentro del sistema ARC Privus.",
+      "date": "2026-03-29T04:31:11.679Z"
+    },
+    {
+      "user": "hola soy Arnaldo Ramírez Campiño tu diseñador y creador",
+      "ai": "Hola usuario. Soy ARC Privus AI Madre.",
+      "date": "2026-03-29T12:12:16.105Z"
+    },
+    {
+      "user": "y me puedes explicar tu funciones",
+      "ai": "He analizado tu mensaje. Estoy aquí para ayudarte con ARC Privus.",
+      "date": "2026-03-29T12:13:14.113Z"
+    },
+    {
+      "user": "hola",
+      "ai": "Hola usuario. Soy ARC Privus AI Madre.",
+      "date": "2026-03-29T12:17:10.207Z"
+    },
+    {
+      "user": "quien eres y como puedes ayudarme",
+      "ai": "Soy ARC Privus AI Madre, la inteligencia central del ecosistema ARC Privus.",
+      "date": "2026-03-29T12:19:02.625Z"
+    },
+    {
+      "user": "hola",
+      "ai": "Hola usuario. ¿Qué quieres construir hoy en ARC Privus?",
+      "date": "2026-03-29T16:15:30.965Z"
+    },
+    {
+      "user": "hola",
+      "ai": "La IA encontró un problema ejecutando el agente.",
+      "date": "2026-04-21T03:19:23.947Z"
+    },
+    {
+      "user": "hola",
+      "ai": "La IA encontró un problema ejecutando el agente.",
+      "date": "2026-04-21T03:19:40.572Z"
+    }
+  ]
+}

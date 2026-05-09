@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Chat ARC Privus</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.msg {
+    margin: 5px 0;
+}
+
+.user { color: #38bdf8; }
+.ai { color: #22c55e; }
+
+#box {
+    display: flex;
+    border-top: 1px solid #333;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+}
+
+button {
+    padding: 10px;
+    background: #22c55e;
+    border: none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="chat"></div>
+
+<div id="box">
+    <input id="msg" placeholder="Escribe..." />
+    <button onclick="send()">Enviar</button>
+</div>
+
+<script>
+async function send() {
+    const input = document.getElementById("msg");
+    const text = input.value;
+
+    if (!text) return;
+
+    add("Tú: " + text, "user");
+
+    const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: text,
+            userId: "demo"
+        })
+    });
+
+    const data = await res.json();
+add("IA: " + (data.respuesta || data.reply || "Sin respuesta"), "ai");
+    input.value = "";
+}
+
+function add(text, type) {
+    const chat = document.getElementById("chat");
+    const div = document.createElement("div");
+    div.className = "msg " + type;
+    div.textContent = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+</script>
+
+</body>
+</html>

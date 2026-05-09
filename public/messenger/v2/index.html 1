@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ARC Privus Messenger</title>
+
+<style>
+
+/* =========================
+   VARIABLES
+========================= */
+:root{
+  --bg-main:#061225;
+  --bg-side:#081832;
+  --bg-chat:#0c2f8f;
+  --bg-panel:#0a1f44;
+  --cyan:#00ffff;
+  --blue:#1fb6ff;
+  --blue-2:#2563ff;
+  --green:#5cff9a;
+  --text:#ffffff;
+  --line:rgba(255,255,255,0.08);
+}
+
+/* =========================
+   BASE
+========================= */
+html,body{
+  margin:0;
+  height:100%;
+  font-family:Arial;
+  background:#061225;
+  background-image:url("assets/fondo-ai-madre.png");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  color:white;
+}
+
+/* =========================
+   APP
+========================= */
+.app{
+  display:flex;
+  height:100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar{
+  width:280px;
+  background:#081832;
+  border-right:1px solid var(--line);
+  padding:10px;
+}
+
+.logo-img{
+  width:44px;
+  border-radius:10px;
+  border:2px solid rgba(0,255,255,0.4);
+}
+
+/* =========================
+   HEADER
+========================= */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px;
+  background:rgba(0,0,0,0.2);
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* =========================
+   LOGO IA VIVO
+========================= */
+.ai-avatar{
+  position:relative;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  overflow:hidden;
+}
+
+.ai-avatar img{
+  width:100%;
+  height:100%;
+}
+
+.ai-avatar::after{
+  content:"";
+  position:absolute;
+  inset:-6px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,255,255,0.4), transparent 70%);
+  opacity:0;
+}
+
+.ai-idle::after{
+  opacity:0.3;
+  animation:aiPulse 3s infinite;
+}
+
+.ai-speaking::after{
+  opacity:0.6;
+  animation:aiGlow 1s infinite alternate;
+}
+
+.ai-thinking::after{
+  opacity:0.5;
+  animation:aiThinking 0.6s infinite;
+}
+
+.ai-error::after{
+  opacity:0.7;
+  background:red;
+}
+
+@keyframes aiPulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+  100%{transform:scale(1);}
+}
+
+@keyframes aiGlow{
+  from{transform:scale(1);}
+  to{transform:scale(1.2);}
+}
+
+@keyframes aiThinking{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.2);}
+  100%{transform:scale(1);}
+}
+
+/* =========================
+   CHAT
+========================= */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.chat{
+  flex:1;
+  overflow:auto;
+  padding:20px;
+}
+
+.msg{
+  margin:10px 0;
+}
+
+.user{
+  text-align:right;
+}
+
+.ai{
+  text-align:left;
+}
+
+/* =========================
+   INPUT
+========================= */
+.input{
+  display:flex;
+  padding:10px;
+  border-top:1px solid var(--line);
+}
+
+.input input{
+  flex:1;
+  padding:10px;
+  border-radius:20px;
+  border:none;
+}
+
+button{
+  margin-left:10px;
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  background:#2563ff;
+  color:white;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <img src="assets/logo-messenger.png" class="logo-img">
+  <h3>ARC Privus</h3>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- HEADER -->
+<div class="header">
+
+  <div class="header-left">
+    <div class="ai-avatar ai-idle" id="aiAvatar">
+      <img src="assets/logo-ai-madre.png">
+    </div>
+    <div>AI Madre</div>
+  </div>
+
+</div>
+
+<!-- CHAT -->
+<div class="chat" id="chat"></div>
+
+<!-- INPUT -->
+<div class="input">
+  <input id="msgInput" placeholder="Escribe...">
+  <button onclick="send()">Enviar</button>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* =========================
+   ESTADO IA
+========================= */
+const aiAvatar = document.getElementById("aiAvatar");
+
+function setAIState(state){
+  aiAvatar.className = "ai-avatar " + state;
+}
+
+setAIState("ai-idle");
+
+/* =========================
+   CHAT
+========================= */
+async function send(){
+
+  const input = document.getElementById("msgInput");
+  const msg = input.value;
+  if(!msg) return;
+
+  addMsg(msg,"user");
+  input.value="";
+
+  setAIState("ai-thinking");
+
+  try{
+
+    const res = await fetch("/api/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message:msg})
+    });
+
+    const data = await res.json();
+
+    addMsg(data.reply,"ai");
+
+    setAIState("ai-speaking");
+
+    setTimeout(()=>{
+      setAIState("ai-idle");
+    },1500);
+
+  }catch(e){
+
+    setAIState("ai-error");
+
+  }
+
+}
+
+function addMsg(text,type){
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.innerText = text;
+  document.getElementById("chat").appendChild(div);
+}
+
+/* =========================
+   LOGOS DINÁMICOS
+========================= */
+async function loadLogos(){
+
+  try{
+
+    const res = await fetch("/api/ui/logo");
+    const data = await res.json();
+
+    document.querySelector(".logo-img").src = data.messenger;
+    document.querySelector(".ai-avatar img").src = data.ai;
+
+  }catch(e){
+    console.warn("Error logos");
+  }
+
+}
+
+loadLogos();
+
+/* =========================
+   PROTECCIÓN IMÁGENES
+========================= */
+document.querySelectorAll("img").forEach(img=>{
+  img.onerror = ()=>{
+    img.style.display="none";
+  };
+});
+
+</script>
+
+</body>
+</html>

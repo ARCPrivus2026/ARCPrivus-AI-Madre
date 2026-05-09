@@ -1,62 +1,74 @@
-import express from "express";
-import bcrypt from "bcrypt";
-import db from "../db.js";
-
+const express = require("express");
 const router = express.Router();
+const db = require("../database/db");
 
-// Registro
-router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ error: "Faltan datos." });
-  }
+// =========================
+// REGISTRO
+// =========================
 
-  const existing = db
-    .prepare("SELECT * FROM users WHERE email = ?")
-    .get(email);
+router.post("/register", (req,res)=>{
 
-  if (existing) {
-    return res.status(400).json({ error: "Correo ya registrado." });
-  }
+ const {name,email,password} = req.body;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+ if(!name || !email || !password){
+   return res.json({
+     ok:false,
+     message:"Datos incompletos"
+   });
+ }
 
-  db.prepare(`
-    INSERT INTO users (name, email, password, created_at)
-    VALUES (?, ?, ?, ?)
-  `).run(name, email, hashedPassword, new Date().toISOString());
+ db.run(
+  "INSERT INTO users (name,email,password) VALUES (?,?,?)",
+  [name,email,password],
+  function(err){
 
-  res.json({ success: true });
-});
-
-// Login
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = db
-    .prepare("SELECT * FROM users WHERE email = ?")
-    .get(email);
-
-  if (!user) {
-    return res.status(400).json({ error: "Usuario no encontrado." });
-  }
-
-  const valid = await bcrypt.compare(password, user.password);
-
-  if (!valid) {
-    return res.status(400).json({ error: "Contraseña incorrecta." });
-  }
-
-  res.json({
-    success: true,
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      plan: user.plan
+    if(err){
+      return res.json({
+        ok:false,
+        message:"Usuario ya existe"
+      });
     }
-  });
+
+    res.json({
+      ok:true,
+      message:"Usuario creado"
+    });
+
+  }
+ );
+
 });
 
-export default router;
+
+// =========================
+// LOGIN
+// =========================
+
+router.post("/login",(req,res)=>{
+
+ const {email,password} = req.body;
+
+ db.get(
+  "SELECT * FROM users WHERE email=? AND password=?",
+  [email,password],
+  (err,row)=>{
+
+   if(!row){
+     return res.json({
+       ok:false,
+       message:"Credenciales incorrectas"
+     });
+   }
+
+   res.json({
+     ok:true,
+     user:row
+   });
+
+  }
+ );
+
+});
+
+module.exports = router;

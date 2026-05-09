@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ARC Privus Admin</title>
+
+<style>
+
+/* =========================
+ESTILO GENERAL
+========================= */
+
+body{
+background:#061225;
+color:white;
+font-family:Arial;
+margin:0;
+}
+
+/* =========================
+HEADER
+========================= */
+
+.header{
+background:#0c1f3f;
+padding:20px;
+font-size:22px;
+font-weight:bold;
+}
+
+/* =========================
+CONTENEDOR
+========================= */
+
+.container{
+padding:20px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+/* =========================
+CARDS
+========================= */
+
+.card{
+background:#0e2a55;
+padding:20px;
+border-radius:10px;
+}
+
+.card h2{
+margin-top:0;
+}
+
+/* =========================
+LISTAS
+========================= */
+
+.list{
+max-height:300px;
+overflow:auto;
+background:#081830;
+padding:10px;
+border-radius:6px;
+}
+
+.item{
+padding:6px;
+border-bottom:1px solid #1e3d70;
+}
+
+/* =========================
+BOTONES
+========================= */
+
+button{
+padding:10px 16px;
+border:none;
+border-radius:6px;
+background:#1b4fff;
+color:white;
+cursor:pointer;
+}
+
+/* =========================
+NUCLEO IA
+========================= */
+
+.ai-core-container{
+display:flex;
+flex-direction:column;
+align-items:center;
+margin-top:30px;
+}
+
+.ai-core{
+
+width:120px;
+height:120px;
+border-radius:50%;
+
+background:radial-gradient(circle,
+#00ffff 0%,
+#0066ff 40%,
+#001133 80%);
+
+box-shadow:
+0 0 30px #00ffff,
+0 0 80px #0088ff,
+0 0 120px #0044ff;
+
+animation:corePulse 3s infinite;
+
+}
+
+.ai-label{
+margin-top:12px;
+font-size:14px;
+color:#00ffff;
+letter-spacing:2px;
+}
+
+/* =========================
+ANIMACION IA
+========================= */
+
+@keyframes corePulse{
+
+0%{
+transform:scale(1);
+box-shadow:
+0 0 30px #00ffff,
+0 0 80px #0088ff;
+}
+
+50%{
+transform:scale(1.15);
+box-shadow:
+0 0 80px #00ffff,
+0 0 160px #0088ff,
+0 0 220px #0044ff;
+}
+
+100%{
+transform:scale(1);
+box-shadow:
+0 0 30px #00ffff,
+0 0 80px #0088ff;
+}
+
+}
+
+/* =========================
+PANTERA IA
+========================= */
+
+.ai-panther-container{
+display:flex;
+flex-direction:column;
+align-items:center;
+margin-top:30px;
+}
+
+.ai-panther{
+
+width:220px;
+filter:drop-shadow(0 0 20px #00ffff);
+
+animation:pantherBreath 8s infinite;
+
+}
+
+.ai-panther-label{
+
+margin-top:10px;
+font-size:16px;
+letter-spacing:3px;
+color:#00ffff;
+
+}
+
+/* respiración */
+
+@keyframes pantherBreath{
+
+0%{
+transform:scale(1);
+filter:drop-shadow(0 0 15px #00ffff);
+}
+
+50%{
+transform:scale(1.05);
+filter:drop-shadow(0 0 40px #00ffff);
+}
+
+100%{
+transform:scale(1);
+filter:drop-shadow(0 0 15px #00ffff);
+}
+
+}
+<h2>Evolución de ARC Privus AI Madre</h2>
+
+<div id="evolutionPanel"></div>
+
+<script>
+
+async function loadEvolution(){
+
+try{
+
+const res = await fetch("/api/evolution");
+
+const data = await res.json();
+
+const panel = document.getElementById("evolutionPanel");
+
+panel.innerHTML = "";
+
+if(data.recommendations){
+
+data.recommendations.forEach(r=>{
+
+const div = document.createElement("div");
+
+div.style.padding="10px";
+div.style.marginBottom="10px";
+div.style.border="1px solid #ccc";
+
+div.innerHTML = `
+<b>${r.name}</b><br>
+Score: ${r.score}<br>
+${r.reason}
+`;
+
+panel.appendChild(div);
+
+});
+
+}
+
+}catch(err){
+
+console.log("Error cargando evolución",err);
+
+}
+
+}
+
+loadEvolution();
+
+</script>
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+ARC Privus Control Panel
+</div>
+
+<div class="ai-core-container">
+
+<div class="ai-core"></div>
+
+<div class="ai-label">
+IA MADRE ACTIVA
+</div>
+
+</div>
+
+<div class="container">
+
+<div class="card">
+<h2>Usuarios conectados</h2>
+<div id="users" class="list"></div>
+</div>
+
+<div class="card">
+<h2>Memoria del sistema</h2>
+<div id="memory" class="list"></div>
+</div>
+
+<div class="card">
+<h2>Actividad reciente</h2>
+<div id="activity" class="list"></div>
+</div>
+
+<div class="card">
+<h2>Control</h2>
+
+<button onclick="loadUsers()">Actualizar usuarios</button>
+
+<br><br>
+
+<button onclick="loadMemory()">Ver memoria</button>
+
+<div class="ai-panther-container">
+
+<img src="/assets/pantera-arc-fondo.png" class="ai-panther">
+
+<div class="ai-panther-label">
+ARC PRIVUS AI MADRE
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+CARGAR USUARIOS
+========================= */
+
+async function loadUsers(){
+
+try{
+
+const r = await fetch("/api/stats")
+
+const data = await r.json()
+
+const usersDiv = document.getElementById("users")
+
+usersDiv.innerHTML=""
+
+const d=document.createElement("div")
+d.className="item"
+d.textContent="Usuarios activos: " + (data.users || 0)
+
+usersDiv.appendChild(d)
+
+}catch(e){
+
+console.log(e)
+
+}
+
+}
+
+/* =========================
+MEMORIA IA
+========================= */
+
+async function loadMemory(){
+
+try{
+
+const r = await fetch("/api/stats")
+
+const data = await r.json()
+
+const memDiv = document.getElementById("memory")
+
+memDiv.innerHTML=""
+
+const d=document.createElement("div")
+d.className="item"
+d.textContent="Mensajes procesados: " + (data.messages || 0)
+
+memDiv.appendChild(d)
+
+}catch(e){
+
+console.log(e)
+
+}
+
+}
+
+</script>
+
+
+</body>
+
+<script src="admin.js"></script>
+
+</html>

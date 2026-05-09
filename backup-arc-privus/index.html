@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ARC Privus</title>
+
+<style>
+body { margin:0; font-family:Arial; background:#0b141a; }
+
+.app { display:flex; height:100vh; }
+
+.sidebar {
+  width:30%;
+  background:#111b21;
+  color:white;
+  padding:10px;
+}
+
+.chat { flex:1; display:flex; flex-direction:column; }
+
+.header { background:#202c33; color:white; padding:10px; }
+
+.messages { flex:1; padding:10px; overflow:auto; }
+
+.msg { padding:10px; border-radius:10px; margin:5px; max-width:60%; }
+
+.user { background:#005c4b; color:white; margin-left:auto; }
+.ai { background:#202c33; color:white; }
+
+.input { display:flex; padding:10px; background:#202c33; }
+
+input { flex:1; padding:10px; }
+button { padding:10px; background:#00a884; color:white; border:none; margin-top:5px; }
+</style>
+</head>
+
+<body>
+
+<div id="login">
+  <h2>Login</h2>
+  <input id="user" placeholder="Usuario"><br>
+  <input id="pass" placeholder="Contraseña" type="password"><br>
+  <button onclick="login()">Entrar</button>
+  <button onclick="register()">Registrar</button>
+</div>
+
+<div class="app" id="app" style="display:none;">
+
+  <div class="sidebar">
+    <h3>Chats</h3>
+    <div id="chatList"></div>
+    <button onclick="newChat()">+ Nuevo</button>
+
+    <!-- 🔥 BOTÓN PREMIUM -->
+    <button onclick="goPremium()">🔥 Ser Premium</button>
+  </div>
+
+  <div class="chat">
+    <div class="header" id="chatName">Selecciona chat</div>
+    <div class="messages" id="messages"></div>
+
+    <div class="input">
+      <input id="input" placeholder="Escribe...">
+      <button onclick="send()">Enviar</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+let userId = localStorage.getItem("user");
+const loginDiv = document.getElementById("login");
+const appDiv = document.getElementById("app");
+const chatList = document.getElementById("chatList");
+const chatName = document.getElementById("chatName");
+const messages = document.getElementById("messages");
+const input = document.getElementById("input");
+
+let currentChat = null;
+
+/* LOGIN */
+function login(){
+  fetch("/api/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      user:document.getElementById("user").value,
+      pass:document.getElementById("pass").value
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.ok){
+      localStorage.setItem("user",d.user);
+      location.reload();
+    } else {
+      alert("Error login");
+    }
+  });
+}
+
+/* REGISTER */
+function register(){
+  fetch("/api/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      user:document.getElementById("user").value,
+      pass:document.getElementById("pass").value
+    })
+  });
+}
+
+/* INICIO */
+if(userId){
+  loginDiv.style.display="none";
+  appDiv.style.display="flex";
+  loadChats();
+}
+
+/* CHATS */
+async function loadChats(){
+  const res = await fetch("/api/chats?userId="+userId);
+  const data = await res.json();
+
+  chatList.innerHTML="";
+
+  data.chats.forEach(c=>{
+    const d=document.createElement("div");
+    d.innerText=c.name;
+    d.onclick=()=>selectChat(c);
+    chatList.appendChild(d);
+  });
+
+  if(data.chats.length){
+    selectChat(data.chats[0]);
+  }
+}
+
+function selectChat(chat){
+  currentChat = chat;
+  chatName.innerText = chat.name;
+  loadHistory();
+}
+
+/* HISTORIAL */
+async function loadHistory(){
+  const res = await fetch(`/api/chat/history?userId=${userId}&chatId=${currentChat._id}`);
+  const data = await res.json();
+
+  messages.innerHTML="";
+
+  data.history.forEach(m=>{
+    add(m.content, m.role==="user"?"user":"ai");
+  });
+}
+
+/* NUEVO CHAT */
+async function newChat(){
+  const name = prompt("Nombre del chat");
+  if(!name) return;
+
+  await fetch("/api/chats",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({userId,name})
+  });
+
+  loadChats();
+}
+
+/* MENSAJES */
+function add(text,type){
+  const d=document.createElement("div");
+  d.className="msg "+type;
+  d.innerText=text;
+  messages.appendChild(d);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+/* ENVIAR */
+async function send(){
+  const m = input.value;
+
+  if(!m) return;
+
+  if(!currentChat){
+    alert("Selecciona un chat primero");
+    return;
+  }
+
+  add(m,"user");
+  input.value="";
+
+  try{
+    const res = await fetch("/api/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        message:m,
+        userId,
+        chatId:currentChat._id
+      })
+    });
+
+    const d = await res.json();
+
+    add(d.reply,"ai");
+
+  }catch(err){
+    console.log("Error:", err);
+  }
+}
+
+/* ENTER */
+input.addEventListener("keypress", e=>{
+  if(e.key==="Enter") send();
+});
+
+/* 🔥 STRIPE */
+async function goPremium(){
+  const res = await fetch("/api/create-checkout-session",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      userId: localStorage.getItem("user")
+    })
+  });
+
+  const data = await res.json();
+
+  window.location = data.url;
+}
+
+</script>
+
+</body>
+</html>

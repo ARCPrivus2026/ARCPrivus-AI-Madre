@@ -1,0 +1,84 @@
+-- Crear base de datos
+CREATE DATABASE IF NOT EXISTS arc_privus;
+USE arc_privus;
+
+-- Tabla de usuarios
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de planes
+CREATE TABLE plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  duration INT NOT NULL, -- duración en días
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Relación usuario-plan
+CREATE TABLE user_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  plan_id INT NOT NULL,
+  activated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE CASCADE
+);
+
+-- Tabla de salas de chat
+CREATE TABLE chat_rooms (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de mensajes
+CREATE TABLE messages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  room_id INT NOT NULL,
+  user_id INT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ===========================
+-- DATOS REALES DE INICIO
+-- ===========================
+
+-- Insertar usuarios reales (contraseñas deben ir encriptadas con bcrypt en tu backend)
+INSERT INTO users (name, email, password) VALUES
+('Arnaldo', 'arnaldo@arcprivus.com', '$2b$10$HASHEDPASSWORD1'),
+('Lucía', 'lucia@arcprivus.com', '$2b$10$HASHEDPASSWORD2'),
+('Carlos', 'carlos@arcprivus.com', '$2b$10$HASHEDPASSWORD3');
+
+-- Insertar planes reales
+INSERT INTO plans (name, price, duration) VALUES
+('Gratis', 0.00, 30),
+('Premium', 9.99, 30),
+('Pro', 19.99, 90);
+
+-- Asignar planes reales a usuarios
+INSERT INTO user_plans (user_id, plan_id, activated_at) VALUES
+(1, 1, NOW()), -- Arnaldo con plan Gratis
+(2, 2, NOW()), -- Lucía con plan Premium
+(3, 3, NOW()); -- Carlos con plan Pro
+
+-- Crear salas de chat reales
+INSERT INTO chat_rooms (name) VALUES
+('General'),
+('Proyecto ARC Privus'),
+('Soporte');
+
+-- Insertar mensajes reales
+INSERT INTO messages (room_id, user_id, content, created_at) VALUES
+(1, 1, 'Bienvenidos a ARC Privus Messenger 🚀', NOW()),
+(1, 2, 'Gracias Arnaldo, ya estoy probando la traducción automática.', NOW()),
+(2, 3, 'Confirmo que la migración a MySQL está funcionando.', NOW()),
+(3, 2, 'Tengo dudas sobre la integración multimedia.', NOW());

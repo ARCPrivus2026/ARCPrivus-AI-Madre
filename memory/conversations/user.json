@@ -1,0 +1,49 @@
+{
+  "history": [
+    {
+      "user": "hola",
+      "ai": "Hola user. Soy ARC Privus AI Madre.",
+      "date": "2026-03-24T00:34:51.583Z"
+    },
+    {
+      "user": "hola",
+      "ai": {},
+      "date": "2026-03-24T00:58:01.893Z"
+    },
+    {
+      "user": "hola",
+      "ai": {},
+      "date": "2026-03-24T01:00:21.888Z"
+    },
+    {
+      "user": "hola",
+      "ai": {},
+      "date": "2026-03-24T01:01:00.174Z"
+    },
+    {
+      "user": "hola",
+      "ai": {},
+      "date": "2026-03-24T01:04:42.997Z"
+    },
+    {
+      "user": "hola",
+      "ai": {},
+      "date": "2026-03-24T01:43:53.080Z"
+    },
+    {
+      "user": "hola",
+      "ai": {},
+      "date": "2026-03-24T01:54:16.584Z"
+    },
+    {
+      "user": "hola",
+      "ai": "Hola user. Soy ARC Privus AI Madre.",
+      "date": "2026-03-24T02:06:23.166Z"
+    },
+    {
+      "user": "dime como puedes ayudarme ",
+      "ai": "Estoy aquí para ayudarte dentro del sistema ARC Privus.",
+      "date": "2026-03-24T02:07:42.866Z"
+    }
+  ]
+}

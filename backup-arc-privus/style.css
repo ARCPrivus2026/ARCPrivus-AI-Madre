@@ -1,0 +1,80 @@
+/* =========================
+MESSENGER BACKGROUND
+========================= */
+
+.messenger-body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+
+    background: url("./assets/fondo-messenger.png") no-repeat center center fixed;
+    background-size: cover;
+}
+
+/* HEADER */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+}
+
+/* LOGOS */
+.logo {
+    width: 40px;
+}
+
+.logo-ai {
+    width: 30px;
+}
+
+/* CHAT */
+.chat-container {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* INPUT */
+.input-bar {
+    display: flex;
+    padding: 10px;
+    background: rgba(0,0,0,0.7);
+}
+
+.input-bar input {
+    flex: 1;
+    padding: 10px;
+}
+
+.input-bar button {
+    padding: 10px;
+}
+/* MENSAJES */
+.message {
+    max-width: 70%;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+}
+
+/* MENSAJE USUARIO */
+.user {
+    background: #0084ff;
+    align-self: flex-end;
+}
+
+/* MENSAJE IA */
+.bot {
+    background: #444;
+    align-self: flex-start;
+}
+
+/* CONTENEDOR FLEX */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+}

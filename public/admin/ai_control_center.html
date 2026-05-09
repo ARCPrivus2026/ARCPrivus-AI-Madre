@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARC Privus AI Madre - Centro de Control</title>
+
+<style>
+
+body{
+background:#061225;
+color:white;
+font-family:Arial, Helvetica, sans-serif;
+margin:0;
+padding:0;
+}
+
+header{
+background:#081c34;
+padding:15px;
+text-align:center;
+font-size:24px;
+color:#00eaff;
+box-shadow:0 2px 10px rgba(0,0,0,0.25);
+}
+
+.container{
+width:90%;
+margin:auto;
+margin-top:20px;
+margin-bottom:40px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.panel{
+background:#0d2a4f;
+padding:15px;
+border-radius:10px;
+box-shadow:0 0 10px #000;
+}
+
+.ai-section{
+margin-top:30px;
+}
+
+.ai-card{
+background:#0d2a4f;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+box-shadow:0 0 10px #000;
+}
+
+h2{
+color:#00eaff;
+margin-top:0;
+}
+
+h3{
+margin-top:0;
+color:#7eefff;
+}
+
+ul{
+padding-left:20px;
+margin:0;
+}
+
+li{
+margin-bottom:6px;
+}
+
+pre{
+white-space:pre-wrap;
+word-break:break-word;
+font-size:13px;
+margin:0;
+}
+
+#status{
+font-size:16px;
+font-weight:bold;
+color:#7dffb3;
+}
+
+canvas{
+background:#020b18;
+border-radius:10px;
+width:100%;
+margin-top:10px;
+box-shadow:0 0 12px rgba(0,0,0,0.4);
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+ARC PRIVUS AI MADRE - CENTRO DE CONTROL
+</header>
+
+<div class="container">
+
+<div class="grid">
+
+<div class="panel">
+<h2>Estado del Sistema</h2>
+<div id="status">Cargando...</div>
+</div>
+
+<div class="panel">
+<h2>Estadísticas</h2>
+<pre id="stats">Cargando...</pre>
+</div>
+
+<div class="panel">
+<h2>Evolución IA</h2>
+<pre id="evolution">Cargando...</pre>
+</div>
+
+<div class="panel">
+<h2>Auto Mejora</h2>
+<pre id="improve">Cargando...</pre>
+</div>
+
+<div class="panel">
+<h2>Capacidades Detectadas</h2>
+<pre id="capabilities">Cargando...</pre>
+</div>
+
+</div>
+
+
+<div class="ai-section">
+
+<h2>Mapa Neural de la IA</h2>
+
+<canvas id="neuralCanvas" width="900" height="420"></canvas>
+
+</div>
+
+
+<div class="ai-section">
+
+<h2>Radar Global de Inteligencias Artificiales</h2>
+
+<canvas id="aiRadar" width="900" height="400"></canvas>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+UTILIDADES
+========================= */
+
+function setText(id,text){
+const el=document.getElementById(id)
+if(el) el.textContent=text
+}
+
+function safeStringify(data){
+try{
+return JSON.stringify(data,null,2)
+}catch(e){
+return "Error"
+}
+}
+
+/* =========================
+ESTADO
+========================= */
+
+function setStatus(){
+setText("status","AI Madre activa")
+}
+
+/* =========================
+LOADERS
+========================= */
+
+async function loadJSON(url,id){
+
+try{
+
+const r=await fetch(url)
+const data=await r.json()
+setText(id,safeStringify(data))
+
+}catch(e){
+
+setText(id,"Error cargando "+url)
+
+}
+
+}
+
+function loadStats(){loadJSON("/api/stats","stats")}
+function loadEvolution(){loadJSON("/api/evolution","evolution")}
+function loadImprove(){loadJSON("/api/self-improve","improve")}
+function loadCapabilities(){loadJSON("/api/capabilities","capabilities")}
+
+/* =========================
+GLOBAL AI MAP
+========================= */
+
+const canvas=document.getElementById("neuralCanvas")
+
+if(canvas){
+
+const ctx=canvas.getContext("2d")
+let nodes=[]
+
+async function loadGlobalMap(){
+
+try{
+
+const res=await fetch("/api/ai/global-map")
+const data=await res.json()
+
+nodes=data.modules.map(n=>({
+
+name:n.name,
+type:n.type,
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+vx:(Math.random()-0.5)*0.4,
+vy:(Math.random()-0.5)*0.4
+
+}))
+
+}catch(e){
+
+console.log("Error mapa IA")
+
+}
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+nodes.forEach(n=>{
+
+n.x+=n.vx
+n.y+=n.vy
+
+if(n.x<0||n.x>canvas.width)n.vx*=-1
+if(n.y<0||n.y>canvas.height)n.vy*=-1
+
+ctx.beginPath()
+ctx.arc(n.x,n.y,6,0,Math.PI*2)
+
+if(n.type==="core") ctx.fillStyle="#00ff9c"
+else if(n.type==="internal") ctx.fillStyle="#00eaff"
+else ctx.fillStyle="#ffcc00"
+
+ctx.fill()
+
+ctx.font="11px Arial"
+ctx.fillStyle="#ffffff"
+ctx.fillText(n.name,n.x+8,n.y)
+
+nodes.forEach(o=>{
+
+const dx=n.x-o.x
+const dy=n.y-o.y
+const d=Math.sqrt(dx*dx+dy*dy)
+
+if(d<160){
+
+ctx.beginPath()
+ctx.moveTo(n.x,n.y)
+ctx.lineTo(o.x,o.y)
+ctx.strokeStyle="rgba(0,234,255,0.15)"
+ctx.stroke()
+
+}
+
+})
+
+})
+
+requestAnimationFrame(draw)
+
+}
+
+loadGlobalMap()
+draw()
+
+}
+
+/* =========================
+GLOBAL AI RADAR
+========================= */
+
+const radar=document.getElementById("aiRadar")
+
+if(radar){
+
+const ctx=radar.getContext("2d")
+let angle=0
+let points=[]
+
+async function loadRadar(){
+
+try{
+
+const res=await fetch("/api/ai/global-map")
+const data=await res.json()
+
+points=data.nodes.map(n=>({
+
+name:n.name,
+x:Math.random()*radar.width,
+y:Math.random()*radar.height
+
+}))
+
+}catch(e){
+
+console.log("Radar error")
+
+}
+
+}
+
+function drawRadar(){
+
+ctx.fillStyle="rgba(6,18,37,0.3)"
+ctx.fillRect(0,0,radar.width,radar.height)
+
+ctx.beginPath()
+ctx.arc(radar.width/2,radar.height/2,180,0,Math.PI*2)
+ctx.strokeStyle="#00eaff"
+ctx.stroke()
+
+points.forEach(p=>{
+
+ctx.beginPath()
+ctx.arc(p.x,p.y,3,0,Math.PI*2)
+ctx.fillStyle="#00ff9c"
+ctx.fill()
+
+})
+
+const x=radar.width/2 + Math.cos(angle)*180
+const y=radar.height/2 + Math.sin(angle)*180
+
+ctx.beginPath()
+ctx.moveTo(radar.width/2,radar.height/2)
+ctx.lineTo(x,y)
+ctx.strokeStyle="#00eaff"
+ctx.stroke()
+
+angle+=0.02
+
+requestAnimationFrame(drawRadar)
+
+}
+
+loadRadar()
+drawRadar()
+
+}
+
+/* =========================
+LOAD GENERAL
+========================= */
+
+function loadAll(){
+
+setStatus()
+
+loadStats()
+loadEvolution()
+loadImprove()
+loadCapabilities()
+
+}
+
+loadAll()
+
+setInterval(loadAll,10000)
+
+</script>
+
+</body>
+</html>

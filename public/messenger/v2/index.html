@@ -1,292 +1,156 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARC Privus Messenger</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ARC Privus AI Madre</title>
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
-}
+  <link rel="stylesheet" href="style.css" />
 
+ <style>
 body{
-height:100vh;
-background: radial-gradient(circle at center,
-#2f4dff 0%,
-#1a2ccf 40%,
-#0d1a7a 70%,
-#061225 100%);
-display:flex;
-flex-direction:column;
-color:white;
-overflow:hidden;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#061225;
+    color:white;
+    height:100vh;
+    overflow:hidden;
 }
 
-/* 🔷 TOPBAR */
-.topbar{
-height:65px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 20px;
-background:rgba(0,0,0,0.3);
-backdrop-filter:blur(20px);
-border-bottom:1px solid rgba(255,255,255,0.1);
+#chat{
+    height:calc(100vh - 70px);
+    overflow-y:auto;
+    padding:15px;
+    box-sizing:border-box;
 }
 
-.logo-area{
-display:flex;
-align-items:center;
-gap:10px;
+.msg{
+    max-width:80%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:15px;
+    word-wrap:break-word;
+    box-shadow:0 0 10px rgba(0,0,0,0.3);
 }
 
-.logo-area img{
-width:45px;
+.user{
+    background:#0084ff;
+    margin-left:auto;
+    text-align:right;
+    color:white;
 }
 
-.brand{
-font-weight:600;
-letter-spacing:1px;
+.ai{
+    background:#111827;
+    border:1px solid #00ccff;
+    color:#00e5ff;
 }
 
-.icon-btn{
-font-size:24px;
-cursor:pointer;
-transition:0.3s;
+#box{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    display:flex;
+    background:#0b162d;
+    padding:10px;
+    box-sizing:border-box;
+    border-top:1px solid #1e293b;
 }
 
-.icon-btn:hover{
-transform:scale(1.15);
-color:#4e6fff;
+#msg{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    outline:none;
+    background:#1e293b;
+    color:white;
+    font-size:16px;
 }
 
-/* 🔷 SIDEMENU */
-.side-menu{
-position:fixed;
-left:-280px;
-top:0;
-width:280px;
-height:100%;
-background:rgba(0,0,40,0.95);
-backdrop-filter:blur(25px);
-padding:20px;
-transition:0.4s;
-z-index:20;
+button{
+    margin-left:10px;
+    padding:12px 18px;
+    border:none;
+    border-radius:12px;
+    background:#00ccff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.side-menu.active{
-left:0;
-}
-
-.side-menu h3{
-margin-bottom:20px;
-}
-
-.side-menu button{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-border:none;
-border-radius:10px;
-background:#1a2ccf;
-color:white;
-cursor:pointer;
-}
-
-/* 🔷 CHAT AREA */
-.chat-area{
-flex:1;
-padding:20px;
-overflow-y:auto;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.message{
-max-width:60%;
-padding:12px 18px;
-border-radius:18px;
-background:rgba(255,255,255,0.15);
-}
-
-.message.user{
-align-self:flex-end;
-background:#1a2ccf;
-}
-
-/* 🔷 BOTTOM BAR */
-.bottom-bar{
-height:70px;
-display:flex;
-align-items:center;
-padding:0 15px;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(20px);
-gap:10px;
-}
-
-input{
-flex:1;
-padding:10px 15px;
-border-radius:20px;
-border:none;
-outline:none;
-}
-
-/* 🔷 WAVE */
-.wave{
-display:flex;
-gap:3px;
-align-items:flex-end;
-height:20px;
-}
-
-.bar{
-width:3px;
-background:#4e6fff;
-animation:wave 1s infinite;
-}
-
-.bar:nth-child(2){animation-delay:0.2s;}
-.bar:nth-child(3){animation-delay:0.4s;}
-
-@keyframes wave{
-0%{height:5px;}
-50%{height:18px;}
-100%{height:5px;}
-}
-
-/* 🔷 FLOAT AI */
-.ai-button{
-position:absolute;
-right:20px;
-bottom:100px;
-width:65px;
-height:65px;
-border-radius:50%;
-background:#4e6fff;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:28px;
-cursor:pointer;
-box-shadow:0 0 30px rgba(0,120,255,0.9);
-transition:0.3s;
-}
-
-.ai-button:hover{
-transform:scale(1.1);
-}
-
-.overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(6px);
-display:none;
-z-index:10;
-}
-
-.overlay.active{
-display:block;
+button:hover{
+    background:#0099cc;
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+<!-- LOGIN -->
+<div id="login" class="login-box">
+  <h1>ARC Privus AI Madre</h1>
+  <p>Inteligencia artificial automática</p>
 
-<!-- 🔷 SIDEMENU -->
-<div class="side-menu" id="sideMenu">
-<h3>Menú ARC</h3>
-<button>Perfil</button>
-<button>Estados</button>
-<button>Configuración</button>
-<button>Traductor Global</button>
-<button>IA Avanzada</button>
+  <input id="user" placeholder="Usuario" />
+  <input id="pass" type="password" placeholder="Contraseña" />
+
+ <button onclick="window.location.href='chat.html'">
+Entrar
+</button>
+  <button onclick="register()">Crear cuenta</button>
+
+  <small>Diagnóstico, soluciones técnicas y negocios con IA</small>
 </div>
 
-<!-- 🔷 TOPBAR -->
-<div class="topbar">
+<!-- APP -->
+<div id="app" class="app" style="display:none;">
 
-<div class="icon-btn" onclick="openMenu()">☰</div>
+  <aside class="sidebar">
+    <h2>ARC Privus</h2>
+    <p id="planText">Plan: free</p>
 
-<div class="logo-area">
-<img src="logo-arc.png">
-<div class="brand">ARCTribune Inc</div>
+    <button onclick="newChat()">+ Nuevo chat</button>
+    <button onclick="logout()">Salir</button>
+
+    <h3>Chats</h3>
+    <div id="chatList"></div>
+  </aside>
+
+  <main class="chat">
+    <header class="header">
+      <h2 id="chatName">AI Madre</h2>
+      <small>IA automática en línea</small>
+    </header>
+
+    <section id="messages" class="messages"></section>
+
+    <section class="suggestions">
+      <button onclick="quickAsk('Mi nevera no enfría abajo, ¿qué puede ser?')">
+        Nevera no enfría
+      </button>
+
+      <button onclick="quickAsk('Mi lavadora no centrifuga, ¿qué reviso primero?')">
+        Lavadora no centrifuga
+      </button>
+
+      <button onclick="quickAsk('Quiero una idea de negocio rentable con IA')">
+        Negocio con IA
+      </button>
+    </section>
+
+    <footer class="input-area">
+      <textarea id="input" placeholder="Escribe tu problema o pregunta..."></textarea>
+      <button onclick="send()">Enviar</button>
+    </footer>
+
+  </main>
+
 </div>
 
-<div class="icon-btn">⋮</div>
-
-</div>
-
-<!-- 🔷 CHAT -->
-<div class="chat-area" id="chatArea">
-<div class="message">Bienvenido a ARC Privus Messenger.</div>
-</div>
-
-<!-- 🔷 BOTTOM -->
-<div class="bottom-bar">
-
-<div class="icon-btn">📷</div>
-<div class="icon-btn">🔊</div>
-
-<div class="wave">
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
-</div>
-
-<input type="text" id="messageInput" placeholder="Escribe un mensaje...">
-
-<div class="icon-btn">🎙️</div>
-<div class="icon-btn" onclick="sendMessage()">➤</div>
-
-</div>
-
-<div class="ai-button" onclick="activateAI()">🧠</div>
-
-<script>
-
-function sendMessage(){
-const input = document.getElementById("messageInput");
-const chat = document.getElementById("chatArea");
-
-if(input.value.trim() !== ""){
-let msg = document.createElement("div");
-msg.classList.add("message","user");
-msg.innerText = input.value;
-chat.appendChild(msg);
-input.value="";
-chat.scrollTop = chat.scrollHeight;
-}
-}
-
-function openMenu(){
-document.getElementById("sideMenu").classList.add("active");
-document.getElementById("overlay").classList.add("active");
-}
-
-function closeMenu(){
-document.getElementById("sideMenu").classList.remove("active");
-document.getElementById("overlay").classList.remove("active");
-}
-
-function activateAI(){
-alert("Conexión IA lista para integrar backend seguro con ChatGPT.");
-}
-
-</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>

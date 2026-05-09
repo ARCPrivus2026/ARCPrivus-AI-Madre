@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Registro ARC Privus</title>
+
+<style>
+
+body{
+background:#061225;
+color:white;
+font-family:Arial;
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+}
+
+.card{
+background:#0e2a55;
+padding:30px;
+border-radius:10px;
+width:320px;
+text-align:center;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+border:none;
+}
+
+button{
+margin-top:15px;
+width:100%;
+padding:10px;
+background:#1b4fff;
+border:none;
+border-radius:6px;
+color:white;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Crear cuenta</h2>
+
+<input id="name" placeholder="Tu nombre"/>
+
+<input id="email" placeholder="Tu correo"/>
+
+<button onclick="register()">Registrarme</button>
+
+<div id="msg"></div>
+
+</div>
+
+<script>
+
+async function register(){
+
+const name=document.getElementById("name").value.trim()
+const email=document.getElementById("email").value.trim()
+
+if(!name || !email){
+document.getElementById("msg").innerText="Completa nombre y correo"
+return
+}
+
+const r=await fetch("/api/register",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name,email})
+})
+
+const data=await r.json()
+
+document.getElementById("msg").innerText=data.message
+
+}
+
+</script>
+
+</body>
+
+</html>

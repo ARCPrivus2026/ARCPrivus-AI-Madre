@@ -1,0 +1,1016 @@
+{
+  "nodes": [
+    {
+      "id": "node_1775428558235",
+      "name": "ARC Privus AI Madre Principal",
+      "endpoint": "http://localhost:3000",
+      "role": "core_ai",
+      "status": "online",
+      "createdAt": "2026-04-05T22:35:58.258Z",
+      "lastSeenAt": "2026-04-21T15:05:21.646Z"
+    }
+  ],
+  "links": [],
+  "events": [
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T15:05:21.650Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T15:03:01.638Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T15:00:41.621Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:58:21.610Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:56:01.596Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:53:41.595Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:51:21.595Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:49:01.572Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:46:41.558Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:44:21.558Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:42:01.552Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:39:41.550Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:37:21.539Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:35:01.532Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:32:41.517Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:30:21.514Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:28:01.489Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:25:41.491Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:23:21.477Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:21:01.463Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:18:41.451Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:16:21.450Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:14:01.439Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:11:41.432Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:09:21.419Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:07:01.418Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:04:41.404Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:02:21.395Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T14:00:01.376Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:57:41.363Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:55:21.360Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:53:01.347Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:50:41.338Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:48:21.326Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:46:01.319Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:43:41.318Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:41:21.304Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:39:01.291Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:36:41.287Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:34:21.282Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:32:01.273Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:29:41.259Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:27:21.245Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:25:01.241Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:22:41.221Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:20:21.227Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:18:01.213Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:15:41.203Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:13:21.178Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:11:01.174Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:08:41.170Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:06:21.160Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:04:01.153Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T13:01:41.149Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:59:21.136Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:57:01.132Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:54:41.128Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:52:21.115Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:50:01.103Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:47:41.097Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:45:21.081Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:43:01.080Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:40:41.074Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:38:21.064Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:36:01.057Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:33:41.049Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:31:21.035Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:29:01.035Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:26:41.031Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:24:21.021Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:22:01.006Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:19:41.002Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:17:20.989Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:15:00.982Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:12:40.978Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:10:20.976Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:08:00.967Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:05:40.959Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:03:20.943Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T12:01:00.939Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:58:40.939Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:56:20.950Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:54:00.942Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:51:40.937Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:49:20.694Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:47:00.687Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:44:40.680Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:42:20.671Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:40:00.685Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:37:40.642Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:35:20.639Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:33:00.636Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:30:40.632Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:28:20.622Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:26:00.613Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:23:40.605Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:21:20.593Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:19:00.582Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:16:40.564Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:14:20.567Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:12:00.559Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:09:40.553Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:07:20.539Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:05:00.536Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:02:40.529Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T11:00:20.518Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:58:00.513Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:55:40.509Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:53:20.509Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:51:00.496Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:48:40.487Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:46:20.474Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:44:00.471Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:41:40.464Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:39:20.456Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:37:00.455Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:34:40.443Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:32:20.431Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:30:00.420Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:27:40.403Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:25:20.403Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:23:00.393Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:20:40.388Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:18:20.378Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:16:00.349Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:13:40.354Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:11:20.338Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:09:00.324Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:06:40.316Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:04:20.312Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T10:02:00.304Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:59:40.290Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:57:20.278Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:55:00.249Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:52:40.255Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:50:20.249Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:48:00.238Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:45:40.235Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:43:20.220Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:41:00.214Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:38:40.203Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:36:20.191Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:34:00.186Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:31:40.180Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:29:20.173Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:27:00.170Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:24:40.168Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:22:20.144Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:20:00.155Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:17:40.152Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:15:20.144Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:13:00.142Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:10:40.121Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:08:20.117Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:06:00.105Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:03:40.094Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T09:01:20.072Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:59:00.078Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:56:40.078Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:54:20.075Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:52:00.068Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:49:40.069Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:47:20.065Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:45:00.053Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:42:40.046Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:40:20.042Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:38:00.036Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:35:40.033Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:33:20.021Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:31:00.005Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:28:39.996Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:26:19.994Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:23:59.978Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:21:39.979Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:19:19.975Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:16:59.967Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:14:39.959Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:12:19.948Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:09:59.933Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:07:39.934Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:05:19.934Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:02:59.928Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T08:00:39.919Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:58:19.894Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:55:59.902Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:53:39.889Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:51:19.882Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:48:59.873Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:46:39.853Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:44:19.845Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:41:59.833Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:39:39.822Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:37:19.820Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:34:59.811Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:32:39.809Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:30:19.794Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:27:59.801Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:25:39.778Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:23:19.779Z"
+    },
+    {
+      "type": "node_status",
+      "description": "ARC Privus AI Madre Principal cambió a online",
+      "time": "2026-04-21T07:20:59.774Z"
+    }
+  ]
+}

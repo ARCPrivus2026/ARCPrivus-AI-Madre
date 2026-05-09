@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>ARC PRIVUS AI MADRE • PANEL</title>
+
+<style>
+
+body{
+margin:0;
+background:#050b1f;
+color:white;
+font-family:Arial;
+}
+
+.header{
+padding:20px;
+font-size:22px;
+font-weight:bold;
+color:#00ffff;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+padding:20px;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+padding:20px;
+border-radius:14px;
+box-shadow:0 0 20px rgba(0,255,255,0.1);
+}
+
+.title{
+font-size:14px;
+opacity:0.6;
+}
+
+.value{
+font-size:28px;
+margin-top:8px;
+color:#5cff9a;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+ARC PRIVUS AI MADRE • PANEL CENTRAL
+</div>
+
+<div class="grid">
+
+<div class="card">
+<div class="title">Usuarios conectados</div>
+<div class="value" id="users">0</div>
+</div>
+
+<div class="card">
+<div class="title">Mensajes procesados</div>
+<div class="value" id="messages">0</div>
+</div>
+
+<div class="card">
+<div class="title">Bots activos</div>
+<div class="value" id="bots">0</div>
+</div>
+
+<div class="card">
+<div class="title">Estado servidor</div>
+<div class="value" id="status">online</div>
+</div>
+
+</div>
+
+<script>
+
+async function loadStats(){
+
+try{
+
+const res = await fetch("/api/stats");
+const data = await res.json();
+
+document.getElementById("users").innerText=data.users || 0;
+document.getElementById("messages").innerText=data.messages || 0;
+document.getElementById("bots").innerText=data.bots || 0;
+
+}catch(e){
+
+document.getElementById("status").innerText="error";
+
+}
+
+}
+
+setInterval(loadStats,2000);
+
+loadStats();
+
+</script>
+
+</body>
+</html>

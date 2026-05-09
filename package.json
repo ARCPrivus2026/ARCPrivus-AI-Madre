@@ -7,10 +7,33 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.1",
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.6.2",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "openai": "^4.0.0"
-  }
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-session": "^1.19.0",
+    "mongoose": "^9.5.0",
+    "multer": "^2.1.1",
+    "mysql2": "^3.22.3",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.104.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "socket.io": "^4.8.3",
+    "sqlite3": "^5.1.7",
+    "stripe": "^22.1.0"
+  },
+  "description": "**ARC Privus AI Madre** es una plataforma inteligente global autónoma, diseñada para actuar como el núcleo central (“IA Madre”) de un ecosistema modular de herramientas, automatización y servicios digitales.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/issues"
+  },
+  "homepage": "https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre#readme"
 }

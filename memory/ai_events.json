@@ -1,0 +1,169 @@
+{
+  "events": [
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T10:59:56.411Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T11:57:38.124Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T12:36:09.021Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T12:43:43.029Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T12:48:09.627Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T13:15:10.826Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T13:19:06.705Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T13:51:37.264Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T14:03:24.001Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T14:21:27.000Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T14:30:56.292Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T22:59:40.274Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T23:07:24.759Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-14T23:17:41.110Z"
+    },
+    {
+      "type": "kernel_event",
+      "description": "chat_message",
+      "time": "2026-04-14T23:19:08.498Z"
+    },
+    {
+      "type": "kernel_event",
+      "description": "chat_reply",
+      "time": "2026-04-14T23:19:09.046Z"
+    },
+    {
+      "type": "chat",
+      "description": "AI Madre procesó mensaje del usuario arnaldo",
+      "time": "2026-04-14T23:19:09.048Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-15T12:25:33.104Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-16T04:18:15.339Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-16T13:02:27.968Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-16T20:03:35.374Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-16T20:26:03.631Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-16T20:41:50.753Z"
+    },
+    {
+      "type": "kernel_event",
+      "description": "chat_message",
+      "time": "2026-04-16T20:43:09.599Z"
+    },
+    {
+      "type": "kernel_event",
+      "description": "chat_reply",
+      "time": "2026-04-16T20:43:09.733Z"
+    },
+    {
+      "type": "chat",
+      "description": "AI Madre procesó mensaje del usuario arnaldo",
+      "time": "2026-04-16T20:43:09.753Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-16T20:52:36.430Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-17T02:59:32.906Z"
+    },
+    {
+      "type": "kernel_event",
+      "description": "chat",
+      "time": "2026-04-18T05:18:42.502Z"
+    },
+    {
+      "type": "kernel_boot",
+      "description": "AI Mother Kernel iniciado",
+      "time": "2026-04-19T03:55:58.561Z"
+    },
+    {
+      "type": "kernel_event",
+      "description": "chat_message",
+      "time": "2026-04-21T03:19:23.518Z"
+    },
+    {
+      "type": "kernel_event",
+      "description": "chat_message",
+      "time": "2026-04-21T03:19:40.546Z"
+    },
+    {
+      "type": "kernel_event",
+      "description": "chat_message",
+      "time": "2026-04-27T03:23:40.961Z"
+    }
+  ]
+}
