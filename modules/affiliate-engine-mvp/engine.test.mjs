@@ -62,3 +62,63 @@ test('no paga por invitar personas: crear afiliados no crea saldos',()=>{
  try{db.addAffiliate({name:'Persona nueva'});assert.equal(db.dashboard().arcCop,0);assert.equal(db.dashboard().affiliateCop,0);}
  finally{db.close();}
 });
+
+test('enlace repetido no duplica campaña y las visitas no almacenan datos personales',()=>{
+  const db=new DemoAffiliateEngine();
+  try{
+    const p=db.addProduct({title:'Curso de muestra',priceCop:100000,commissionPct:30});
+    const a=db.addAffiliate({name:'Afiliado muestra'});
+    const link=db.createReferral({productId:p.id,affiliateId:a.id});
+    assert.equal(db.createReferral({productId:p.id,affiliateId:a.id}).token,link.token);
+    assert.match(link.token,/^[a-f0-9]{32}$/);
+    assert.equal(db.recordReferralVisit(link.token).clicks,1);
+    assert.equal(db.recordReferralVisit(link.token).clicks,2);
+    assert.equal(db.getReferrals().length,1);
+    assert.equal(db.getReferrals()[0].clicks,2);
+    assert.equal(Object.hasOwn(db.getReferrals()[0],'ip'),false);
+  }finally{db.close();}
+});
+test('venta simulada atribuida a enlace y reembolso revierten cifras',()=>{
+  const db=new DemoAffiliateEngine();
+  try{
+    const p=db.addProduct({title:'Producto de muestra',priceCop:100000,commissionPct:30});
+    const a=db.addAffiliate({name:'Afiliado muestra'});
+    const link=db.createReferral({productId:p.id,affiliateId:a.id});
+    const sale=db.recordReferralSale({token:link.token,requestId:'transaccion-enlace'});
+    assert.equal(sale.affiliateCop,27000);
+    assert.equal(sale.arcCop,3000);
+    assert.equal(db.dashboard().sales,1);
+    db.refundDemoSale(sale.id);
+    assert.equal(db.dashboard().sales,0);
+    assert.equal(db.dashboard().arcCop,0);
+  }finally{db.close();}
+});
+test('la misma solicitud no puede adjudicarse a otro afiliado',()=>{
+  const db=new DemoAffiliateEngine();
+  try{
+    const p=db.addProduct({title:'Curso muestra',priceCop:30000,commissionPct:20});
+    const a=db.addAffiliate({name:'Afiliado Uno'});
+    const b=db.addAffiliate({name:'Afiliado Dos'});
+    db.recordDemoSale({productId:p.id,affiliateId:a.id,requestId:'misma-solicitud'});
+    assert.throws(()=>db.recordDemoSale({
+      productId:p.id,affiliateId:b.id,requestId:'misma-solicitud'
+    }),/misma solicitud|solicitud repetida/i);
+    assert.equal(db.dashboard().sales,1);
+  }finally{db.close();}
+});
+test('recupera venta directa aunque existan más de 100 operaciones',()=>{
+  const db=new DemoAffiliateEngine();
+  try{
+    const p=db.addProduct({title:'Curso de prueba',priceCop:1000,commissionPct:10});
+    const a=db.addAffiliate({name:'Afiliado muestra'});
+    const first=db.recordDemoSale({productId:p.id,affiliateId:a.id,requestId:'first'});
+    for(let i=0;i<102;i++)db.recordDemoSale({
+      productId:p.id,affiliateId:a.id,requestId:'id-'+i
+    });
+    assert.equal(db.getSales().length,100);
+    assert.equal(db.getSale(first.id).id,first.id);
+    assert.equal(db.recordDemoSale({
+      productId:p.id,affiliateId:a.id,requestId:'first'
+    }).id,first.id);
+  }finally{db.close();}
+});
