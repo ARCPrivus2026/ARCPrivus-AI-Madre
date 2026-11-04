@@ -32,7 +32,9 @@ test('MySQL real: usuario CI solo autorizado para su esquema temporal', { skip: 
     const grants = rows.flatMap(row=>Object.values(row)).join('\n');
     // MYSQL_USER is created by the ephemeral container with access to only
     // MYSQL_DATABASE, plus global USAGE (not global ALL PRIVILEGES).
-    assert.match(grants,/arc_affiliate_staging_ci/i);
+    // MySQL quotes and escapes underscores in SHOW GRANTS database identifiers.
+    const normalizedGrants = grants.replaceAll(String.fromCharCode(92)+'_', '_');
+    assert.match(normalizedGrants,/arc_affiliate_staging_ci/i);
     assert.equal(grants.includes('GRANT ALL PRIVILEGES ON *.*'),false);
   } finally {
     try { if (connection) connection.release(); }
