@@ -10,7 +10,7 @@ Validar un flujo mínimo y auditable de producto → afiliado → enlace de prom
 Desde el directorio `modules/affiliate-engine-mvp`:
 
 ```powershell
-node --test engine.test.mjs
+node --test engine.test.mjs http.test.mjs
 node server.mjs
 ```
 
@@ -43,10 +43,10 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 | POST | `/api/demo-sales/:id/refund` | Revierte simulación contable |
 | GET | `/api/audit` | Trazabilidad básica (no inmutable) |
 
-## Protección
+## Seguridad, privacidad y límites
 
 - Solo escucha en 127.0.0.1. No colocar Cloudflare Tunnel, proxy ni puerto público.
-- No hay autenticación, autorización por roles ni prevención de acceso indebido, por eso **estrictamente local**.
+- No hay autenticación ni autorización por roles, por eso **estrictamente local**. Además, el servidor exige el host local, cuerpo JSON y bloqueo de orígenes externos para las operaciones POST; estas defensas no sustituyen controles de producción.
 - No introducir nombres reales, documentos, datos bancarios ni información sensible.
 - Los enlaces `/?ref=<token>` únicamente son vistas locales de prueba; **no** se deben entregar a clientes ni publicitar.
 - Cada apertura o recarga del enlace de prueba incrementa el contador; no equivale a visitantes únicos y no es una medida antifraude.
@@ -67,5 +67,8 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 5. Ofrecer catálogo real con moderación y evidencia de titularidad; enlaces de atribución consentidos y control de cookies.
 6. Integrar Copilot/Studio IA para marketing honesto, sin afirmaciones de rentabilidad no verificadas.
 7. Desplegar por fases tras pruebas de carga, accesibilidad y seguridad, auditoría externa y piloto con compradores reales.
+
+### Pruebas de integración
+La batería `http.test.mjs` levanta el servidor en un puerto local temporal y verifica interfaz, estilos CSP, bloqueo de orígenes externos, enlaces, atribución, idempotencia y reverso. **No confirma** cumplimiento legal, seguridad de producción ni ingresos reales.
 
 **Importante:** El proyecto del repositorio puede diferir del entorno R4 local. Este MVP no modifica ningún archivo existente del sistema principal; su integración deberá decidirse después de auditoría.
