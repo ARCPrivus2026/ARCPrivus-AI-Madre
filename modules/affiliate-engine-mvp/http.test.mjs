@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 async function startLocalServer(databaseFile = ':memory:'){
   const child = spawn(process.execPath, [join(here, 'server.mjs')], {
-    cwd: here, env: { ...process.env, ARC_DEMO_PORT: '0', ARC_DEMO_DB: databaseFile },
+    cwd: here, env: { ...process.env, ARC_DEMO_PORT: '0', ARC_DEMO_DB: databaseFile, ARC_DEMO_TEST_MODE: '1' },
     stdio: ['ignore', 'pipe', 'pipe']
   });
   const url = await new Promise((resolve, reject) => {
