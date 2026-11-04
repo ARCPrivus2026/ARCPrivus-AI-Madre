@@ -9,6 +9,7 @@ const dbPath = process.env.ARC_DEMO_DB || join(here, '.local-data', 'demo.sqlite
 const port = Number(process.env.ARC_DEMO_PORT || 3197);
 const engine = new DemoAffiliateEngine(dbPath);
 const html = readFileSync(join(here, 'index.html'));
+const appJs = readFileSync(join(here, 'app.js'));
 const json = (res, status, data) => {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
@@ -38,6 +39,10 @@ const server = createServer(async (req, res) => {
         'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
       });
       return res.end(html);
+    }
+    if (req.method === 'GET' && route === '/app.js') {
+      res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+      return res.end(appJs);
     }
     if (req.method === 'GET' && route === '/api/status') return json(res, 200, { status: 'DEMO_ONLY', livePayments: false, payouts: false });
     if (req.method === 'GET' && route === '/api/summary') return json(res, 200, engine.dashboard());
