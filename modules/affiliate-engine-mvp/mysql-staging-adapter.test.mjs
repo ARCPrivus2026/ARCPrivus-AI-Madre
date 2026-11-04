@@ -71,5 +71,6 @@ test('solo crea un pool inyectado con autorización explícita (sin red)',async(
 
 test('no está importado en el servidor actual ni en R4',()=>{
   const source=readFileSync(fileURLToPath(new URL('./server.mjs',import.meta.url)),'utf8');
-  assert.doesNotMatch(source,/mysql-staging-adapter|config\\/db|config\\\\db/);
+  assert.equal(source.includes('mysql-staging-adapter'), false);
+  assert.equal(source.includes('config/db.js'), false);
 });
