@@ -1,9 +1,9 @@
-# ARC Global Affiliate & Commerce Engine — MVP 0.1
+# ARC Global Affiliate & Commerce Engine — MVP 0.2
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
 ## Objetivo
-Validar un flujo mínimo y auditable de producto → afiliado → venta **simulada** → reparto → reembolso simulado. Todos los datos en COP enteros.
+Validar un flujo mínimo y auditable de producto → afiliado → enlace de promoción → visita → venta **simulada atribuida** → reparto → reembolso simulado. Todos los datos en COP enteros.
 
 ## Ejecutar en Windows (Node 22.13+ o 24)
 
@@ -34,6 +34,10 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 | GET | `/api/summary` | Resumen de ventas simuladas vigentes |
 | GET/POST | `/api/products` | Lista/crea productos de prueba |
 | GET/POST | `/api/affiliates` | Lista/crea afiliados de prueba |
+| GET/POST | `/api/referrals` | Lista/crea enlaces de afiliación de prueba (por par producto-afiliado) |
+| GET | `/api/referrals/:token` | Consulta detalles del enlace (sin registrar visita) |
+| POST | `/api/referrals/:token/visit` | Registra una visita simulada, sin IP/cookie |
+| POST | `/api/referrals/:token/demo-sale` | Simula venta atribuida; requiere `requestId` único |
 | GET | `/api/sales` | Lista hasta 100 operaciones |
 | POST | `/api/demo-sales` | Simula venta con `productId`, `affiliateId`, `requestId` único |
 | POST | `/api/demo-sales/:id/refund` | Revierte simulación contable |
@@ -44,6 +48,10 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 - Solo escucha en 127.0.0.1. No colocar Cloudflare Tunnel, proxy ni puerto público.
 - No hay autenticación, autorización por roles ni prevención de acceso indebido, por eso **estrictamente local**.
 - No introducir nombres reales, documentos, datos bancarios ni información sensible.
+- Los enlaces `/?ref=<token>` únicamente son vistas locales de prueba; **no** se deben entregar a clientes ni publicitar.
+- Cada apertura o recarga del enlace de prueba incrementa el contador; no equivale a visitantes únicos y no es una medida antifraude.
+- Las visitas se cuentan sin guardar IP, user-agent, cookies ni identificadores del visitante, aunque el tráfico HTTP local sigue existiendo mientras el servidor funciona.
+- El código de referencia no es una credencial ni un secreto de seguridad y no debe utilizarse como autorización de pagos.
 - El registro de auditoría en SQLite es modificable por quien tiene acceso al archivo: no es todavía evidencia contable a prueba de manipulaciones.
 - No existen ventas monetarias reales, aprobación de productos ni cálculo de ganancias garantizadas.
 - No se paga por reclutamiento ni por inscripción. Las cuentas de prueba no tienen saldo.
@@ -51,6 +59,7 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 
 ## Camino hacia producción (NO implementado)
 
+0. Completar pruebas automatizadas en CI y revisión del prototipo local, sin publicar ni fusionar.
 1. Aprobar modelo jurídico para Colombia (incluye consumidor, datos, comercio electrónico, tributación y revisión de normas sobre multinivel), contratos con vendedores y afiliados y políticas de reembolsos.
 2. Implementar cuentas reales, doble factor, permisos por vendedor/afiliado/admin, antifraude, protección de datos y consentimiento.
 3. Persistencia robusta MySQL/PostgreSQL con libro contable de doble entrada e historial inmutable, conciliación y pruebas de concurrencia.
