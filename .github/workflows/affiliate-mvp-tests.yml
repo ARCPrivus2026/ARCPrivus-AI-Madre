@@ -4,17 +4,19 @@ on:
     paths:
       - 'modules/affiliate-engine-mvp/**'
       - '.github/workflows/affiliate-mvp-tests.yml'
-  push:
-    branches:
-      - 'feat/arc-affiliate-engine-mvp-20261104'
-    paths:
-      - 'modules/affiliate-engine-mvp/**'
-      - '.github/workflows/affiliate-mvp-tests.yml'
+
+# Evita dos ejecuciones por cada commit y cancela las antiguas del mismo PR.
+concurrency:
+  group: affiliate-mvp-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   test:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,5 +25,6 @@ jobs:
       - run: node --check modules/affiliate-engine-mvp/engine.mjs
       - run: node --check modules/affiliate-engine-mvp/server.mjs
       - run: node --check modules/affiliate-engine-mvp/app.js
+      - run: node --check modules/affiliate-engine-mvp/r4-preflight.mjs
       - run: node --check modules/affiliate-engine-mvp/http.test.mjs
       - run: node --test modules/affiliate-engine-mvp/*.test.mjs
