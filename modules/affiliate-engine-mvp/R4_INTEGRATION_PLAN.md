@@ -75,6 +75,24 @@ El archivo `mysql-staging-adapter.mjs` existe únicamente en la rama de revisió
 
 La validación de nombres no sustituye los permisos MySQL de mínimo privilegio; antes de crear el esquema debe aprobarse el diseño de seguridad del entorno R4.
 
+## Revisión adicional de llamadas al pool en R4 — captura de Windows
+
+El análisis de patrones de `server.js` confirmó:
+
+| Patrón buscado | Coincidencias |
+|---|---:|
+| `getConnection(` | 1 |
+| `beginTransaction(` | 0 |
+| `commit(` | 0 |
+| `rollback(` | 0 |
+| `release(` | 1 |
+
+Esto **no demuestra** que el objeto liberado sea el mismo que se obtuvo, ni que `release()` ocurra en una cláusula `finally`. Tampoco constituye prueba de ausencia de transacciones en otros módulos, porque la lectura cubrió solo `server.js`.
+
+### Condición previa de revisión
+
+Antes de instalar siquiera una copia del módulo Affiliate junto a R4, verificar de solo lectura los números de línea de `getConnection()`, `release()` y `finally`; inspeccionar después el alcance y manejo de errores sin exponer credenciales ni código sensible. No cambiar la conexión R4 como parte del trabajo comercial.
+
 ## Secuencia de integración, por puertas
 
 ### Puerta 0 — Auditoría de solo lectura (se permite ahora)
