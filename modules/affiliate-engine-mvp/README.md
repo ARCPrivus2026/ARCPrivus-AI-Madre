@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 0.2
+# ARC Global Affiliate & Commerce Engine — MVP 0.3
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -31,6 +31,7 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 | Método | Ruta | Acción |
 |---|---|---|
 | GET | `/api/status` | Indica modalidad demostrativa |
+| GET | `/api/integrity` | Conciliación de saldos, claves foráneas y eventos de auditoría; HTTP 503 si no cuadra |
 | GET | `/api/summary` | Resumen de ventas simuladas vigentes |
 | GET/POST | `/api/products` | Lista/crea productos de prueba |
 | GET/POST | `/api/affiliates` | Lista/crea afiliados de prueba |
@@ -43,16 +44,18 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 | POST | `/api/demo-sales/:id/refund` | Revierte simulación contable |
 | GET | `/api/audit` | Trazabilidad básica (no inmutable) |
 
-## Seguridad, privacidad y límites
+## Confiabilidad, seguridad y límites
 
 - Solo escucha en 127.0.0.1. No colocar Cloudflare Tunnel, proxy ni puerto público.
 - No hay autenticación ni autorización por roles, por eso **estrictamente local**. Además, el servidor exige el host local, cuerpo JSON y bloqueo de orígenes externos para las operaciones POST; estas defensas no sustituyen controles de producción.
 - No introducir nombres reales, documentos, datos bancarios ni información sensible.
 - Los enlaces `/?ref=<token>` únicamente son vistas locales de prueba; **no** se deben entregar a clientes ni publicitar.
+- La atribución por enlace ahora se guarda en cada venta simulada. No se permite reutilizar una misma solicitud cambiando su enlace de procedencia. Las ventas de la versión anterior conservan su registro, pero su enlace histórico puede quedar vacío.
 - Cada apertura o recarga del enlace de prueba incrementa el contador; no equivale a visitantes únicos y no es una medida antifraude.
 - Las visitas se cuentan sin guardar IP, user-agent, cookies ni identificadores del visitante, aunque el tráfico HTTP local sigue existiendo mientras el servidor funciona.
 - El código de referencia no es una credencial ni un secreto de seguridad y no debe utilizarse como autorización de pagos.
 - El registro de auditoría en SQLite es modificable por quien tiene acceso al archivo: no es todavía evidencia contable a prueba de manipulaciones.
+- El motor compara saldos, referencias, eventos e integridad SQLite; cuando hay diferencias, el servidor devuelve HTTP 503 y bloquea nuevas escrituras. No se trata de un detector de fraudes completo ni de un mecanismo inviolable.
 - No existen ventas monetarias reales, aprobación de productos ni cálculo de ganancias garantizadas.
 - No se paga por reclutamiento ni por inscripción. Las cuentas de prueba no tienen saldo.
 - No activar conexiones con marketplaces externos sin permisos contractuales y revisión de su modelo de comisiones.
@@ -70,5 +73,7 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 
 ### Pruebas de integración
 La batería `http.test.mjs` levanta el servidor en un puerto local temporal y verifica interfaz, estilos CSP, bloqueo de orígenes externos, enlaces, atribución, idempotencia y reverso. **No confirma** cumplimiento legal, seguridad de producción ni ingresos reales.
+
+Consultar también [`TRUST_CHECKLIST.md`](./TRUST_CHECKLIST.md) para las condiciones obligatorias antes de lanzar un negocio real.
 
 **Importante:** El proyecto del repositorio puede diferir del entorno R4 local. Este MVP no modifica ningún archivo existente del sistema principal; su integración deberá decidirse después de auditoría.
