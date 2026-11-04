@@ -67,13 +67,18 @@ export class DemoAffiliateEngine {
         status TEXT NOT NULL CHECK(status IN ('DEMO_CONFIRMED', 'DEMO_REFUNDED')),
         price_cop INTEGER NOT NULL, commission_cop INTEGER NOT NULL,
         arc_cop INTEGER NOT NULL, affiliate_cop INTEGER NOT NULL,
-        merchant_cop INTEGER NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        merchant_cop INTEGER NOT NULL, referral_token TEXT REFERENCES referral_links(token), created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
       CREATE TABLE IF NOT EXISTS audit_events (
         id TEXT PRIMARY KEY, event_type TEXT NOT NULL, subject_id TEXT NOT NULL,
         details TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    // Migración compatible: se conserva el historial de la versión 0.2.
+    const saleColumns = this.db.prepare('PRAGMA table_info(demo_sales)').all();
+    if (!saleColumns.some(c => c.name === 'referral_token')) {
+      this.db.exec('ALTER TABLE demo_sales ADD COLUMN referral_token TEXT REFERENCES referral_links(token)');
+    }
   }
   close() { this.db.close(); }
   transaction(action) {
@@ -176,7 +181,7 @@ export class DemoAffiliateEngine {
   getSales() {
     return this.db.prepare(`SELECT s.id,s.request_id AS requestId,s.status,s.price_cop AS priceCop,
       s.commission_cop AS commissionCop,s.arc_cop AS arcCop,s.affiliate_cop AS affiliateCop,
-      s.merchant_cop AS merchantCop,s.created_at AS createdAt,
+      s.merchant_cop AS merchantCop,s.referral_token AS referralToken,s.created_at AS createdAt,
       p.title AS product, a.name AS affiliate
       FROM demo_sales s JOIN products p ON p.id=s.product_id
       JOIN affiliates a ON a.id=s.affiliate_id
@@ -186,7 +191,7 @@ export class DemoAffiliateEngine {
     validId(id, 'venta');
     return this.db.prepare(`SELECT s.id,s.request_id AS requestId,s.status,
       s.price_cop AS priceCop,s.commission_cop AS commissionCop,
-      s.arc_cop AS arcCop,s.affiliate_cop AS affiliateCop,s.merchant_cop AS merchantCop,
+      s.arc_cop AS arcCop,s.affiliate_cop AS affiliateCop,s.merchant_cop AS merchantCop,s.referral_token AS referralToken,
       s.created_at AS createdAt,p.title AS product,a.name AS affiliate
       FROM demo_sales s JOIN products p ON p.id=s.product_id
       JOIN affiliates a ON a.id=s.affiliate_id
@@ -197,11 +202,17 @@ export class DemoAffiliateEngine {
     validId(affiliateId, 'afiliado');
     validId(requestId, 'solicitud');
     // Idempotencia: jamás duplicar una solicitud repetida.
+    if (referralToken !== null) {
+      const ref = this.getReferral(referralToken);
+      if (!ref || ref.productId !== productId || ref.affiliateId !== affiliateId) {
+        throw new Error('El enlace no corresponde al producto o afiliado');
+      }
+    }
     const previous = this.db.prepare(
-      'SELECT id,product_id AS productId,affiliate_id AS affiliateId FROM demo_sales WHERE request_id=?'
+      'SELECT id,product_id AS productId,affiliate_id AS affiliateId,referral_token AS referralToken FROM demo_sales WHERE request_id=?'
     ).get(requestId);
     if (previous) {
-      if (previous.productId !== productId || previous.affiliateId !== affiliateId) {
+      if (previous.productId !== productId || previous.affiliateId !== affiliateId || previous.referralToken !== referralToken) {
         throw new Error('La solicitud repetida no corresponde al mismo producto y afiliado');
       }
       return this.getSale(previous.id);
@@ -213,10 +224,10 @@ export class DemoAffiliateEngine {
       const d = calculateDistribution(product.price_cop, product.commission_pct);
       const id = randomUUID();
       this.db.prepare(`INSERT INTO demo_sales
-        (id,request_id,product_id,affiliate_id,status,price_cop,commission_cop,arc_cop,affiliate_cop,merchant_cop)
-        VALUES (?,?,?,?,?,?,?,?,?,?)`).run(
+        (id,request_id,product_id,affiliate_id,status,price_cop,commission_cop,arc_cop,affiliate_cop,merchant_cop,referral_token)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)`).run(
           id, requestId, productId, affiliateId, 'DEMO_CONFIRMED',
-          d.priceCop, d.commissionCop, d.arcCop, d.affiliateCop, d.merchantCop
+          d.priceCop, d.commissionCop, d.arcCop, d.affiliateCop, d.merchantCop, referralToken
         );
       this.log('DEMO_SALE_CREATED', id, { requestId, productId, affiliateId, referralToken, ...d });
       return this.getSale(id);
