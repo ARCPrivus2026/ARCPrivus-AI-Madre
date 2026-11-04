@@ -6,7 +6,9 @@ import { DemoAffiliateEngine } from './engine.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const dbPath = process.env.ARC_DEMO_DB || join(here, '.local-data', 'demo.sqlite');
-const port = Number(process.env.ARC_DEMO_PORT || 3197);
+const port = process.env.ARC_DEMO_PORT === undefined ? 3197 : Number(process.env.ARC_DEMO_PORT);
+if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('Puerto local inválido');
+let activePort = port;
 const engine = new DemoAffiliateEngine(dbPath);
 const html = readFileSync(join(here, 'index.html'));
 const appJs = readFileSync(join(here, 'app.js'));
@@ -31,8 +33,8 @@ const body = async (req) => {
 const server = createServer(async (req, res) => {
   try {
     // Protección de demostración contra DNS rebinding, CSRF y solicitudes externas.
-    const localOrigin = 'http://127.0.0.1:' + port;
-    if (req.headers.host !== '127.0.0.1:' + port) {
+    const localOrigin = 'http://127.0.0.1:' + activePort;
+    if (req.headers.host !== '127.0.0.1:' + activePort) {
       return json(res, 403, { error: 'Este prototipo solo admite 127.0.0.1' });
     }
     if (req.method === 'POST') {
@@ -101,4 +103,7 @@ const server = createServer(async (req, res) => {
   }
 });
 // LOCALHOST es obligatorio: no hay autenticación para uso público.
-server.listen(port, '127.0.0.1', () => console.log('ARC Affiliate DEMO: http://127.0.0.1:' + port));
+server.listen(port, '127.0.0.1', () => {
+  activePort = server.address().port;
+  console.log('ARC Affiliate DEMO: http://127.0.0.1:' + activePort);
+});
