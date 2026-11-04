@@ -52,6 +52,14 @@ export class DemoAffiliateEngine {
         id TEXT PRIMARY KEY, name TEXT NOT NULL, code TEXT NOT NULL UNIQUE,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
+      CREATE TABLE IF NOT EXISTS referral_links (
+        id TEXT PRIMARY KEY,
+        product_id TEXT NOT NULL REFERENCES products(id),
+        affiliate_id TEXT NOT NULL REFERENCES affiliates(id),
+        token TEXT NOT NULL UNIQUE, clicks INTEGER NOT NULL DEFAULT 0 CHECK(clicks>=0),
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(product_id, affiliate_id)
+      );
       CREATE TABLE IF NOT EXISTS demo_sales (
         id TEXT PRIMARY KEY, request_id TEXT NOT NULL UNIQUE,
         product_id TEXT NOT NULL REFERENCES products(id),
@@ -110,6 +118,61 @@ export class DemoAffiliateEngine {
   getAffiliates() {
     return this.db.prepare('SELECT id,name,code FROM affiliates ORDER BY created_at DESC, rowid DESC').all();
   }
+
+  createReferral({ productId, affiliateId }) {
+    validId(productId, 'producto');
+    validId(affiliateId, 'afiliado');
+    return this.transaction(() => {
+      const product = this.db.prepare('SELECT id FROM products WHERE id=?').get(productId);
+      const affiliate = this.db.prepare('SELECT id FROM affiliates WHERE id=?').get(affiliateId);
+      if (!product || !affiliate) throw new Error('Producto o afiliado inexistente');
+      const id = randomUUID();
+      const token = randomUUID().replaceAll('-', '');
+      const result = this.db.prepare(
+        'INSERT OR IGNORE INTO referral_links (id,product_id,affiliate_id,token) VALUES (?,?,?,?)'
+      ).run(id, productId, affiliateId, token);
+      if (result.changes === 1) this.log('REFERRAL_CREATED', id, { productId, affiliateId, token });
+      return this.db.prepare(`SELECT l.id,l.token,l.clicks,
+        l.product_id AS productId,l.affiliate_id AS affiliateId,
+        p.title AS product,a.name AS affiliate
+        FROM referral_links l JOIN products p ON p.id=l.product_id
+        JOIN affiliates a ON a.id=l.affiliate_id
+        WHERE l.product_id=? AND l.affiliate_id=?`).get(productId, affiliateId);
+    });
+  }
+  getReferrals() {
+    return this.db.prepare(`SELECT l.id,l.token,l.clicks,
+      l.product_id AS productId,l.affiliate_id AS affiliateId,
+      p.title AS product,a.name AS affiliate
+      FROM referral_links l JOIN products p ON p.id=l.product_id
+      JOIN affiliates a ON a.id=l.affiliate_id
+      ORDER BY l.created_at DESC,l.rowid DESC LIMIT 100`).all();
+  }
+  getReferral(token) {
+    if (typeof token !== 'string' || !/^[a-f0-9]{32}$/.test(token)) throw new Error('Enlace inválido');
+    return this.db.prepare(`SELECT l.id,l.token,l.clicks,
+      l.product_id AS productId,l.affiliate_id AS affiliateId,
+      p.title AS product,a.name AS affiliate
+      FROM referral_links l JOIN products p ON p.id=l.product_id
+      JOIN affiliates a ON a.id=l.affiliate_id
+      WHERE l.token=?`).get(token);
+  }
+  recordReferralVisit(token) {
+    return this.transaction(() => {
+      const link = this.getReferral(token);
+      if (!link) throw new Error('Enlace inexistente');
+      this.db.prepare('UPDATE referral_links SET clicks=clicks+1 WHERE token=?').run(token);
+      return this.getReferral(token);
+    });
+  }
+  recordReferralSale({ token, requestId }) {
+    const link = this.getReferral(token);
+    if (!link) throw new Error('Enlace inexistente');
+    return this.recordDemoSale({
+      productId: link.productId, affiliateId: link.affiliateId, requestId,
+      referralToken: token
+    });
+  }
   getSales() {
     return this.db.prepare(`SELECT s.id,s.request_id AS requestId,s.status,s.price_cop AS priceCop,
       s.commission_cop AS commissionCop,s.arc_cop AS arcCop,s.affiliate_cop AS affiliateCop,
@@ -120,15 +183,29 @@ export class DemoAffiliateEngine {
       ORDER BY s.created_at DESC,s.rowid DESC LIMIT 100`).all();
   }
   getSale(id) {
-    return this.getSales().find(s => s.id === id);
+    validId(id, 'venta');
+    return this.db.prepare(`SELECT s.id,s.request_id AS requestId,s.status,
+      s.price_cop AS priceCop,s.commission_cop AS commissionCop,
+      s.arc_cop AS arcCop,s.affiliate_cop AS affiliateCop,s.merchant_cop AS merchantCop,
+      s.created_at AS createdAt,p.title AS product,a.name AS affiliate
+      FROM demo_sales s JOIN products p ON p.id=s.product_id
+      JOIN affiliates a ON a.id=s.affiliate_id
+      WHERE s.id=?`).get(id);
   }
-  recordDemoSale({ productId, affiliateId, requestId }) {
+  recordDemoSale({ productId, affiliateId, requestId, referralToken = null }) {
     validId(productId, 'producto');
     validId(affiliateId, 'afiliado');
     validId(requestId, 'solicitud');
     // Idempotencia: jamás duplicar una solicitud repetida.
-    const previous = this.db.prepare('SELECT id FROM demo_sales WHERE request_id=?').get(requestId);
-    if (previous) return this.getSale(previous.id);
+    const previous = this.db.prepare(
+      'SELECT id,product_id AS productId,affiliate_id AS affiliateId FROM demo_sales WHERE request_id=?'
+    ).get(requestId);
+    if (previous) {
+      if (previous.productId !== productId || previous.affiliateId !== affiliateId) {
+        throw new Error('La solicitud repetida no corresponde al mismo producto y afiliado');
+      }
+      return this.getSale(previous.id);
+    }
     return this.transaction(() => {
       const product = this.db.prepare('SELECT * FROM products WHERE id=?').get(productId);
       const affiliate = this.db.prepare('SELECT * FROM affiliates WHERE id=?').get(affiliateId);
@@ -141,7 +218,7 @@ export class DemoAffiliateEngine {
           id, requestId, productId, affiliateId, 'DEMO_CONFIRMED',
           d.priceCop, d.commissionCop, d.arcCop, d.affiliateCop, d.merchantCop
         );
-      this.log('DEMO_SALE_CREATED', id, { requestId, productId, affiliateId, ...d });
+      this.log('DEMO_SALE_CREATED', id, { requestId, productId, affiliateId, referralToken, ...d });
       return this.getSale(id);
     });
   }
