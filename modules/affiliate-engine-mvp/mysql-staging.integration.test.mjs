@@ -33,7 +33,7 @@ test('MySQL real: usuario CI solo autorizado para su esquema temporal', { skip: 
     // MYSQL_USER is created by the ephemeral container with access to only
     // MYSQL_DATABASE, plus global USAGE (not global ALL PRIVILEGES).
     assert.match(grants,/arc_affiliate_staging_ci/i);
-    assert.doesNotMatch(grants,/GRANT ALL PRIVILEGES ON \\*\\.\\*/i);
+    assert.equal(grants.includes('GRANT ALL PRIVILEGES ON *.*'),false);
   } finally {
     try { if (connection) connection.release(); }
     finally { if (pool) await pool.end(); }
