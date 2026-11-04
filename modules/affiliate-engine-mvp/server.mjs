@@ -48,6 +48,20 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && route === '/api/summary') return json(res, 200, engine.dashboard());
     if (req.method === 'GET' && route === '/api/products') return json(res, 200, engine.getProducts());
     if (req.method === 'GET' && route === '/api/affiliates') return json(res, 200, engine.getAffiliates());
+    if (req.method === 'GET' && route === '/api/referrals') return json(res, 200, engine.getReferrals());
+    if (req.method === 'POST' && route === '/api/referrals') return json(res, 201, engine.createReferral(await body(req)));
+    const refRoute = route.match(/^\/api\/referrals\/([a-f0-9]{32})$/);
+    if (req.method === 'GET' && refRoute) {
+      const link = engine.getReferral(refRoute[1]);
+      return json(res, link ? 200 : 404, link || { error: 'Enlace inexistente' });
+    }
+    const visit = route.match(/^\/api\/referrals\/([a-f0-9]{32})\/visit$/);
+    if (req.method === 'POST' && visit) return json(res, 200, engine.recordReferralVisit(visit[1]));
+    const referralSale = route.match(/^\/api\/referrals\/([a-f0-9]{32})\/demo-sale$/);
+    if (req.method === 'POST' && referralSale) {
+      const payload = await body(req);
+      return json(res, 201, engine.recordReferralSale({ token: referralSale[1], requestId: payload.requestId }));
+    }
     if (req.method === 'GET' && route === '/api/sales') return json(res, 200, engine.getSales());
     if (req.method === 'GET' && route === '/api/audit') return json(res, 200, engine.audit());
     if (req.method === 'POST' && route === '/api/products') return json(res, 201, engine.addProduct(await body(req)));
