@@ -19,6 +19,16 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Confirmar que ningún motor principal fue modificado
+        run: |
+          git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" | while IFS= read -r file; do
+            case "$file" in
+              modules/affiliate-engine-mvp/*|.github/workflows/affiliate-mvp-tests.yml) ;;
+              *) echo "::error::Fuera de alcance: $file"; exit 1 ;;
+            esac
+          done
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
