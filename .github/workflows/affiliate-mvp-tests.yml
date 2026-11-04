@@ -37,5 +37,49 @@ jobs:
       - run: node --check modules/affiliate-engine-mvp/app.js
       - run: node --check modules/affiliate-engine-mvp/r4-preflight.mjs
       - run: node --check modules/affiliate-engine-mvp/mysql-staging-adapter.mjs
+      - run: node --check modules/affiliate-engine-mvp/mysql-staging-probe.mjs
+      - run: node --check modules/affiliate-engine-mvp/mysql-staging.integration.test.mjs
       - run: node --check modules/affiliate-engine-mvp/http.test.mjs
       - run: node --test modules/affiliate-engine-mvp/*.test.mjs
+
+  mysql-staging-smoke:
+    name: MySQL isolated staging smoke test
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci-only-root-password-2026
+          MYSQL_DATABASE: arc_affiliate_staging_ci
+          MYSQL_USER: arc_aff_ci
+          MYSQL_PASSWORD: ci-only-affiliate-password-2026
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install only isolated MySQL driver
+        working-directory: modules/affiliate-engine-mvp
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Execute real MySQL staging probes (no R4)
+        working-directory: modules/affiliate-engine-mvp
+        env:
+          ARC_AFF_MYSQL_CI_TEST: '1'
+          ARC_AFF_STAGING_CONNECT: '1'
+          ARC_AFF_STAGING_ONLY: '1'
+          ARC_AFF_DB_HOST: '127.0.0.1'
+          ARC_AFF_DB_PORT: '3306'
+          ARC_AFF_DB_NAME: arc_affiliate_staging_ci
+          ARC_AFF_DB_USER: arc_aff_ci
+          ARC_AFF_DB_PASSWORD: ci-only-affiliate-password-2026
+          ARC_LIVE_PAYMENTS: '0'
+          ARC_ENABLE_PAYOUTS: '0'
+        run: node --test mysql-staging.integration.test.mjs
