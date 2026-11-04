@@ -93,6 +93,22 @@ Esto **no demuestra** que el objeto liberado sea el mismo que se obtuvo, ni que 
 
 Antes de instalar siquiera una copia del módulo Affiliate junto a R4, verificar de solo lectura los números de línea de `getConnection()`, `release()` y `finally`; inspeccionar después el alcance y manejo de errores sin exponer credenciales ni código sensible. No cambiar la conexión R4 como parte del trabajo comercial.
 
+## Bloque de prueba `testDatabase()` — comprobación final en R4
+
+Lectura de las líneas **184–204** del `server.js` local, compartidas con las cadenas de texto ocultas:
+
+- Línea 189: `async function testDatabase()`.
+- Línea 190: bloque `try`.
+- Línea 191: `const connection = await db.getConnection();`.
+- Línea 192: solo una llamada de registro de consola.
+- Línea 193: `connection.release();`, liberación explícita antes de establecer `runtime.database` y retornar.
+- Líneas 196–200: `catch` registra el error y devuelve `false`.
+- No se observó `finally` en este bloque.
+
+**Conclusión acotada:** es una prueba de conectividad (no un bloque de transacción comercial). La liberación ocurre en el camino normal, sin consulta SQL ni `await` entre adquisición y liberación. Si excepcionalmente fallara el registro de consola tras adquirir la conexión, no se alcanzaría `release()`; `finally` sería una mejora defensiva. No hay evidencia que justifique modificar el `server.js` de R4 para incorporar Affiliate.
+
+**Decisión técnica:** cerrar la inspección del bloque `testDatabase` sin cambios a R4 y continuar el desarrollo de Affiliate en una rama aislada. No afirmar que todos los demás usos del pool fueron auditados.
+
 ## Secuencia de integración, por puertas
 
 ### Puerta 0 — Auditoría de solo lectura (se permite ahora)
