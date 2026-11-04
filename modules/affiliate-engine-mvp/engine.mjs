@@ -259,6 +259,29 @@ export class DemoAffiliateEngine {
     return { environment: 'DEMO_ONLY', currency: 'COP', ...counts, ...s,
       warning: 'Cifras simuladas: NO son pagos, beneficios ni ingresos reales.' };
   }
+  reconcile() {
+    const integrity = this.db.prepare('PRAGMA integrity_check').get().integrity_check;
+    const foreignKeyViolations = this.db.prepare('PRAGMA foreign_key_check').all().length;
+    const financialMismatches = this.db.prepare(`SELECT COUNT(*) AS n FROM demo_sales
+      WHERE price_cop <> merchant_cop + affiliate_cop + arc_cop
+      OR commission_cop <> affiliate_cop + arc_cop
+      OR price_cop < 1 OR affiliate_cop < 0 OR arc_cop < 0 OR merchant_cop < 0`).get().n;
+    const referralMismatches = this.db.prepare(`SELECT COUNT(*) AS n FROM demo_sales s
+      LEFT JOIN referral_links r ON r.token=s.referral_token
+      WHERE s.referral_token IS NOT NULL AND
+      (r.id IS NULL OR s.product_id <> r.product_id OR s.affiliate_id <> r.affiliate_id)`).get().n;
+    const counts = this.db.prepare(`SELECT
+      (SELECT COUNT(*) FROM demo_sales) AS sales,
+      (SELECT COUNT(*) FROM audit_events WHERE event_type='DEMO_SALE_CREATED') AS created,
+      (SELECT COUNT(*) FROM demo_sales WHERE status='DEMO_REFUNDED') AS refunded,
+      (SELECT COUNT(*) FROM audit_events WHERE event_type='DEMO_SALE_REFUNDED') AS refundEvents`).get();
+    const auditMismatches = Math.abs(counts.sales-counts.created) + Math.abs(counts.refunded-counts.refundEvents);
+    const ok = integrity === 'ok' && foreignKeyViolations === 0 &&
+      financialMismatches === 0 && referralMismatches === 0 && auditMismatches === 0;
+    return { ok, productionReady: false, dbIntegrity: integrity, foreignKeyViolations,
+      financialMismatches, referralMismatches, auditMismatches,
+      checkedSales: counts.sales, warning: 'Comprobación local; no es auditoría externa ni certificado de seguridad.' };
+  }
   audit(limit = 50) {
     return this.db.prepare('SELECT event_type AS type,subject_id AS subjectId,details,created_at AS createdAt FROM audit_events ORDER BY rowid DESC LIMIT ?').all(Math.min(limit,100));
   }
