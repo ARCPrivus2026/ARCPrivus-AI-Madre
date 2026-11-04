@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 0.4 (preintegración)
+# ARC Global Affiliate & Commerce Engine — MVP 0.6 (prueba MySQL aislada)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -25,6 +25,22 @@ node .\r4-preflight.mjs "D:\ARC\ARNOLRC_PRUEBA_INSTALACION_LIMPIA_FINAL_2026-09-
 ```
 
 Se requiere una copia de esta rama en el equipo Windows para usar esa orden. El script no autoriza la integración, incluso si devuelve `blockers: []`. Ver [R4_INTEGRATION_PLAN.md](./R4_INTEGRATION_PLAN.md).
+
+## Prueba MySQL REAL y aislada en GitHub Actions (NO R4)
+
+El workflow `Affiliate MVP tests` incluye un trabajo `mysql-staging-smoke` que crea un **contenedor efímero MySQL 8.4** en un corredor de GitHub. Solo existe durante la prueba y se elimina al acabar.
+
+- Esquema temporal de prueba: `arc_affiliate_staging_ci`.
+- Usuario desechable: `arc_aff_ci`, con privilegios delimitados por el contenedor a ese esquema.
+- Controlador `mysql2` instalado **solamente** dentro del módulo durante la prueba.
+- `mysql-staging-probe.mjs` realiza una única consulta `SELECT DATABASE(), CURRENT_USER(), 1` y libera la conexión y el pool mediante bloques `finally`.
+- Una segunda comprobación revisa los permisos declarados por el servidor con `SHOW GRANTS FOR CURRENT_USER()`.
+- Las pruebas simuladas verifican que no se conecta por defecto y que los recursos se cierran incluso si ocurre un error.
+- No se consulta, crea ni modifica ninguna tabla del entorno ARNOLRC R4. No se usa su configuración, usuario, contraseña ni base.
+- **No ejecutar una prueba de red real en Windows R4** ni habilitar `ARC_AFF_STAGING_CONNECT` en su configuración.
+- El éxito en CI valida la conectividad exclusiva del contenedor; no constituye migración, prueba de carga, seguridad multiusuario ni autorización comercial.
+
+Archivo de CI: `.github/workflows/affiliate-mvp-tests.yml`.
 
 ## Regla comercial demostrativa
 
@@ -73,7 +89,7 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 
 ## Camino hacia producción (NO implementado)
 
-0. Completar pruebas automatizadas en CI y revisión del prototipo local, sin publicar ni fusionar.
+0. Superar las pruebas unitarias, HTTP y MySQL aislado en CI; revisar el prototipo local y completar la auditoría R4 sin publicar ni fusionar.
 1. Aprobar modelo jurídico para Colombia (incluye consumidor, datos, comercio electrónico, tributación y revisión de normas sobre multinivel), contratos con vendedores y afiliados y políticas de reembolsos.
 2. Implementar cuentas reales, doble factor, permisos por vendedor/afiliado/admin, antifraude, protección de datos y consentimiento.
 3. Persistencia robusta MySQL/PostgreSQL con libro contable de doble entrada e historial inmutable, conciliación y pruebas de concurrencia.
