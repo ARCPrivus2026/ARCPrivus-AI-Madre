@@ -36,5 +36,6 @@ jobs:
       - run: node --check modules/affiliate-engine-mvp/server.mjs
       - run: node --check modules/affiliate-engine-mvp/app.js
       - run: node --check modules/affiliate-engine-mvp/r4-preflight.mjs
+      - run: node --check modules/affiliate-engine-mvp/mysql-staging-adapter.mjs
       - run: node --check modules/affiliate-engine-mvp/http.test.mjs
       - run: node --test modules/affiliate-engine-mvp/*.test.mjs
