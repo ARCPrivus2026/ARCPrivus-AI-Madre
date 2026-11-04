@@ -50,6 +50,31 @@ Las comprobaciones **de solo lectura** realizadas en el equipo Windows del proye
 5. Una interrupción de Affiliate no debe bloquear el pool R4 ni la ejecución de Messenger, Copilot, Natalia u otros motores.
 6. La siguiente inspección deberá comprobar patrones de uso de consultas y dependencias **sin mostrar el contenido de `.env` ni cadenas de conexión**.
 
+## Diagnóstico de uso del pool MySQL en el servidor R4 — verificado con CMD
+
+La última comprobación **de solo lectura** de `server.js` y la carpeta local R4 mostró:
+
+- `IMPORTA_CONFIG_DB=True` — referencia al módulo de conexión existente
+- `DB_QUERY=9` — nueve coincidencias textuales de `db.query(`
+- `DB_EXECUTE=0` — sin coincidencias textuales de `db.execute(`
+- `DB_GETCONNECTION=1` — una coincidencia textual de `db.getConnection(`
+- `EXISTE_AFFILIATE=False` — el módulo de Affiliate todavía no está instalado en R4
+
+**Interpretación limitada:** estos son conteos de patrones de texto, no una inspección dinámica del flujo de ejecución ni una auditoría de los bloqueos de transacciones. No se ha leído la consulta SQL completa, ni se ha comprobado que los nueve usos sean seguros.
+
+### Adaptador preparado en la rama, todavía desconectado
+
+El archivo `mysql-staging-adapter.mjs` existe únicamente en la rama de revisión de GitHub.
+
+- No está importado por `server.mjs` ni por el `server.js` de R4.
+- **No abre conexiones automáticamente.** Su modo normal es apagado.
+- Las pruebas utilizan un controlador ficticio (mock) que no accede a MySQL.
+- Una futura conexión de pruebas requeriría una autorización explícita (`ARC_AFF_STAGING_CONNECT=1` y `ARC_AFF_STAGING_ONLY=1`), host MySQL local, usuario dedicado `arc_aff_*`, contraseña propia, base nueva `arc_affiliate_staging_*` y permisos limitados del servidor de base de datos.
+- Prohíbe las variables de activación de pagos reales; el software aún no está autorizado para manejar dinero.
+- **No configurar esas variables ni crear la base** durante la revisión actual.
+
+La validación de nombres no sustituye los permisos MySQL de mínimo privilegio; antes de crear el esquema debe aprobarse el diseño de seguridad del entorno R4.
+
 ## Secuencia de integración, por puertas
 
 ### Puerta 0 — Auditoría de solo lectura (se permite ahora)
