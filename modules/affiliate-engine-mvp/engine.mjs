@@ -9,19 +9,19 @@ export const ARC_FEE_BPS = 1000;
 
 function validName(value, label = 'nombre') {
   if (typeof value !== 'string' || value.trim().length < 3 || value.trim().length > 120) {
-    throw new Error(\`\${label}: debe contener entre 3 y 120 caracteres\`);
+    throw new Error(`${label}: debe contener entre 3 y 120 caracteres`);
   }
   return value.trim();
 }
 function validPositiveInt(value, label, max = 1_000_000_000) {
   if (!Number.isSafeInteger(value) || value < 1 || value > max) {
-    throw new Error(\`\${label}: número entero fuera de rango\`);
+    throw new Error(`${label}: número entero fuera de rango`);
   }
   return value;
 }
 function validId(value, label) {
   if (typeof value !== 'string' || value.length < 1 || value.length > 100) {
-    throw new Error(\`\${label}: identificador inválido\`);
+    throw new Error(`${label}: identificador inválido`);
   }
   return value;
 }
@@ -43,7 +43,7 @@ export class DemoAffiliateEngine {
     if (filename !== ':memory:') mkdirSync(dirname(filename), { recursive: true });
     this.db = new DatabaseSync(filename);
     this.db.exec('PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;');
-    this.db.exec(\`
+    this.db.exec(`
       CREATE TABLE IF NOT EXISTS products (
         id TEXT PRIMARY KEY, title TEXT NOT NULL, price_cop INTEGER NOT NULL,
         commission_pct INTEGER NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -65,7 +65,7 @@ export class DemoAffiliateEngine {
         id TEXT PRIMARY KEY, event_type TEXT NOT NULL, subject_id TEXT NOT NULL,
         details TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
-    \`);
+    `);
   }
   close() { this.db.close(); }
   transaction(action) {
@@ -111,13 +111,13 @@ export class DemoAffiliateEngine {
     return this.db.prepare('SELECT id,name,code FROM affiliates ORDER BY created_at DESC, rowid DESC').all();
   }
   getSales() {
-    return this.db.prepare(\`SELECT s.id,s.request_id AS requestId,s.status,s.price_cop AS priceCop,
+    return this.db.prepare(`SELECT s.id,s.request_id AS requestId,s.status,s.price_cop AS priceCop,
       s.commission_cop AS commissionCop,s.arc_cop AS arcCop,s.affiliate_cop AS affiliateCop,
       s.merchant_cop AS merchantCop,s.created_at AS createdAt,
       p.title AS product, a.name AS affiliate
       FROM demo_sales s JOIN products p ON p.id=s.product_id
       JOIN affiliates a ON a.id=s.affiliate_id
-      ORDER BY s.created_at DESC,s.rowid DESC LIMIT 100\`).all();
+      ORDER BY s.created_at DESC,s.rowid DESC LIMIT 100`).all();
   }
   getSale(id) {
     return this.getSales().find(s => s.id === id);
@@ -135,9 +135,9 @@ export class DemoAffiliateEngine {
       if (!product || !affiliate) throw new Error('Producto o afiliado inexistente');
       const d = calculateDistribution(product.price_cop, product.commission_pct);
       const id = randomUUID();
-      this.db.prepare(\`INSERT INTO demo_sales
+      this.db.prepare(`INSERT INTO demo_sales
         (id,request_id,product_id,affiliate_id,status,price_cop,commission_cop,arc_cop,affiliate_cop,merchant_cop)
-        VALUES (?,?,?,?,?,?,?,?,?,?)\`).run(
+        VALUES (?,?,?,?,?,?,?,?,?,?)`).run(
           id, requestId, productId, affiliateId, 'DEMO_CONFIRMED',
           d.priceCop, d.commissionCop, d.arcCop, d.affiliateCop, d.merchantCop
         );
@@ -162,12 +162,12 @@ export class DemoAffiliateEngine {
       products: this.db.prepare('SELECT COUNT(*) AS n FROM products').get().n,
       affiliates: this.db.prepare('SELECT COUNT(*) AS n FROM affiliates').get().n
     };
-    const s = this.db.prepare(\`SELECT COUNT(*) AS sales,
+    const s = this.db.prepare(`SELECT COUNT(*) AS sales,
       COALESCE(SUM(price_cop),0) AS grossCop,
       COALESCE(SUM(affiliate_cop),0) AS affiliateCop,
       COALESCE(SUM(arc_cop),0) AS arcCop,
       COALESCE(SUM(merchant_cop),0) AS merchantCop
-      FROM demo_sales WHERE status='DEMO_CONFIRMED'\`).get();
+      FROM demo_sales WHERE status='DEMO_CONFIRMED'`).get();
     return { environment: 'DEMO_ONLY', currency: 'COP', ...counts, ...s,
       warning: 'Cifras simuladas: NO son pagos, beneficios ni ingresos reales.' };
   }
