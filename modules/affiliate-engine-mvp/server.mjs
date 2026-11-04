@@ -10,6 +10,7 @@ const port = Number(process.env.ARC_DEMO_PORT || 3197);
 const engine = new DemoAffiliateEngine(dbPath);
 const html = readFileSync(join(here, 'index.html'));
 const appJs = readFileSync(join(here, 'app.js'));
+const styleCss = readFileSync(join(here, 'style.css'));
 const json = (res, status, data) => {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
@@ -29,7 +30,24 @@ const body = async (req) => {
 };
 const server = createServer(async (req, res) => {
   try {
-    const url = new URL(req.url, 'http://localhost');
+    // Protección de demostración contra DNS rebinding, CSRF y solicitudes externas.
+    const localOrigin = 'http://127.0.0.1:' + port;
+    if (req.headers.host !== '127.0.0.1:' + port) {
+      return json(res, 403, { error: 'Este prototipo solo admite 127.0.0.1' });
+    }
+    if (req.method === 'POST') {
+      const origin = req.headers.origin;
+      const site = req.headers['sec-fetch-site'];
+      if ((origin && origin !== localOrigin) ||
+          (site && site !== 'same-origin' && site !== 'none')) {
+        return json(res, 403, { error: 'Solicitud externa no permitida' });
+      }
+      const contentType = (req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
+      if (contentType !== 'application/json') {
+        return json(res, 415, { error: 'Se requiere application/json' });
+      }
+    }
+    const url = new URL(req.url, localOrigin);
     const route = url.pathname;
     if (req.method === 'GET' && route === '/') {
       res.writeHead(200, {
@@ -39,6 +57,14 @@ const server = createServer(async (req, res) => {
         'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
       });
       return res.end(html);
+    }
+    if (req.method === 'GET' && route === '/style.css') {
+      res.writeHead(200, {
+        'Content-Type': 'text/css; charset=utf-8',
+        'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff'
+      });
+      return res.end(styleCss);
     }
     if (req.method === 'GET' && route === '/app.js') {
       res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
