@@ -49,6 +49,15 @@ const server = createServer(async (req, res) => {
         return json(res, 415, { error: 'Se requiere application/json' });
       }
     }
+    if (req.method === 'POST') {
+      // Ante inconsistencia, negar toda escritura en vez de continuar
+      // mostrando operaciones que ya no se pueden conciliar.
+      const check = engine.reconcile();
+      if (!check.ok) return json(res, 503, {
+        error: 'Base de demostración con diferencias: escrituras bloqueadas',
+        integrity: check
+      });
+    }
     const url = new URL(req.url, localOrigin);
     const route = url.pathname;
     if (req.method === 'GET' && route === '/') {
