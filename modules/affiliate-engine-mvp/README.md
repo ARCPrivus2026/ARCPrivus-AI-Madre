@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 0.3
+# ARC Global Affiliate & Commerce Engine — MVP 0.4 (preintegración)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -10,11 +10,21 @@ Validar un flujo mínimo y auditable de producto → afiliado → enlace de prom
 Desde el directorio `modules/affiliate-engine-mvp`:
 
 ```powershell
-node --test engine.test.mjs http.test.mjs
+node --test *.test.mjs
 node server.mjs
 ```
 
 Abrir **http://127.0.0.1:3197** en el navegador de la misma computadora. Los datos de demostración se guardan en `.local-data/demo.sqlite` (no subir a Git).
+
+## Diagnóstico de compatibilidad R4 (SOLO LECTURA)
+
+`r4-preflight.mjs` inspecciona únicamente estructura, dependencias declaradas y nombres de scripts de la carpeta R4 indicada. No lee archivos `.env`, contraseñas, credenciales ni contenido de bases; no ejecuta software existente.
+
+```powershell
+node .\r4-preflight.mjs "D:\ARC\ARNOLRC_PRUEBA_INSTALACION_LIMPIA_FINAL_2026-09-16\ARNOLRC_R4_6_12_13_PREPUBLICACION_WINDOWS_2026-09-16"
+```
+
+Se requiere una copia de esta rama en el equipo Windows para usar esa orden. El script no autoriza la integración, incluso si devuelve `blockers: []`. Ver [R4_INTEGRATION_PLAN.md](./R4_INTEGRATION_PLAN.md).
 
 ## Regla comercial demostrativa
 
@@ -56,6 +66,7 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 - El código de referencia no es una credencial ni un secreto de seguridad y no debe utilizarse como autorización de pagos.
 - El registro de auditoría en SQLite es modificable por quien tiene acceso al archivo: no es todavía evidencia contable a prueba de manipulaciones.
 - El motor compara saldos, referencias, eventos e integridad SQLite; cuando hay diferencias, el servidor devuelve HTTP 503 y bloquea nuevas escrituras. No se trata de un detector de fraudes completo ni de un mecanismo inviolable.
+- El servidor se niega a iniciar si intentan activar flags de pagos reales; una ubicación externa de base `ARC_DEMO_DB` solo se admite con `ARC_DEMO_TEST_MODE=1` para pruebas controladas.
 - No existen ventas monetarias reales, aprobación de productos ni cálculo de ganancias garantizadas.
 - No se paga por reclutamiento ni por inscripción. Las cuentas de prueba no tienen saldo.
 - No activar conexiones con marketplaces externos sin permisos contractuales y revisión de su modelo de comisiones.
@@ -74,6 +85,6 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 ### Pruebas de integración
 La batería `http.test.mjs` levanta el servidor en un puerto local temporal y verifica interfaz, estilos CSP, bloqueo de orígenes externos, enlaces, atribución, idempotencia y reverso. **No confirma** cumplimiento legal, seguridad de producción ni ingresos reales.
 
-Consultar también [`TRUST_CHECKLIST.md`](./TRUST_CHECKLIST.md) para las condiciones obligatorias antes de lanzar un negocio real.
+Consultar también [`TRUST_CHECKLIST.md`](./TRUST_CHECKLIST.md) y [`R4_INTEGRATION_PLAN.md`](./R4_INTEGRATION_PLAN.md) para las condiciones obligatorias antes de lanzar un negocio real.
 
 **Importante:** El proyecto del repositorio puede diferir del entorno R4 local. Este MVP no modifica ningún archivo existente del sistema principal; su integración deberá decidirse después de auditoría.
