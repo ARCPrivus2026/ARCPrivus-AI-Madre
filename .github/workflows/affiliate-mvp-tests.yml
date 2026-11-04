@@ -22,4 +22,6 @@ jobs:
           node-version: '24'
       - run: node --check modules/affiliate-engine-mvp/engine.mjs
       - run: node --check modules/affiliate-engine-mvp/server.mjs
-      - run: node --test modules/affiliate-engine-mvp/engine.test.mjs
+      - run: node --check modules/affiliate-engine-mvp/app.js
+      - run: node --check modules/affiliate-engine-mvp/http.test.mjs
+      - run: node --test modules/affiliate-engine-mvp/*.test.mjs
