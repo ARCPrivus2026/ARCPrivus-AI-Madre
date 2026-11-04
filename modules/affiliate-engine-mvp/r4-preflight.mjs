@@ -2,6 +2,7 @@
 // No ejecuta código del proyecto objetivo, no instala paquetes y no abre puertos.
 import { existsSync, lstatSync, readFileSync, readdirSync } from 'node:fs';
 import { basename, resolve, join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 function fileExists(root, name) {
   const filename = join(root, name);
@@ -72,7 +73,7 @@ export function inspectR4(rootPath) {
   return report;
 }
 
-if (process.argv[1] && import.meta.url === new URL('file://' + resolve(process.argv[1]).replaceAll('\\','/')).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
     const result = inspectR4(process.argv[2]);
     process.stdout.write(JSON.stringify(result, null, 2) + '\n');
