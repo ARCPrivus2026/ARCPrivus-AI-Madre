@@ -5,6 +5,14 @@ import { fileURLToPath } from 'node:url';
 import { DemoAffiliateEngine } from './engine.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
+// Nunca permitir que una configuración externa convierta el prototipo en pagos reales.
+const liveFlags = ['ARC_AFFILIATE_LIVE', 'ARC_LIVE_PAYMENTS', 'ARC_ENABLE_PAYOUTS'];
+if (liveFlags.some(name => /^(1|true|yes|on)$/i.test(String(process.env[name] || '')))) {
+  throw new Error('Pagos reales deshabilitados: este servicio es únicamente una DEMO');
+}
+if (process.env.ARC_DEMO_DB && process.env.ARC_DEMO_TEST_MODE !== '1') {
+  throw new Error('La base SQLite de la DEMO no se puede redirigir fuera del entorno de pruebas');
+}
 const dbPath = process.env.ARC_DEMO_DB || join(here, '.local-data', 'demo.sqlite');
 const port = process.env.ARC_DEMO_PORT === undefined ? 3197 : Number(process.env.ARC_DEMO_PORT);
 if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('Puerto local inválido');
