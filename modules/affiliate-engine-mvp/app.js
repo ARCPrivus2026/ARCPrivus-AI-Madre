@@ -9,13 +9,22 @@ function fill(id, items, label) {
   $(id).replaceChildren(...items.map(x => { const o=element('option',label(x)); o.value=x.id; return o; }));
 }
 async function reload() {
-  const [sum, products, affiliates, sales] = await Promise.all([api('summary'),api('products'),api('affiliates'),api('sales')]);
+  const [sum, products, affiliates, sales, refs] = await Promise.all([api('summary'),api('products'),api('affiliates'),api('sales'),api('referrals')]);
   $('sales').textContent=sum.sales; $('affiliate').textContent=cop(sum.affiliateCop);
   $('arc').textContent=cop(sum.arcCop); $('gross').textContent=cop(sum.grossCop);
   fill('productId',products,p=>p.title+' — '+cop(p.priceCop));
   fill('affiliateId',affiliates,a=>a.name);
+  fill('refProductId',products,p=>p.title);
+  fill('refAffiliateId',affiliates,a=>a.name);
   $('products').replaceChildren(...products.map(p=>element('li',p.title+' · '+cop(p.priceCop)+' · '+p.commissionPct+'% comisión')));
   $('affiliates').replaceChildren(...affiliates.map(a=>element('li',a.name+' · Código '+a.code)));
+  $('referrals').replaceChildren(...refs.map(r=>{
+    const li=element('li',r.product+' · '+r.affiliate+' · visitas: '+r.clicks+' · ');
+    const a=element('a','Abrir página de prueba');
+    a.href='/?ref='+encodeURIComponent(r.token);
+    li.append(a);
+    return li;
+  }));
   $('history').replaceChildren(...sales.map(s=>{
     const li=document.createElement('li');
     li.append(element('span',s.product+' | '+s.affiliate+' | '+cop(s.priceCop)+' | ARC '+cop(s.arcCop)+' | '+s.status));
@@ -42,4 +51,30 @@ $('affiliateForm').addEventListener('submit',e=>{
 $('saleForm').addEventListener('submit',e=>{
   e.preventDefault(); execute(async()=>{await api('demo-sales',{method:'POST',body:JSON.stringify({productId:$('productId').value,affiliateId:$('affiliateId').value,requestId:crypto.randomUUID()})});await reload();});
 });
-execute(reload);
+$('refForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  execute(async()=>{
+    await api('referrals',{method:'POST',body:JSON.stringify({
+      productId:$('refProductId').value,affiliateId:$('refAffiliateId').value
+    })});
+    await reload();
+  });
+});
+async function openReferralPage(){
+  const token=new URLSearchParams(location.search).get('ref');
+  if (!token) return;
+  if (!/^[a-f0-9]{32}$/.test(token)) { $('message').textContent='Enlace de prueba inválido.'; return; }
+  try{
+    const link=await api('referrals/'+token);
+    $('landingInfo').textContent='Producto: '+link.product+' · Afiliado: '+link.affiliate;
+    $('landing').hidden=false;
+    $('simulatePurchase').addEventListener('click',()=>execute(async()=>{
+      await api('referrals/'+token+'/demo-sale',{method:'POST',
+        body:JSON.stringify({requestId:crypto.randomUUID()})});
+      await reload();
+    }));
+    await api('referrals/'+token+'/visit',{method:'POST',body:'{}'});
+    await reload();
+  }catch(e){$('message').textContent='No se pudo abrir el enlace: '+e.message;}
+}
+execute(async()=>{await reload();await openReferralPage();});
