@@ -83,6 +83,7 @@ test('servidor localhost: vistas CSP, bloqueo externo y flujo de promoción', as
     const sale=await first.json();
     assert.equal(sale.arcCop,3000);
     assert.equal(sale.affiliateCop,27000);
+    assert.equal(sale.referralToken,link.token);
     const replay=await post(url+'/api/referrals/'+link.token+'/demo-sale',{requestId:'demo-1'});
     assert.equal((await replay.json()).id,sale.id);
     const summary=await (await fetch(url+'/api/summary')).json();
@@ -93,5 +94,10 @@ test('servidor localhost: vistas CSP, bloqueo externo y flujo de promoción', as
     const zero=await (await fetch(url+'/api/summary')).json();
     assert.equal(zero.sales,0);
     assert.equal(zero.arcCop,0);
+    const integrity = await fetch(url+'/api/integrity');
+    assert.equal(integrity.status,200);
+    const checks = await integrity.json();
+    assert.equal(checks.ok,true);
+    assert.equal(checks.productionReady,false);
   } finally { child.kill(); }
 });
