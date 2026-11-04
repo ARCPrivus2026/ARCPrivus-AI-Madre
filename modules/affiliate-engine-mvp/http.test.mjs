@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -136,4 +136,21 @@ test('bloquea nuevas operaciones cuando hay alteraciones en el registro contable
     });
     rmSync(dir,{recursive:true,force:true});
   }
+});
+
+test('servidor se niega a habilitar cobros reales o a abrir base ajena',()=>{
+  const app=join(here,'server.mjs');
+  const live=spawnSync(process.execPath,[app],{
+    cwd:here,encoding:'utf8',timeout:5000,
+    env:{...process.env,ARC_LIVE_PAYMENTS:'1',ARC_DEMO_DB:':memory:',ARC_DEMO_TEST_MODE:'1'}
+  });
+  assert.notEqual(live.status,0);
+  assert.match(live.stderr,/Pagos reales deshabilitados/i);
+  const hijack=spawnSync(process.execPath,[app],{
+    cwd:here,encoding:'utf8',timeout:5000,
+    env:{...process.env,ARC_DEMO_DB:':memory:',ARC_DEMO_TEST_MODE:'0',
+      ARC_LIVE_PAYMENTS:'0',ARC_AFFILIATE_LIVE:'0',ARC_ENABLE_PAYOUTS:'0'}
+  });
+  assert.notEqual(hijack.status,0);
+  assert.match(hijack.stderr,/base SQLite de la DEMO/i);
 });
