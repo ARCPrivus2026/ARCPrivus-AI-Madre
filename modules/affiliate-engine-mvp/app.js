@@ -8,6 +8,19 @@ function element(tag, text) { const x = document.createElement(tag); x.textConte
 function fill(id, items, label) {
   $(id).replaceChildren(...items.map(x => { const o=element('option',label(x)); o.value=x.id; return o; }));
 }
+async function updateIntegrity() {
+  try {
+    const r = await fetch('/api/integrity', {cache:'no-store'});
+    const report = await r.json();
+    $('integrity').textContent = report.ok
+      ? 'Correcto: no se detectaron diferencias en las operaciones de prueba.'
+      : 'ALERTA: se detectaron diferencias. Las nuevas operaciones están bloqueadas.';
+    $('integrity').style.color = report.ok ? '#8ff0d6' : '#ffb4a1';
+  } catch {
+    $('integrity').textContent = 'No se pudo comprobar la consistencia.';
+    $('integrity').style.color = '#ffb4a1';
+  }
+}
 async function reload() {
   const [sum, products, affiliates, sales, refs] = await Promise.all([api('summary'),api('products'),api('affiliates'),api('sales'),api('referrals')]);
   $('sales').textContent=sum.sales; $('affiliate').textContent=cop(sum.affiliateCop);
@@ -35,6 +48,7 @@ async function reload() {
     }
     return li;
   }));
+  await updateIntegrity();
 }
 async function execute(fn) {
   try { await fn(); $('message').textContent='Operación de demostración completada.'; }
