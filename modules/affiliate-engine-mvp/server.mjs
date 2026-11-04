@@ -73,6 +73,10 @@ const server = createServer(async (req, res) => {
       return res.end(appJs);
     }
     if (req.method === 'GET' && route === '/api/status') return json(res, 200, { status: 'DEMO_ONLY', livePayments: false, payouts: false });
+    if (req.method === 'GET' && route === '/api/integrity') {
+      const report = engine.reconcile();
+      return json(res, report.ok ? 200 : 503, report);
+    }
     if (req.method === 'GET' && route === '/api/summary') return json(res, 200, engine.dashboard());
     if (req.method === 'GET' && route === '/api/products') return json(res, 200, engine.getProducts());
     if (req.method === 'GET' && route === '/api/affiliates') return json(res, 200, engine.getAffiliates());
