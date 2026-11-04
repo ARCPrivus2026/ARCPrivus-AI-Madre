@@ -2,12 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-async function startLocalServer(){
+async function startLocalServer(databaseFile = ':memory:'){
   const child = spawn(process.execPath, [join(here, 'server.mjs')], {
-    cwd: here, env: { ...process.env, ARC_DEMO_PORT: '0', ARC_DEMO_DB: ':memory:' },
+    cwd: here, env: { ...process.env, ARC_DEMO_PORT: '0', ARC_DEMO_DB: databaseFile },
     stdio: ['ignore', 'pipe', 'pipe']
   });
   const url = await new Promise((resolve, reject) => {
@@ -100,4 +103,37 @@ test('servidor localhost: vistas CSP, bloqueo externo y flujo de promoción', as
     assert.equal(checks.ok,true);
     assert.equal(checks.productionReady,false);
   } finally { child.kill(); }
+});
+
+test('bloquea nuevas operaciones cuando hay alteraciones en el registro contable', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'arc-affiliate-http-'));
+  const dbFile = join(dir, 'test.sqlite');
+  const { url, child } = await startLocalServer(dbFile);
+  try {
+    const product = await (await post(url+'/api/products',{
+      title:'Producto auditoría', priceCop:100000, commissionPct:30
+    })).json();
+    const affiliate = await (await post(url+'/api/affiliates',{name:'Afiliado Auditoría'})).json();
+    const response = await post(url+'/api/demo-sales',{
+      productId:product.id, affiliateId:affiliate.id, requestId:'tamper-sale'
+    });
+    assert.equal(response.status,201);
+    const db = new DatabaseSync(dbFile);
+    db.prepare("UPDATE demo_sales SET arc_cop=arc_cop+1 WHERE request_id=?").run('tamper-sale');
+    db.close();
+    const health=await fetch(url+'/api/integrity');
+    assert.equal(health.status,503);
+    assert.equal((await health.json()).financialMismatches,1);
+    const blocked=await post(url+'/api/products',{
+      title:'Operación bloqueada',priceCop:100000,commissionPct:30
+    });
+    assert.equal(blocked.status,503);
+    assert.match((await blocked.json()).error,/bloqueadas/i);
+  } finally {
+    await new Promise(resolve => {
+      child.once('exit',resolve);
+      child.kill();
+    });
+    rmSync(dir,{recursive:true,force:true});
+  }
 });
