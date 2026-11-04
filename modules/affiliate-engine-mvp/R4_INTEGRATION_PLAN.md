@@ -20,6 +20,36 @@
 6. La variable de activación comercial debe **permanecer desactivada**. Integrar identidad, pagos, antifraude y conciliación solo después de cumplir `TRUST_CHECKLIST.md`.
 7. Los enlaces de demo no pueden anunciarse como enlaces que cobran o remuneran en dinero real.
 
+## Diagnóstico confirmado en Windows R4 — 4 de noviembre de 2026
+
+Las comprobaciones **de solo lectura** realizadas en el equipo Windows del proyecto devolvieron:
+
+| Indicador | Resultado observado |
+|---|---|
+| Carpeta R4 | Existe |
+| Paquete R4 | `arnolrc-platform` |
+| Módulos | `type: module` |
+| Archivo de inicio | `server.js` |
+| Referencia desde servidor | `config/db` |
+| `config/db.js` | Hace referencia a `mysql2` |
+| `mysql2/promise` | Sí |
+| `createPool` | Sí |
+| `createConnection` | No detectado |
+| `process.env` | Sí |
+| `export default` | Sí |
+| `connectionLimit` | Sí |
+
+**Alcance de la evidencia:** las búsquedas de texto confirman declaraciones y referencias, **no** una conexión activa, no la base de datos seleccionada ni que todos los módulos utilicen ese mismo pool. El listado de `package.json` también incluye `sqlite3`, `better-sqlite3` y `mongoose`; su instalación no demuestra su uso efectivo.
+
+### Contrato de aislamiento propuesto (sin ejecutar)
+
+1. Mantener totalmente intacto el pool MySQL actual de `config/db.js`; **no** importarlo ni compartirlo con Affiliate.
+2. Diseñar un pool propio de Affiliate con `mysql2/promise` y variables exclusivas del motor comercial (por ejemplo `ARC_AFF_DB_HOST`, `ARC_AFF_DB_USER`, `ARC_AFF_DB_NAME`); nunca almacenar credenciales en el repositorio.
+3. Establecer un esquema independiente de *staging* que no sea el de R4 y un usuario MySQL con permisos limitados exclusivamente a ese esquema. No crear la base ni el usuario en esta etapa.
+4. Mantener el módulo apagado por defecto; no añadir rutas, procesos ni tareas a `server.js` o al puerto 3100.
+5. Una interrupción de Affiliate no debe bloquear el pool R4 ni la ejecución de Messenger, Copilot, Natalia u otros motores.
+6. La siguiente inspección deberá comprobar patrones de uso de consultas y dependencias **sin mostrar el contenido de `.env` ni cadenas de conexión**.
+
 ## Secuencia de integración, por puertas
 
 ### Puerta 0 — Auditoría de solo lectura (se permite ahora)
@@ -62,4 +92,4 @@ Se observaron implementaciones de servidor y mecanismos de acceso heterogéneos;
 
 ## Estado de CI observado
 
-El pipeline de GitHub Actions fue creado pero sus trabajos permanecían **`queued`**, con `runner_id: null`, sin conclusiones. El estado de Vercel por sí solo no certifica estas pruebas. Se redujeron eventos duplicados y se configuró cancelación de ejecuciones obsoletas; todavía se requiere resultado final verificable.
+La ejecución oficial de GitHub Actions del commit `387f6abdc0d280326d83b90188b3118b76f06d73` terminó con **19 pruebas aprobadas y 0 fallidas** (run 41867895187), incluido el control de archivos fuera de alcance. Estos resultados no verifican todavía la instalación de Windows R4 ni autorizan integrar pagos. Toda modificación posterior del documento requerirá su propia comprobación de CI para ese nuevo commit.
