@@ -2,12 +2,13 @@
  * ARC Affiliate 0.9 — CI-ONLY credential/session prototype.
  * No HTTP endpoints, no cookies, no real customer accounts and no deployment.
  * Uses its OWN ephemeral MySQL staging schema; never imports ARNOLRC R4.
- * Production still requires MFA, IP/device controls, audits, CSRF, TLS and review.
+ * Production still requires WebAuthn, recovery, rate limits, audits, CSRF, TLS and review.
  */
 import {randomUUID,randomBytes,createHash,timingSafeEqual,scrypt as scryptCallback} from 'node:crypto';
 import {promisify} from 'node:util';
 import {getStagingPoolOptions} from './mysql-staging-adapter.mjs';
 import {DemoAccessDenied} from './mysql-staging-access.mjs';
+import {createFixtureMfaSecret,totpAt,validateTotpOnce,encryptFixtureMfa,decryptFixtureMfa} from './mysql-staging-mfa.mjs';
 
 const derive=promisify(scryptCallback);
 const SESSION_MS=15*60*1000;
@@ -35,7 +36,13 @@ export const identityDDL=Object.freeze([
    "token_hash CHAR(64) NOT NULL UNIQUE,"+
    "expires_at_ms BIGINT UNSIGNED NOT NULL,revoked BOOLEAN NOT NULL DEFAULT FALSE,"+
    "FOREIGN KEY(account_id) REFERENCES aff_demo_accounts(id),"+
-   "INDEX idx_demo_expiry(expires_at_ms)) ENGINE=InnoDB"
+   "mfa_verified BOOLEAN NOT NULL DEFAULT FALSE,"+
+   "INDEX idx_demo_expiry(expires_at_ms)) ENGINE=InnoDB",
+  "CREATE TABLE IF NOT EXISTS aff_demo_admin_mfa ("+
+   "account_id CHAR(36) PRIMARY KEY,ciphertext CHAR(40) NOT NULL,"+
+   "iv CHAR(24) NOT NULL,tag CHAR(32) NOT NULL,"+
+   "last_step BIGINT NOT NULL DEFAULT -1,"+
+   "FOREIGN KEY(account_id) REFERENCES aff_demo_accounts(id)) ENGINE=InnoDB"
 ]);
 function passwordValid(password){
   return typeof password==='string'&&password.length>=12&&password.length<=128
@@ -74,7 +81,7 @@ export async function compareFixturePassword(password,salt,digest){
 }
 
 export class MysqlStagingIdentity {
-  constructor(pool,roleGate,env=process.env,now=()=>Date.now()){
+  constructor(pool,roleGate,env=process.env,now=()=>Date.now(),mfaKey=null){
     getStagingPoolOptions(env);
     if(env.ARC_AFF_MYSQL_CI_TEST!=='1'||env.ARC_AFF_STAGING_SCHEMA_TEST!=='1'){
       throw new Error('Identidad simulada solo disponible en CI');
@@ -86,6 +93,7 @@ export class MysqlStagingIdentity {
     this.pool=pool;
     this.roles=roleGate;
     this.now=now;
+    this.mfaKey=mfaKey; // 32-byte ephemeral CI key, never read R4 configuration
   }
   async initializeSchema(){
     for(const statement of identityDDL)await this.pool.query(statement);
@@ -103,7 +111,42 @@ export class MysqlStagingIdentity {
     );
     return accountId;
   }
-  async signIn({username,password}){
+  /**
+   * Privileged fixture provisioning, NOT an HTTP endpoint.
+   * A test-only random TOTP seed is returned ONCE to the test harness.
+   * Re-enrollment invalidates all existing sessions; admins cannot opt out.
+   */
+  async enrollFixtureAdminMfa(accountId){
+    if(typeof accountId!=='string'||!UUID_RE.test(accountId)||!Buffer.isBuffer(this.mfaKey)
+       ||this.mfaKey.length!==32)throw new DemoAuthenticationFailed();
+    const secret=createFixtureMfaSecret();
+    const sealed=encryptFixtureMfa(secret,this.mfaKey);
+    const conn=await this.pool.getConnection();
+    let active=false;
+    try{
+      await conn.beginTransaction();active=true;
+      const [accounts]=await conn.execute(
+        "SELECT a.id,a.enabled AS account_enabled,p.role,p.enabled AS principal_enabled "+
+        "FROM aff_demo_accounts a JOIN aff_demo_principals p ON p.id=a.principal_id "+
+        "WHERE a.id=? FOR UPDATE",[accountId]
+      );
+      if(accounts.length!==1||accounts[0].role!=='SIM_ADMIN'||
+         !accounts[0].account_enabled||!accounts[0].principal_enabled){
+        throw new DemoAuthenticationFailed();
+      }
+      await conn.execute(
+        "INSERT INTO aff_demo_admin_mfa(account_id,ciphertext,iv,tag,last_step) "+
+        "VALUES(?,?,?,?,-1) ON DUPLICATE KEY UPDATE "+
+        "ciphertext=VALUES(ciphertext),iv=VALUES(iv),tag=VALUES(tag),last_step=-1",
+        [accountId,sealed.ciphertext,sealed.iv,sealed.tag]
+      );
+      await conn.execute('UPDATE aff_demo_sessions SET revoked=1 WHERE account_id=?',[accountId]);
+      await conn.commit();active=false;
+    }catch(error){if(active)await conn.rollback();throw error;}
+    finally{conn.release();}
+    return secret; // only in memory of the CI test
+  }
+  async signIn({username,password,totpCode=null}){
     usernameInput(username);passwordInput(password);
     const connection=await this.pool.getConnection();
     let active=false;
@@ -113,8 +156,10 @@ export class MysqlStagingIdentity {
       await connection.beginTransaction();active=true;
       const [accounts]=await connection.execute(
         "SELECT a.id,a.pwd_salt,a.pwd_digest,a.failed_attempts,a.locked_until_ms,"+
-        "a.enabled AS account_enabled,p.enabled AS principal_enabled "+
+        "a.enabled AS account_enabled,p.enabled AS principal_enabled,p.role,"+
+        "m.ciphertext AS mfa_ciphertext,m.iv AS mfa_iv,m.tag AS mfa_tag,m.last_step "+
         "FROM aff_demo_accounts a JOIN aff_demo_principals p ON p.id=a.principal_id "+
+        "LEFT JOIN aff_demo_admin_mfa m ON m.account_id=a.id "+
         "WHERE a.username=? FOR UPDATE",[username]
       );
       const a=accounts[0]||null;
@@ -123,9 +168,25 @@ export class MysqlStagingIdentity {
       const saved=a?Buffer.from(a.pwd_digest,'hex'):DUMMY_DIGEST;
       const valid=timingSafeEqual(Buffer.from(candidate,'hex'),saved);
       const now=this.now();
-      if(!a||!a.account_enabled||!a.principal_enabled||a.locked_until_ms>now||!valid){
-        if(a&&a.account_enabled&&a.principal_enabled&&a.locked_until_ms<=now&&!valid){
-          const failures=Math.min(5,Number(a.failed_attempts)+1);
+      const admin=!!a&&a.role==='SIM_ADMIN';
+      let validMfa=false;
+      let acceptedStep=-1;
+      // No session may ever be issued for an admin without second factor.
+      if(admin&&valid&&a.account_enabled&&a.principal_enabled&&a.locked_until_ms<=now
+         &&a.mfa_ciphertext&&Buffer.isBuffer(this.mfaKey)&&this.mfaKey.length===32){
+        const seed=decryptFixtureMfa({
+          ciphertext:a.mfa_ciphertext,iv:a.mfa_iv,tag:a.mfa_tag
+        },this.mfaKey);
+        const checked=validateTotpOnce(seed,totpCode,now,Number(a.last_step));
+        validMfa=checked.ok;
+        acceptedStep=checked.step;
+      }
+      const good=!!a&&!!a.account_enabled&&!!a.principal_enabled
+        &&a.locked_until_ms<=now&&valid&&(!admin||validMfa);
+      if(!good){
+        // Count wrong password, missing MFA, wrong TOTP and reused TOTP alike.
+        if(a&&a.account_enabled&&a.principal_enabled&&a.locked_until_ms<=now){
+          const failures=Math.min(MAX_FAILURES,Number(a.failed_attempts)+1);
           await connection.execute(
             'UPDATE aff_demo_accounts SET failed_attempts=?,locked_until_ms=? WHERE id=?',
             [failures,failures>=MAX_FAILURES?now+LOCK_MS:0,a.id]
@@ -135,10 +196,16 @@ export class MysqlStagingIdentity {
       }else{
         const token=randomBytes(32).toString('base64url');
         const expiresAtMs=now+SESSION_MS;
+        if(admin){
+          await connection.execute(
+            'UPDATE aff_demo_admin_mfa SET last_step=? WHERE account_id=?',
+            [acceptedStep,a.id]
+          );
+        }
         await connection.execute('UPDATE aff_demo_accounts SET failed_attempts=0,locked_until_ms=0 WHERE id=?',[a.id]);
         await connection.execute(
-          'INSERT INTO aff_demo_sessions(id,account_id,token_hash,expires_at_ms,revoked) VALUES(?,?,?,?,0)',
-          [randomUUID(),a.id,hashSession(token),expiresAtMs]
+          'INSERT INTO aff_demo_sessions(id,account_id,token_hash,expires_at_ms,revoked,mfa_verified) VALUES(?,?,?,?,0,?)',
+          [randomUUID(),a.id,hashSession(token),expiresAtMs,admin?1:0]
         );
         result=Object.freeze({token,expiresAtMs});
       }
@@ -157,7 +224,9 @@ export class MysqlStagingIdentity {
       "JOIN aff_demo_accounts a ON a.id=s.account_id "+
       "JOIN aff_demo_principals p ON p.id=a.principal_id "+
       "WHERE s.token_hash=? AND s.revoked=0 AND s.expires_at_ms>? "+
-      "AND a.enabled=1 AND p.enabled=1",
+      "AND a.enabled=1 AND p.enabled=1 "+
+      "AND (p.role<>'SIM_ADMIN' OR (s.mfa_verified=1 AND EXISTS "+
+      "(SELECT 1 FROM aff_demo_admin_mfa m WHERE m.account_id=a.id)))",
       [hash,this.now()]
     );
     if(rows.length!==1)throw new DemoAuthenticationFailed();
