@@ -5,6 +5,7 @@
 import { randomUUID } from 'node:crypto';
 import { calculateDistribution } from './engine.mjs';
 import { getStagingPoolOptions } from './mysql-staging-adapter.mjs';
+import {simulatedJournalDDL,recordSimulatedJournal,reconcileSimulatedJournals} from './mysql-staging-journal.mjs';
 
 const ddl = [
   "CREATE TABLE IF NOT EXISTS aff_demo_products ("+
@@ -75,7 +76,7 @@ export class MysqlStagingDemoStore {
   }
   async initializeSchema() {
     // MySQL DDL commits automatically. Only the exclusive ephemeral CI schema.
-    for (const sql of ddl) await this.pool.query(sql);
+    for (const sql of [...ddl,...simulatedJournalDDL]) await this.pool.query(sql);
   }
   async product({title,priceCop,commissionPct}) {
     title=name(title);
@@ -137,6 +138,12 @@ export class MysqlStagingDemoStore {
         await conn.execute(
           "INSERT INTO aff_demo_audit(id,order_id,event_type) VALUES(?,?,'SIM_ORDER_CREATED')",
           [randomUUID(),committedId]);
+        await recordSimulatedJournal(conn,{
+          orderId:committedId,
+          order:{priceCop:dist.priceCop,merchantCop:dist.merchantCop,
+            affiliateCop:dist.affiliateCop,arcCop:dist.arcCop},
+          event:'SIM_ORDER_CREATED'
+        });
       }
       await conn.commit();inTx=false;
     } catch(e) {
@@ -168,6 +175,12 @@ export class MysqlStagingDemoStore {
         await conn.execute("UPDATE aff_demo_orders SET status='SIM_REFUNDED' WHERE id=?",[orderId]);
         await conn.execute("UPDATE aff_demo_commissions SET state='SIM_REVERSED' WHERE order_id=?",[orderId]);
         await conn.execute("INSERT INTO aff_demo_audit(id,order_id,event_type) VALUES(?,?,'SIM_ORDER_REFUNDED')",[randomUUID(),orderId]);
+        await recordSimulatedJournal(conn,{
+          orderId,
+          order:{priceCop:Number(found.price_cop),merchantCop:Number(found.merchant_cop),
+            affiliateCop:Number(found.affiliate_cop),arcCop:Number(found.arc_cop)},
+          event:'SIM_ORDER_REFUNDED'
+        });
       }
       await conn.commit();inTx=false;
     }catch(e){if(inTx)await conn.rollback();throw e;}
@@ -194,7 +207,8 @@ export class MysqlStagingDemoStore {
          "OR (o.status='SIM_CONFIRMED' AND c.state<>'SIM_ACTIVE') "+
          "OR (o.status='SIM_REFUNDED' AND c.state<>'SIM_REVERSED')) AS mismatches");
     const r=rows[0];
-    return {ok:r.total===r.commissions&&r.total===r.created&&r.refunded===r.refund_events&&r.mismatches===0,
-      mode:'SIMULATION_ONLY',productionReady:false,...r};
+    const journals=await reconcileSimulatedJournals(this.pool);
+    return {ok:r.total===r.commissions&&r.total===r.created&&r.refunded===r.refund_events&&r.mismatches===0&&journals.ok,
+      mode:'SIMULATION_ONLY',productionReady:false,...r,journals};
   }
 }
