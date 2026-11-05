@@ -21,7 +21,7 @@ export const accessDDL = Object.freeze([
       "role='SIM_ADMIN' AND scope_product_id IS NULL AND scope_affiliate_id IS NULL) OR ("+
       "role='SIM_MERCHANT' AND scope_product_id IS NOT NULL AND scope_affiliate_id IS NULL) OR ("+
       "role='SIM_AFFILIATE' AND scope_product_id IS NULL AND scope_affiliate_id IS NOT NULL))"+
-  ") ENGINE=InnoDB"
+  " ENGINE=InnoDB"
 ]);
 const allowedRoles = new Set(['SIM_ADMIN','SIM_MERCHANT','SIM_AFFILIATE']);
 function validId(v) {
