@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
 import {createStagingPool} from './mysql-staging-adapter.mjs';
 import {MysqlStagingDemoStore} from './mysql-staging-store.mjs';
 import {MysqlDemoRoleGate,DemoAccessDenied} from './mysql-staging-access.mjs';
@@ -23,7 +24,7 @@ async function setup(hooks={}){
 test('MySQL real: journal de doble entrada cuadre y reversión en pedido', {skip:!enabled},async()=>{
   const x=await setup();
   try{
-    const order=await x.store.simulatedOrder({referralId:x.link.id,requestId:'ledger-'+crypto.randomUUID()});
+    const order=await x.store.simulatedOrder({referralId:x.link.id,requestId:'ledger-'+randomUUID()});
     const [journals]=await x.pool.execute('SELECT * FROM aff_demo_journals WHERE order_id=?',[order.id]);
     assert.equal(journals.length,1);
     assert.equal(journals[0].event_type,'SIM_ORDER_CREATED');
@@ -54,7 +55,7 @@ test('MySQL real: journal de doble entrada cuadre y reversión en pedido', {skip
 test('MySQL real: anulación transaccional no deja journal ni pedido huérfano', {skip:!enabled},async()=>{
   const x=await setup({afterOrderInsert:async()=>{throw new Error('forced-business-failure');}});
   try{
-    const request='journal-fail-'+crypto.randomUUID();
+    const request='journal-fail-'+randomUUID();
     await assert.rejects(
       ()=>x.store.simulatedOrder({referralId:x.link.id,requestId:request}),/forced-business-failure/
     );
@@ -67,7 +68,7 @@ test('MySQL real: conciliación detecta un asiento artificialmente alterado', {s
   const x=await setup();
   try{
     const order=await x.store.simulatedOrder({
-      referralId:x.link.id,requestId:'journal-tamper-'+crypto.randomUUID()
+      referralId:x.link.id,requestId:'journal-tamper-'+randomUUID()
     });
     const [lines]=await x.pool.execute(
       "SELECT p.id,p.amount_cop FROM aff_demo_postings p JOIN aff_demo_journals j ON j.id=p.journal_id WHERE j.order_id=? AND p.account_code='SIM_ARC'",
@@ -89,7 +90,7 @@ test('MySQL real: conciliación detecta un asiento artificialmente alterado', {s
 test('MySQL real: administrador, comerciante y afiliado tienen acceso limitado por objeto', {skip:!enabled},async()=>{
   const x=await setup();
   try{
-    const order=await x.store.simulatedOrder({referralId:x.link.id,requestId:'rbac-'+crypto.randomUUID()});
+    const order=await x.store.simulatedOrder({referralId:x.link.id,requestId:'rbac-'+randomUUID()});
     const admin=await x.roles.createFixture({role:'SIM_ADMIN'});
     const merchant=await x.roles.createFixture({role:'SIM_MERCHANT',scopeProductId:x.p.id});
     const affiliate=await x.roles.createFixture({role:'SIM_AFFILIATE',scopeAffiliateId:x.a.id});
