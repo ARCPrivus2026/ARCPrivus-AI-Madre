@@ -64,9 +64,10 @@ export function getStagingPoolOptions(env = process.env) {
   // Keep this in a private function call; do not log or serialize.
   return Object.freeze({
     host, port, user, password, database,
-    waitForConnections: false,
+    // Bound both active connections and pending requests; never queue unbounded.
+    waitForConnections: true,
     connectionLimit: 2,
-    queueLimit: 0,
+    queueLimit: 8,
     connectTimeout: 3000,
     multipleStatements: false,
     decimalNumbers: false,
