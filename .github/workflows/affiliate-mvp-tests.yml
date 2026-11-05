@@ -7,7 +7,7 @@ on:
 
 # Evita dos ejecuciones por cada commit y cancela las antiguas del mismo PR.
 concurrency:
-  group: affiliate-mvp-v08-${{ github.event.pull_request.number || github.ref }}
+  group: affiliate-mvp-v09-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
