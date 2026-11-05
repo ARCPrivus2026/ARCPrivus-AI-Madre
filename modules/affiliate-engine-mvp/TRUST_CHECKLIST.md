@@ -1,4 +1,4 @@
-# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 0.8)
+# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 0.9)
 
 **Estado:** PILOTO LOCAL CON DINERO SIMULADO. Ninguna sección de este documento autoriza operar una plataforma pública ni recibir fondos de clientes.
 
@@ -38,6 +38,24 @@ La política de roles es un **mecanismo interno de autorización para identidade
 
 ### Verificación
 La ejecución oficial [41941908374](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41941908374) completó **50 ejecuciones de pruebas aprobadas, 0 fallidas** para la lógica del MVP 0.8 (39 generales + 11 MySQL). Las 10 pruebas omitidas en el trabajo general se reservan para el trabajo especializado.
+
+## A.2. Identidad y sesiones simuladas — MVP 0.9
+
+**Todo lo siguiente aplica únicamente al esquema MySQL efímero de GitHub Actions.** No está habilitado como servicio web ni como autenticación para clientes.
+
+| Control | Estado |
+|---|---|
+| Contraseñas ficticias derivadas con `scrypt` y sal por cuenta | Implementado en código CI-only |
+| Tokens aleatorios y hash persistido en la base | Implementado en código CI-only |
+| Expiración de sesión a los 15 minutos | Implementado en código CI-only |
+| Cierre de sesión y revocación al desactivar la cuenta | Implementado en código CI-only |
+| Bloqueo temporal tras cinco intentos fallidos | Implementado en código CI-only |
+| Identidad de actor derivada de sesión para permisos por pedido | Implementado en código CI-only |
+| Login real, MFA, HTTPS, cookies y CSRF | **NO implementados** |
+| Rate limiting por IP, supervisión de ataques, verificación de email | **NO implementados** |
+| Revisión de seguridad / pruebas de penetración | **NO realizadas** |
+
+La presencia de hashes, contraseñas o sesiones en un demo **no significa autenticación lista para producción**. Está prohibido conectar `mysql-staging-identity.mjs` al servidor web o a R4 antes de una auditoría independiente y de implementar controles de protección web.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
