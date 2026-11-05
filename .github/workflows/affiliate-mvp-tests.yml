@@ -44,6 +44,8 @@ jobs:
       - run: node --check modules/affiliate-engine-mvp/mysql-staging-journal.mjs
       - run: node --check modules/affiliate-engine-mvp/mysql-staging-access.mjs
       - run: node --check modules/affiliate-engine-mvp/mysql-staging-security.integration.test.mjs
+      - run: node --check modules/affiliate-engine-mvp/mysql-staging-identity.mjs
+      - run: node --check modules/affiliate-engine-mvp/mysql-staging-identity.integration.test.mjs
       - run: node --check modules/affiliate-engine-mvp/http.test.mjs
       - run: node --test modules/affiliate-engine-mvp/*.test.mjs
 
@@ -88,4 +90,4 @@ jobs:
           ARC_AFF_DB_PASSWORD: ci-only-affiliate-password-2026
           ARC_LIVE_PAYMENTS: '0'
           ARC_ENABLE_PAYOUTS: '0'
-        run: timeout --signal=TERM --kill-after=10s 180s node --test --test-concurrency=1 mysql-staging.integration.test.mjs mysql-staging-store.integration.test.mjs mysql-staging-security.integration.test.mjs
+        run: timeout --signal=TERM --kill-after=10s 180s node --test --test-concurrency=1 mysql-staging.integration.test.mjs mysql-staging-store.integration.test.mjs mysql-staging-security.integration.test.mjs mysql-staging-identity.integration.test.mjs
