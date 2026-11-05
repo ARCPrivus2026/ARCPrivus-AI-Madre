@@ -8,9 +8,14 @@ const enabled = process.env.ARC_AFF_MYSQL_CI_TEST === '1'
 
 const setup = async(hooks={}) => {
   const pool=await createStagingPool(process.env);
-  const store=new MysqlStagingDemoStore(pool,process.env,hooks);
-  await store.initializeSchema();
-  return {pool,store};
+  try{
+    const store=new MysqlStagingDemoStore(pool,process.env,hooks);
+    await store.initializeSchema();
+    return {pool,store};
+  }catch(error){
+    await pool.end();
+    throw error;
+  }
 };
 const make = async store => {
   const p=await store.product({title:'Producto SIMULADO',priceCop:100000,commissionPct:30});
