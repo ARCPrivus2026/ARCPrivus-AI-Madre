@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 0.7 (persistencia transaccional MySQL de prueba)
+# ARC Global Affiliate & Commerce Engine — MVP 0.8 (permisos simulados y asientos de doble entrada)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -63,6 +63,28 @@ Las operaciones son **SIMULADAS**; no representan pedidos facturados, cobros rea
 
 La batería de integración `mysql-staging-store.integration.test.mjs` comprueba datos almacenados, idempotencia, atribución, reembolso, reversión de una transacción interrumpida y ausencia de duplicados con solicitudes concurrentes contra un MySQL 8.4 efímero.
 
+## Roles y contabilidad simulados — MVP 0.8
+
+Se añadieron dos capas **solo para el MySQL efímero de GitHub Actions**:
+
+**`mysql-staging-access.mjs`** implementa una política de denegación por defecto, con tres roles de prueba:
+- `SIM_ADMIN`: puede consultar pedidos y revertir operaciones simuladas.
+- `SIM_MERCHANT`: puede consultar únicamente pedidos correspondientes a su producto de prueba.
+- `SIM_AFFILIATE`: puede consultar únicamente pedidos asignados a su afiliación de prueba.
+
+La identidad de los actores se guarda en una tabla de prueba `aff_demo_principals`. El control comprueba permisos por rol y objeto, e impide el acceso a usuarios deshabilitados. **No existe autenticación real**: falta un proveedor de identidad, sesión firmada, MFA, recuperación de cuenta y validación del origen del `actorId`. Nunca aceptar un identificador de actor enviado por el navegador como identidad verificada. La API de demostración del panel SQLite **no importa** este módulo.
+
+**`mysql-staging-journal.mjs`** incorpora las tablas `aff_demo_journals` y `aff_demo_postings`. Para una venta simulada de COP 100.000 y comisión comercial del 30 %, se registra:
+- Débito: cuenta ficticia `SIM_CLEARING` COP 100.000.
+- Créditos: comerciante COP 70.000; afiliado COP 27.000; ARC COP 3.000.
+- Reembolso: un asiento inverso, conservando los anteriores.
+
+Los asientos se graban **dentro de la misma transacción InnoDB** que el pedido, la comisión y la auditoría. La conciliación verifica igualdad de débitos/créditos y existencia de eventos contables. Las pruebas reales incluyen operaciones normales, reversos, rollback forzado, alteración de asientos y control de accesos por rol. El nombre `SIM_CLEARING` no corresponde a fondos efectivamente cobrados o depositados.
+
+Estos asientos son solo una representación contable de pruebas. **No constituyen libro contable certificado**, tienen un registro modificable por el usuario MySQL y no gestionan depósitos, impuestos, facturas, liquidaciones, saldos exigibles ni pagos externos.
+
+**Resultado oficial del commit de lógica `d48c6cf5a997f96e503b263fef6a0a7e55ea4660`:** GitHub Actions [run 41941908374](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41941908374), con 39 pruebas aprobadas en el trabajo general y 11 en MySQL real, 0 fallidas. Esta documentación requiere una nueva validación del commit final.
+
 ## Regla comercial demostrativa
 
 Por cada venta de COP 100.000 con comisión comercial pactada de 30 %:
@@ -113,7 +135,7 @@ Los cálculos del piloto omiten impuestos, pasarelas, descuentos, retenciones, d
 0. Superar las pruebas unitarias, HTTP y MySQL aislado en CI; revisar el prototipo local y completar la auditoría R4 sin publicar ni fusionar.
 1. Aprobar modelo jurídico para Colombia (incluye consumidor, datos, comercio electrónico, tributación y revisión de normas sobre multinivel), contratos con vendedores y afiliados y políticas de reembolsos.
 2. Implementar cuentas reales, doble factor, permisos por vendedor/afiliado/admin, antifraude, protección de datos y consentimiento.
-3. Persistencia robusta MySQL/PostgreSQL con libro contable de doble entrada e historial inmutable, conciliación y pruebas de concurrencia.
+3. Evolucionar los asientos simulados a un libro de doble entrada inmutable y conciliado independientemente, con migraciones versionadas y pruebas de concurrencia antes de producción.
 4. Conectar una pasarela compatible con marketplaces; cobros confirmados solo por webhooks firmados e idempotentes; conciliación y ventanas de devoluciones.
 5. Ofrecer catálogo real con moderación y evidencia de titularidad; enlaces de atribución consentidos y control de cookies.
 6. Integrar Copilot/Studio IA para marketing honesto, sin afirmaciones de rentabilidad no verificadas.
