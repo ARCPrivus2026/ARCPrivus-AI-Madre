@@ -25,6 +25,7 @@ test('MySQL real: tablas exclusivas, venta simulada, 10 % comisión y reembolso 
   const {pool,store}=await setup();
   try{
     const {r}=await make(store);
+    const before=await store.summary();
     const req=unique('order');
     const o=await store.simulatedOrder({referralId:r.id,requestId:req});
     assert.equal(o.status,'SIM_CONFIRMED');
@@ -42,8 +43,7 @@ test('MySQL real: tablas exclusivas, venta simulada, 10 % comisión y reembolso 
     const [audits]=await pool.execute('SELECT * FROM aff_demo_audit WHERE order_id=?',[o.id]);
     assert.equal(audits.length,2);
     const totals=await store.summary();
-    const [live]=await pool.execute("SELECT COUNT(*) AS n FROM aff_demo_orders WHERE status='SIM_CONFIRMED'");
-    assert.equal(Number(totals.arcCop),Number(live[0].n)*0); // all orders in this test begin refunded
+    assert.equal(Number(totals.arcCop),Number(before.arcCop));
     assert.equal((await store.reconcile()).ok,true);
   }finally{await pool.end();}
 });
