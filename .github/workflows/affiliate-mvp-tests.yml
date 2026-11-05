@@ -7,7 +7,7 @@ on:
 
 # Evita dos ejecuciones por cada commit y cancela las antiguas del mismo PR.
 concurrency:
-  group: affiliate-mvp-${{ github.event.pull_request.number || github.ref }}
+  group: affiliate-mvp-v08-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -88,4 +88,4 @@ jobs:
           ARC_AFF_DB_PASSWORD: ci-only-affiliate-password-2026
           ARC_LIVE_PAYMENTS: '0'
           ARC_ENABLE_PAYOUTS: '0'
-        run: node --test --test-concurrency=1 mysql-staging.integration.test.mjs mysql-staging-store.integration.test.mjs mysql-staging-security.integration.test.mjs
+        run: timeout --signal=TERM --kill-after=10s 180s node --test --test-concurrency=1 mysql-staging.integration.test.mjs mysql-staging-store.integration.test.mjs mysql-staging-security.integration.test.mjs
