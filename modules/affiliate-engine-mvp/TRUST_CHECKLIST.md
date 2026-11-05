@@ -1,4 +1,4 @@
-# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 0.3)
+# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 0.8)
 
 **Estado:** PILOTO LOCAL CON DINERO SIMULADO. Ninguna sección de este documento autoriza operar una plataforma pública ni recibir fondos de clientes.
 
@@ -20,6 +20,24 @@
 | Disponibilidad pública / seguridad multiusuario | **NO** | Sin autenticación ni autorización |
 
 Las verificaciones locales no constituyen auditoría independiente. Aunque la conciliación dé `ok: true`, **no** demuestra que los datos sean verdaderos ni que un administrador con acceso al archivo no pueda alterar los registros. Las ventas son inventadas en el modo de simulación.
+
+## A.1. Avances en MySQL 8.4 de CI (NO aptos para usuarios reales)
+
+| Control de prueba | Estado | Evidencia |
+|---|---|---|
+| Persistencia MySQL separada del R4 local | Aprobado en contenedor temporal | `mysql-staging-store.integration.test.mjs` |
+| Pedido+comisión+auditoría en transacción InnoDB | Aprobado en pruebas | `mysql-staging-store.integration.test.mjs` |
+| Asientos balanceados (débito/crédito) e inverso al reembolso | Aprobado en pruebas | `mysql-staging-security.integration.test.mjs` |
+| Detección de un asiento manualmente alterado | Aprobado en pruebas | `mysql-staging-security.integration.test.mjs` |
+| Roles ficticios y permiso por producto/afiliado | Aprobado en pruebas | `mysql-staging-access.test.mjs`, `mysql-staging-security.integration.test.mjs` |
+| Autenticación real y MFA | **NO** | Pendiente de implementar |
+| Libro contable inmutable y conciliación independiente | **NO** | Pendiente de implementar |
+| Cobro, retención y pago reales | **NO** | Prohibidos en esta etapa |
+
+La política de roles es un **mecanismo interno de autorización para identidades ficticias**. No verifica identidades reales y sus métodos directos no deben publicarse como endpoints. La simulación del dinero se limita a asientos ficticios, sin representar fondos depositados o liquidaciones.
+
+### Verificación
+La ejecución oficial [41941908374](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41941908374) completó **50 ejecuciones de pruebas aprobadas, 0 fallidas** para la lógica del MVP 0.8 (39 generales + 11 MySQL). Las 10 pruebas omitidas en el trabajo general se reservan para el trabajo especializado.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
