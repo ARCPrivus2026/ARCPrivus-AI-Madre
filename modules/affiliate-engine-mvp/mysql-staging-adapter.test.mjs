@@ -37,7 +37,8 @@ test('solo permite credenciales dedicadas y esquema aislado local', () => {
   assert.equal(opt.user,'arc_aff_test');
   assert.equal(opt.connectionLimit,2);
   assert.equal(opt.multipleStatements,false);
-  assert.equal(opt.waitForConnections,false);
+  assert.equal(opt.waitForConnections,true);
+  assert.equal(opt.queueLimit,8);
 });
 
 test('rechaza host remoto, esquema R4 y usuario común', () => {
