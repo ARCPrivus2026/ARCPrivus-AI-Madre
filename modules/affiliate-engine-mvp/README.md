@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 0.9 (identidad y sesiones de prueba, aisladas)
+# ARC Global Affiliate & Commerce Engine — MVP 1.0 (MFA administrativo simulado, identidad y sesiones aisladas)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -105,6 +105,23 @@ Se incorporó `mysql-staging-identity.mjs` al módulo de MySQL **exclusivamente 
 **Límites de seguridad obligatorios:** no existe endpoint HTTPS, cookies seguras, CSRF, MFA, recuperación de cuenta, correo verificado, controles por IP/dispositivo, detección de bots ni revisión independiente. El bloqueo por cuenta no controla ataques distribuidos a gran escala. Las funciones `createFixtureAccount` y `disableAccount` son **solo configuración de pruebas**, no operaciones de usuario público. El método anterior de autorización por `actorId` es interno y nunca debe publicarse como API; toda operación futura necesitará un servidor autenticador que resuelva identidad en cada solicitud.
 
 **No configurar `ARC_AFF_STAGING_CONNECT` ni ninguna bandera CI en Windows R4; no usar contraseñas reales, datos personales, clientes o pagos.**
+
+## ARC Affiliate 1.0 — Segunda verificación administrativa, solo laboratorio
+
+Se añadieron `mysql-staging-mfa.mjs` y pruebas automáticas del segundo factor para **cuentas ficticias `SIM_ADMIN`**. La función de inicio de sesión del laboratorio `mysql-staging-identity.mjs` ahora **rechaza cualquier sesión administrativa sin el código TOTP correcto**; no se introdujo una ruta alternativa para entrar únicamente con contraseña.
+
+- **TOTP de 6 cifras** basado en pasos de 30 segundos; se valida contra un vector conocido del RFC 6238 (SHA-1). El laboratorio requiere el código de la ventana actual, sin margen para reloj desincronizado.
+- **Anti-repetición:** el paso del último código aceptado queda almacenado y comprobado dentro de la misma transacción InnoDB; una segunda autenticación con ese código se rechaza aunque la contraseña sea correcta.
+- **Protección de la semilla:** cada administrador ficticio recibe una semilla aleatoria; se guarda **cifrada con AES-256-GCM**. La clave de 32 bytes se crea en memoria dentro del proceso de pruebas, no en R4 ni en el repositorio.
+- **Sesiones de administrador:** contienen un indicador interno `mfa_verified`. Las consultas de autorización rechazan expresamente una sesión administrativa marcada como no verificada, incluso si otro componente generara un token válido por error.
+- **Renovación de semilla:** la función interna de fixture invalida todas las sesiones anteriores. Los intentos con códigos ausentes o incorrectos también cuentan para el bloqueo temporal por cuenta.
+- Las cuentas ficticias `SIM_MERCHANT` y `SIM_AFFILIATE` permanecen con el flujo de contraseña del laboratorio, sujetas a las restricciones de acceso de la versión 0.9. **No se afirma que todas las cuentas tengan MFA**.
+
+**Límites obligatorios:** el código no constituye una plataforma de autenticación certificada ni un producto listo para clientes. Sigue sin disponer de HTTPS/cookies, autenticación WebAuthn, recuperación segura de cuenta, rate limiting por IP, verificación de correo, protección frente a suplantación en navegadores, auditoría inmutable, pruebas de penetración o rotación operativa de claves. El aprovisionamiento de semillas es una **función de fixture de CI**, nunca un endpoint de autoinscripción. El TOTP es vulnerable a suplantación de páginas (phishing); se prefiere diseñar WebAuthn resistente al phishing antes de producción.
+
+**No introducir semillas reales, contraseñas personales ni credenciales de R4.** No exponer `signIn()`, `enrollFixtureAdminMfa()` ni los objetos de almacenamiento como endpoints públicos. El trabajo se ejecuta exclusivamente en MySQL efímero de GitHub Actions.
+
+**Evidencia técnica inicial:** [GitHub Actions 41946143113](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41946143113), **46 pruebas aprobadas en la batería general** y **21 pruebas aprobadas con MySQL real**, sin fallos. El commit final de documentación requiere confirmación adicional.
 
 ## Regla comercial demostrativa
 
