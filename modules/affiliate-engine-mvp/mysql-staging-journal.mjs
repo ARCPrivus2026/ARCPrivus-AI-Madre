@@ -95,11 +95,11 @@ export async function reconcileSimulatedJournals(pool) {
       "OR (o.status='SIM_CONFIRMED' AND EXISTS(SELECT 1 FROM aff_demo_journals j "+
       "WHERE j.order_id=o.id AND j.event_type='SIM_ORDER_REFUNDED'))) AS missing_or_extra,"+
     "(SELECT COUNT(*) FROM ("+
-       "SELECT j.id,COUNT(p.id) AS lines,"+
+       "SELECT j.id,COUNT(p.id) AS posting_count,"+
        "COALESCE(SUM(CASE WHEN p.side='DEBIT' THEN p.amount_cop ELSE 0 END),0) AS debits,"+
        "COALESCE(SUM(CASE WHEN p.side='CREDIT' THEN p.amount_cop ELSE 0 END),0) AS credits "+
        "FROM aff_demo_journals j LEFT JOIN aff_demo_postings p ON p.journal_id=j.id GROUP BY j.id"+
-     ") totals WHERE totals.lines<2 OR totals.debits<>totals.credits) AS unbalanced"
+     ") totals WHERE totals.posting_count<2 OR totals.debits<>totals.credits) AS unbalanced"
   );
   const r=rows[0];
   return Object.freeze({
