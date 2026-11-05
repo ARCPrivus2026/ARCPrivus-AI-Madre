@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {randomUUID,createHash} from 'node:crypto';
+import {randomUUID,randomBytes,createHash} from 'node:crypto';
 import {createStagingPool} from './mysql-staging-adapter.mjs';
 import {MysqlStagingDemoStore} from './mysql-staging-store.mjs';
 import {MysqlDemoRoleGate,DemoAccessDenied} from './mysql-staging-access.mjs';
 import {MysqlStagingIdentity,DemoAuthenticationFailed} from './mysql-staging-identity.mjs';
+import {totpAt} from './mysql-staging-mfa.mjs';
 
 const enabled=process.env.ARC_AFF_MYSQL_CI_TEST==='1'
   &&process.env.ARC_AFF_STAGING_SCHEMA_TEST==='1';
@@ -22,7 +23,7 @@ async function createEnv(){
    let now=Date.now();
    const clock=()=>now;
    const setTime=t=>{now=t;};
-   const identity=new MysqlStagingIdentity(pool,roles,process.env,clock);
+   const identity=new MysqlStagingIdentity(pool,roles,process.env,clock,randomBytes(32));
    await identity.initializeSchema();
    const product=await store.product({title:'Comercio demo de seguridad',priceCop:100000,commissionPct:30});
    const affiliate=await store.affiliate({alias:'Afiliado demo de seguridad'});
@@ -39,7 +40,12 @@ async function account(env,role,scope={}){
  const accountId=await env.identity.createFixtureAccount({
    principalId,username:user,password:goodPassword
  });
- return {principalId,accountId,username:user};
+ const mfaSeed=role==='SIM_ADMIN'?await env.identity.enrollFixtureAdminMfa(accountId):null;
+ return {principalId,accountId,username:user,mfaSeed};
+}
+async function login(env,a,password=goodPassword){
+ const totpCode=a.mfaSeed?totpAt(a.mfaSeed,env.time()).code:null;
+ return env.identity.signIn({username:a.username,password,totpCode});
 }
 
 test('MySQL real: contraseña scrypt y token opaco almacenados únicamente como hashes',
@@ -54,7 +60,7 @@ test('MySQL real: contraseña scrypt y token opaco almacenados únicamente como 
    assert.equal(stored[0].pwd_digest.length,64);
    assert.equal(stored[0].pwd_salt.length,32);
    assert.equal(JSON.stringify(stored).includes(goodPassword),false);
-   const session=await e.identity.signIn({username:a.username,password:goodPassword});
+   const session=await login(e,a);
    assert.match(session.token,/^[A-Za-z0-9_-]{43}$/);
    assert.equal(session.expiresAtMs,e.time()+15*60*1000);
    const [records]=await e.pool.execute(
@@ -88,9 +94,9 @@ test('MySQL real: incorrectas, usuario desconocido y quinto fallo bloquean acces
    );
    assert.equal(rows[0].failed_attempts,5);
    assert.ok(Number(rows[0].locked_until_ms)>e.time());
-   await assert.rejects(()=>e.identity.signIn({username:a.username,password:goodPassword}),DemoAuthenticationFailed);
+   await assert.rejects(()=>login(e,a),DemoAuthenticationFailed);
    e.setTime(Number(rows[0].locked_until_ms)+1);
-   const session=await e.identity.signIn({username:a.username,password:goodPassword});
+   const session=await login(e,a);
    assert.equal((await e.identity.readOrder(session.token,e.order.id)).id,e.order.id);
    e.setTime(session.expiresAtMs+1);
    await assert.rejects(()=>e.identity.readOrder(session.token,e.order.id),DemoAuthenticationFailed);
@@ -102,15 +108,16 @@ test('MySQL real: revocación por cierre de sesión, cuenta desactivada y rol de
  const e=await createEnv();
  try{
    const a=await account(e,'SIM_ADMIN');
-   const s1=await e.identity.signIn({username:a.username,password:goodPassword});
+   const s1=await login(e,a);
    await e.identity.signOut(s1.token);
    await assert.rejects(()=>e.identity.readOrder(s1.token,e.order.id),DemoAuthenticationFailed);
-   const s2=await e.identity.signIn({username:a.username,password:goodPassword});
+   e.setTime(e.time()+30000); // a TOTP code cannot be re-used in the same window
+   const s2=await login(e,a);
    await e.identity.disableAccount(a.accountId);
    await assert.rejects(()=>e.identity.readOrder(s2.token,e.order.id),DemoAuthenticationFailed);
-   await assert.rejects(()=>e.identity.signIn({username:a.username,password:goodPassword}),DemoAuthenticationFailed);
+   await assert.rejects(()=>login(e,a),DemoAuthenticationFailed);
    const b=await account(e,'SIM_ADMIN');
-   const s3=await e.identity.signIn({username:b.username,password:goodPassword});
+   const s3=await login(e,b);
    await e.roles.disableFixture(b.principalId);
    await assert.rejects(()=>e.identity.readOrder(s3.token,e.order.id),DemoAuthenticationFailed);
  }finally{await e.pool.end();}
@@ -124,8 +131,8 @@ test('MySQL real: un afiliado autenticado no ve pedidos ajenos ni revierte venta
    const otherAffiliate=await e.store.affiliate({alias:'Otro afiliado ficticio'});
    const b=await account(e,'SIM_AFFILIATE',{affiliateId:otherAffiliate.id});
    const merchant=await account(e,'SIM_MERCHANT',{productId:e.product.id});
-   const s1=await e.identity.signIn({username:a.username,password:goodPassword});
-   const s2=await e.identity.signIn({username:b.username,password:goodPassword});
+   const s1=await login(e,a);
+   const s2=await login(e,b);
    const s3=await e.identity.signIn({username:merchant.username,password:goodPassword});
    assert.equal((await e.identity.readOrder(s1.token,e.order.id)).id,e.order.id);
    assert.equal((await e.identity.readOrder(s3.token,e.order.id)).id,e.order.id);
