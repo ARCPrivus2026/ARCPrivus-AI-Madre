@@ -121,7 +121,7 @@ Se añadieron `mysql-staging-mfa.mjs` y pruebas automáticas del segundo factor 
 
 **No introducir semillas reales, contraseñas personales ni credenciales de R4.** No exponer `signIn()`, `enrollFixtureAdminMfa()` ni los objetos de almacenamiento como endpoints públicos. El trabajo se ejecuta exclusivamente en MySQL efímero de GitHub Actions.
 
-**Evidencia técnica inicial:** [GitHub Actions 41946143113](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41946143113), **46 pruebas aprobadas en la batería general** y **21 pruebas aprobadas con MySQL real**, sin fallos. El commit final de documentación requiere confirmación adicional.
+**Evidencia técnica de la lógica v1.0:** [GitHub Actions 41946428282](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41946428282), **46 pruebas aprobadas en la batería general** y **23 pruebas aprobadas con MySQL real**, 0 fallidas. Entre las pruebas añadidas están el bloqueo tras cinco códigos TOTP incorrectos y dos intentos simultáneos con un único código, de los que se autoriza solo uno. El commit final de documentación requerirá su propia ejecución de CI.
 
 ## Regla comercial demostrativa
 
