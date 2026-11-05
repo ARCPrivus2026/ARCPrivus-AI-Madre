@@ -10,15 +10,20 @@ const enabled = process.env.ARC_AFF_MYSQL_CI_TEST === '1'
 
 async function setup(hooks={}){
   const pool=await createStagingPool(process.env);
-  const store=new MysqlStagingDemoStore(pool,process.env,hooks);
-  await store.initializeSchema();
-  const roles=new MysqlDemoRoleGate(pool,store,process.env);
-  await roles.initializeSchema();
-  const p=await store.product({title:'Producto contable de prueba',priceCop:100000,commissionPct:30});
-  const a=await store.affiliate({alias:'Afiliado simulado'});
-  const other=await store.affiliate({alias:'Afiliado de otro grupo'});
-  const link=await store.referral({productId:p.id,affiliateId:a.id});
-  return {pool,store,roles,p,a,other,link};
+  try{
+    const store=new MysqlStagingDemoStore(pool,process.env,hooks);
+    await store.initializeSchema();
+    const roles=new MysqlDemoRoleGate(pool,store,process.env);
+    await roles.initializeSchema();
+    const p=await store.product({title:'Producto contable de prueba',priceCop:100000,commissionPct:30});
+    const a=await store.affiliate({alias:'Afiliado simulado'});
+    const other=await store.affiliate({alias:'Afiliado de otro grupo'});
+    const link=await store.referral({productId:p.id,affiliateId:a.id});
+    return {pool,store,roles,p,a,other,link};
+  }catch(error){
+    await pool.end();
+    throw error;
+  }
 }
 
 test('MySQL real: journal de doble entrada cuadre y reversión en pedido', {skip:!enabled},async()=>{
