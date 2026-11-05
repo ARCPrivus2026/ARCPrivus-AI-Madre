@@ -88,4 +88,4 @@ jobs:
           ARC_AFF_DB_PASSWORD: ci-only-affiliate-password-2026
           ARC_LIVE_PAYMENTS: '0'
           ARC_ENABLE_PAYOUTS: '0'
-        run: node --test mysql-staging.integration.test.mjs mysql-staging-store.integration.test.mjs mysql-staging-security.integration.test.mjs
+        run: node --test --test-concurrency=1 mysql-staging.integration.test.mjs mysql-staging-store.integration.test.mjs mysql-staging-security.integration.test.mjs
