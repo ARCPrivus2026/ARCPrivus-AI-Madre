@@ -1,5 +1,5 @@
 /**
- * ARC Affiliate 0.9 — CI-ONLY credential/session prototype.
+ * ARC Affiliate 1.0 — CI-ONLY credential/session/MFA prototype.
  * No HTTP endpoints, no cookies, no real customer accounts and no deployment.
  * Uses its OWN ephemeral MySQL staging schema; never imports ARNOLRC R4.
  * Production still requires WebAuthn, recovery, rate limits, audits, CSRF, TLS and review.
@@ -8,7 +8,7 @@ import {randomUUID,randomBytes,createHash,timingSafeEqual,scrypt as scryptCallba
 import {promisify} from 'node:util';
 import {getStagingPoolOptions} from './mysql-staging-adapter.mjs';
 import {DemoAccessDenied} from './mysql-staging-access.mjs';
-import {createFixtureMfaSecret,totpAt,validateTotpOnce,encryptFixtureMfa,decryptFixtureMfa} from './mysql-staging-mfa.mjs';
+import {createFixtureMfaSecret,validateTotpOnce,encryptFixtureMfa,decryptFixtureMfa} from './mysql-staging-mfa.mjs';
 
 const derive=promisify(scryptCallback);
 const SESSION_MS=15*60*1000;
@@ -35,8 +35,8 @@ export const identityDDL=Object.freeze([
    "id CHAR(36) PRIMARY KEY,account_id CHAR(36) NOT NULL,"+
    "token_hash CHAR(64) NOT NULL UNIQUE,"+
    "expires_at_ms BIGINT UNSIGNED NOT NULL,revoked BOOLEAN NOT NULL DEFAULT FALSE,"+
-   "FOREIGN KEY(account_id) REFERENCES aff_demo_accounts(id),"+
    "mfa_verified BOOLEAN NOT NULL DEFAULT FALSE,"+
+   "FOREIGN KEY(account_id) REFERENCES aff_demo_accounts(id),"+
    "INDEX idx_demo_expiry(expires_at_ms)) ENGINE=InnoDB",
   "CREATE TABLE IF NOT EXISTS aff_demo_admin_mfa ("+
    "account_id CHAR(36) PRIMARY KEY,ciphertext CHAR(40) NOT NULL,"+
