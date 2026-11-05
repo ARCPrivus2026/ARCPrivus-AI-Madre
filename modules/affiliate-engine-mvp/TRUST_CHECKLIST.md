@@ -1,4 +1,4 @@
-# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 0.9)
+# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.0)
 
 **Estado:** PILOTO LOCAL CON DINERO SIMULADO. Ninguna sección de este documento autoriza operar una plataforma pública ni recibir fondos de clientes.
 
@@ -56,6 +56,25 @@ La ejecución oficial [41941908374](https://github.com/ARCPrivus2026/ARCPrivus-A
 | Revisión de seguridad / pruebas de penetración | **NO realizadas** |
 
 La presencia de hashes, contraseñas o sesiones en un demo **no significa autenticación lista para producción**. Está prohibido conectar `mysql-staging-identity.mjs` al servidor web o a R4 antes de una auditoría independiente y de implementar controles de protección web.
+
+## A.3. Segunda verificación de administradores — MVP 1.0
+
+| Protección del laboratorio | Estado |
+|---|---|
+| Contraseña sola no autoriza `SIM_ADMIN` | Aprobado en CI real |
+| TOTP de 6 dígitos por ventana de 30 segundos | Aprobado con vector RFC 6238 |
+| Cifrado autenticado AES-256-GCM de semilla en MySQL | Aprobado en pruebas |
+| Antirrepetición transaccional de código TOTP | Aprobado en CI real |
+| Sesión administrativa exige `mfa_verified=1` | Aprobado en CI real |
+| Rotación de semilla revoca sesiones antiguas | Aprobado en CI real |
+| Códigos ausentes o inválidos cuentan para bloqueo | Aprobado en CI real |
+| MFA de comerciantes y afiliados | **NO implementado** |
+| WebAuthn resistente a phishing y recuperación segura | **NO implementados** |
+| Exposición pública / credenciales reales / pagos | **NO autorizados** |
+
+La clave de cifrado se crea de forma efímera en el propio proceso de pruebas. Su gestión, rotación y respaldo seguros no están resueltos para operación real. El código de inscripción de usuarios simulados **no valida identidad fuera del proceso de CI**. Un atacante con acceso a las contraseñas y al código TOTP en tiempo real podría suplantar una sesión; WebAuthn y una arquitectura de servidor web deben evaluarse antes de producción.
+
+Referencia de CI: [run 41946143113](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41946143113), 46 + 21 ejecuciones de pruebas aprobadas, 0 fallidas en el commit previo a documentación final.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
