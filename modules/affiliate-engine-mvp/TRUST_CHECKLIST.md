@@ -74,7 +74,7 @@ La presencia de hashes, contraseñas o sesiones en un demo **no significa autent
 
 La clave de cifrado se crea de forma efímera en el propio proceso de pruebas. Su gestión, rotación y respaldo seguros no están resueltos para operación real. El código de inscripción de usuarios simulados **no valida identidad fuera del proceso de CI**. Un atacante con acceso a las contraseñas y al código TOTP en tiempo real podría suplantar una sesión; WebAuthn y una arquitectura de servidor web deben evaluarse antes de producción.
 
-Referencia de CI: [run 41946143113](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41946143113), 46 + 21 ejecuciones de pruebas aprobadas, 0 fallidas en el commit previo a documentación final.
+Referencia de CI: [run 41946428282](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41946428282), 46 + 23 ejecuciones de pruebas aprobadas, 0 fallidas en el commit previo a documentación final. Se comprueba bloqueo tras cinco TOTP erróneos y antirrepetición ante dos intentos concurrentes.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
