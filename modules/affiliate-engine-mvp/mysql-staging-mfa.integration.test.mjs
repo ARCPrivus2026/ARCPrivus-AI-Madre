@@ -137,3 +137,55 @@ test('MySQL real: MFA CI no habilita al afiliado a reembolsar y su sesión no re
    await assert.rejects(()=>e.identity.enrollFixtureAdminMfa(affiliate.accountId),DemoAuthenticationFailed);
  }finally{await e.pool.end();}
 });
+
+
+test('MySQL real: cinco OTP equivocados bloquean al admin hasta vencer el plazo',
+ {skip:!enabled},async()=>{
+ const e=await setup();
+ try{
+   const admin=await e.fixture('SIM_ADMIN');
+   const seed=await e.identity.enrollFixtureAdminMfa(admin.accountId);
+   const correct=totpAt(seed,e.now()).code;
+   const wrong=correct==='000000'?'999999':'000000';
+   for(let n=0;n<5;n++){
+     await assert.rejects(
+       ()=>e.identity.signIn({username:admin.username,password,totpCode:wrong}),
+       DemoAuthenticationFailed
+     );
+   }
+   const [accounts]=await e.pool.execute(
+     'SELECT failed_attempts,locked_until_ms FROM aff_demo_accounts WHERE id=?',[admin.accountId]
+   );
+   assert.equal(accounts[0].failed_attempts,5);
+   assert.ok(Number(accounts[0].locked_until_ms)>e.now());
+   await assert.rejects(
+     ()=>e.identity.signIn({username:admin.username,password,totpCode:correct}),
+     DemoAuthenticationFailed
+   );
+   e.setNow(Number(accounts[0].locked_until_ms)+1);
+   const fresh=await e.identity.signIn({
+     username:admin.username,password,totpCode:totpAt(seed,e.now()).code
+   });
+   assert.ok(fresh.token);
+ }finally{await e.pool.end();}
+});
+
+test('MySQL real: dos accesos simultáneos con el mismo TOTP no generan dos sesiones',
+ {skip:!enabled},async()=>{
+ const e=await setup();
+ try{
+   const admin=await e.fixture('SIM_ADMIN');
+   const seed=await e.identity.enrollFixtureAdminMfa(admin.accountId);
+   const totpCode=totpAt(seed,e.now()).code;
+   const results=await Promise.allSettled([
+     e.identity.signIn({username:admin.username,password,totpCode}),
+     e.identity.signIn({username:admin.username,password,totpCode})
+   ]);
+   assert.equal(results.filter(r=>r.status==='fulfilled').length,1);
+   assert.equal(results.filter(r=>r.status==='rejected'&&r.reason instanceof DemoAuthenticationFailed).length,1);
+   const [sessions]=await e.pool.execute(
+     'SELECT COUNT(*) AS n FROM aff_demo_sessions WHERE account_id=?',[admin.accountId]
+   );
+   assert.equal(sessions[0].n,1);
+ }finally{await e.pool.end();}
+});
