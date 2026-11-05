@@ -54,7 +54,7 @@ test('MySQL real: admin jamás obtiene sesión solo con contraseña, incluso sin
    const seed=await e.identity.enrollFixtureAdminMfa(admin.accountId);
    const [mfas]=await e.pool.execute('SELECT ciphertext,iv,tag,last_step FROM aff_demo_admin_mfa WHERE account_id=?',[admin.accountId]);
    assert.equal(mfas.length,1);
-   assert.equal(mfas[0].ciphertext,seed.toString('hex'),false);
+   assert.notEqual(mfas[0].ciphertext,seed.toString('hex'));
    assert.equal(JSON.stringify(mfas).includes(seed.toString('hex')),false);
    await assert.rejects(
      ()=>e.identity.signIn({username:admin.username,password}),DemoAuthenticationFailed
