@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 0.6 (prueba MySQL aislada)
+# ARC Global Affiliate & Commerce Engine — MVP 0.7 (persistencia transaccional MySQL de prueba)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -41,6 +41,27 @@ El workflow `Affiliate MVP tests` incluye un trabajo `mysql-staging-smoke` que c
 - El éxito en CI valida la conectividad exclusiva del contenedor; no constituye migración, prueba de carga, seguridad multiusuario ni autorización comercial.
 
 Archivo de CI: `.github/workflows/affiliate-mvp-tests.yml`.
+
+## Persistencia transaccional MySQL — SOLO CI
+
+El módulo `mysql-staging-store.mjs` implementa exclusivamente en una **base temporal del corredor de pruebas** seis tablas con prefijo `aff_demo_`:
+
+| Tabla | Propósito |
+|---|---|
+| `aff_demo_products` | Producto de prueba y porcentaje comercial |
+| `aff_demo_affiliates` | Afiliados simulados |
+| `aff_demo_referrals` | Asociación única entre producto y afiliado |
+| `aff_demo_orders` | Pedido simulado con atribución y reparto |
+| `aff_demo_commissions` | Estado de comisión simulada por pedido |
+| `aff_demo_audit` | Eventos de creación y reembolso de prueba |
+
+El pedido, el registro de comisión y el evento de auditoría se crean en **una transacción InnoDB**: o se confirman juntos o se deshacen juntos. El reembolso también es transaccional; la solicitud repetida no debe duplicar la comisión, y la atribución no puede cambiarse silenciosamente.
+
+**Restricciones no negociables:** la construcción del objeto exige `ARC_AFF_MYSQL_CI_TEST=1` y `ARC_AFF_STAGING_SCHEMA_TEST=1`, además del adaptador opt-in y un nombre/usuario de staging exclusivos. No importar este objeto en `server.mjs` ni en el `server.js` de R4. No activar estas variables en el equipo Windows del usuario, Cloudflare ni servidores públicos. El método `initializeSchema()` efectúa DDL y únicamente está pensado para la base temporal de GitHub Actions. **No ejecutar DDL sobre R4.**
+
+Las operaciones son **SIMULADAS**; no representan pedidos facturados, cobros reales, beneficios ni obligaciones de pago. El registro de auditoría sigue siendo editable por quien posee permisos de base y no sustituye un libro de doble entrada.
+
+La batería de integración `mysql-staging-store.integration.test.mjs` comprueba datos almacenados, idempotencia, atribución, reembolso, reversión de una transacción interrumpida y ausencia de duplicados con solicitudes concurrentes contra un MySQL 8.4 efímero.
 
 ## Regla comercial demostrativa
 
