@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 0.8 (permisos simulados y asientos de doble entrada)
+# ARC Global Affiliate & Commerce Engine — MVP 0.9 (identidad y sesiones de prueba, aisladas)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -84,6 +84,27 @@ Los asientos se graban **dentro de la misma transacción InnoDB** que el pedido,
 Estos asientos son solo una representación contable de pruebas. **No constituyen libro contable certificado**, tienen un registro modificable por el usuario MySQL y no gestionan depósitos, impuestos, facturas, liquidaciones, saldos exigibles ni pagos externos.
 
 **Resultado oficial del commit de lógica `d48c6cf5a997f96e503b263fef6a0a7e55ea4660`:** GitHub Actions [run 41941908374](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41941908374), con 39 pruebas aprobadas en el trabajo general y 11 en MySQL real, 0 fallidas. Esta documentación requiere una nueva validación del commit final.
+
+## Prototipo de identidad CI-only — MVP 0.9
+
+Se incorporó `mysql-staging-identity.mjs` al módulo de MySQL **exclusivamente para pruebas automáticas en GitHub Actions**, sin conectarlo al servidor web, a ARNOLRC R4 ni a cuentas públicas. Esta capa no sustituye la identidad/seguridad que una futura plataforma real necesitará.
+
+| Control de laboratorio | Implementación |
+|---|---|
+| Contraseñas ficticias | `scrypt` asíncrono de Node.js con sal aleatoria por cuenta, almacena solo derivación y sal |
+| Inicio de sesión de prueba | Verificación por cuenta ficticia asociada a un `principal_id` de rol previamente creado |
+| Tokens | 32 bytes aleatorios, codificación Base64URL, solo hash SHA-256 del token en MySQL |
+| Vigencia | 15 minutos; el servidor de prueba compara expiración |
+| Revocación | Cierre de sesión; desactivar cuenta ficticia revoca todas sus sesiones |
+| Bloqueo | Tras 5 fallos consecutivos: 15 minutos de bloqueo por cuenta |
+| Autorización | La función protegida resuelve el actor desde el token almacenado, no desde un ID de rol proporcionado por el cliente |
+| Alcance | El comerciante y afiliado solo consultan pedidos autorizados por el rol, el administrador puede revertir simulaciones |
+
+**Tablas nuevas:** `aff_demo_accounts` y `aff_demo_sessions` dentro del esquema temporal de CI. Se exige el mismo doble bloqueo `ARC_AFF_MYSQL_CI_TEST=1` y `ARC_AFF_STAGING_SCHEMA_TEST=1`. El prototipo no crea ninguna cuenta de usuario real.
+
+**Límites de seguridad obligatorios:** no existe endpoint HTTPS, cookies seguras, CSRF, MFA, recuperación de cuenta, correo verificado, controles por IP/dispositivo, detección de bots ni revisión independiente. El bloqueo por cuenta no controla ataques distribuidos a gran escala. Las funciones `createFixtureAccount` y `disableAccount` son **solo configuración de pruebas**, no operaciones de usuario público. El método anterior de autorización por `actorId` es interno y nunca debe publicarse como API; toda operación futura necesitará un servidor autenticador que resuelva identidad en cada solicitud.
+
+**No configurar `ARC_AFF_STAGING_CONNECT` ni ninguna bandera CI en Windows R4; no usar contraseñas reales, datos personales, clientes o pagos.**
 
 ## Regla comercial demostrativa
 
