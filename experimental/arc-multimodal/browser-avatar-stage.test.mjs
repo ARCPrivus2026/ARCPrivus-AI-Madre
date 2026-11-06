@@ -1,4 +1,5 @@
 import test from "node:test";
+import {fakeSkinnedLimbMesh} from "./testing-glb-fixtures.mjs";
 import assert from "node:assert/strict";
 import {createBrowserSpeechDriver,loadArcAvatarStage} from "./browser-avatar-stage.mjs";
 
@@ -32,7 +33,7 @@ function gltf(){
     .map(name=>({name,isBone:true}));
   return {
     animations:["Idle","Walk","Run","Sit","Stand"].map(name=>({name})),
-    scene:{traverse(fn){[...bones,face].forEach(fn);}}
+    scene:{traverse(fn){[...bones,face,fakeSkinnedLimbMesh()].forEach(fn);}}
   };
 }
 
