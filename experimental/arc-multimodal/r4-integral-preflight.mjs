@@ -119,18 +119,51 @@ function simplifyInventory(inv){
     rightFoot:["rightfoot","foot_r","right_foot","mixamorirightfoot","mixamorigrightfoot"]
   };
   const simplify=n=>String(n).replace(/[^a-z0-9]/gi,"").toLowerCase();
-  const issues=[];
-  const groups=inv.meshes.flatMap(m=>m.weightedGroups||[]).map(simplify);
+  const issues=[],warnings=[];
   const bones=inv.bones.map(simplify);
   const limbs={};
+  const minVertices=3;
+  const threshold=0.05;
+  const countsAvailable=inv.meshes.length>0 && inv.meshes.every(mesh=>
+    mesh.weightedVertexCounts && typeof mesh.weightedVertexCounts==="object" &&
+    !Array.isArray(mesh.weightedVertexCounts) && mesh.weightThreshold===threshold
+  );
+  if(!countsAvailable)issues.push("Sin evidencia cuantitativa de pesos por vertice");
   for(const [name,variants] of Object.entries(aliases)){
     const normalized=variants.map(simplify);
     const hasBone=bones.some(x=>normalized.includes(x));
-    const hasInfluence=groups.some(x=>normalized.includes(x));
-    limbs[name]={hasBone,hasInfluence};
+    const total=countsAvailable ? inv.meshes.reduce((sum,mesh)=>{
+      const matches=Object.entries(mesh.weightedVertexCounts)
+        .filter(([group,count])=>normalized.includes(simplify(group)) &&
+          Number.isSafeInteger(count) && count>=0);
+      return sum+matches.reduce((s,[,count])=>s+count,0);
+    },0):null;
+    const hasInfluence=Number.isFinite(total) && total>=minVertices;
+    limbs[name]={hasBone,hasInfluence,weightedVertices:total,
+      minimumVertices:minVertices,minimumWeight:threshold};
     if(!hasBone)issues.push("Hueso faltante: "+name);
-    else if(!hasInfluence)issues.push("Sin vertices ponderados para: "+name);
+    else if(countsAvailable && !hasInfluence)
+      issues.push("Influencia insuficiente en "+name+": "+total+" vertices");
   }
+
+  const suspiciousMeshes=inv.meshes.filter(mesh=>
+    /mano|hand/i.test(mesh.name||"") &&
+    (mesh.visibleInRender===false || mesh.vertices===0 || mesh.polygons===0)
+  ).map(mesh=>mesh.name);
+  if(suspiciousMeshes.length)issues.push(
+    "Mallas de mano invisibles o sin geometria: "+suspiciousMeshes.join(", ")
+  );
+  const unboundHandMeshes=(inv.unboundMeshNames||[])
+    .filter(name=>/mano|hand/i.test(name));
+  if(unboundHandMeshes.length)issues.push(
+    "Posibles mallas de mano sin esqueleto: "+unboundHandMeshes.join(", ")
+  );
+  const hiddenMeshes=inv.meshes
+    .filter(mesh=>mesh.visibleInRender===false)
+    .map(mesh=>mesh.name);
+  if(hiddenMeshes.length)warnings.push(
+    "Mallas ocultas para render: "+hiddenMeshes.join(", ")
+  );
   const morphs=new Set(inv.morphs.map(simplify));
   if(!["jawopen","mouthopen"].some(x=>morphs.has(x)))
     issues.push("Falta apertura de boca");
@@ -139,8 +172,10 @@ function simplifyInventory(inv){
   for(const action of ["idle","walk","run","sit","stand"])
     if(!inv.clipMap?.[action])issues.push("Sin clip identificado: "+action);
   return {status:issues.length?"incompleto":"estructura_por_verificar_visual",
-    issues,limbs,actionNames:inv.clips,morphNames:inv.morphs,
-    meshCount:inv.meshes.length,armature:inv.armature};
+    issues,warnings,limbs,hiddenMeshes,unboundHandMeshes,suspiciousMeshes,
+    actionNames:inv.clips,morphNames:inv.morphs,
+    meshCount:inv.meshes.length,armature:inv.armature,
+    quantitativeWeightEvidence:countsAvailable};
 }
 export function runR4Preflight({
   root,natalia,copiloto,blender,out,runner=spawnSync,limits
