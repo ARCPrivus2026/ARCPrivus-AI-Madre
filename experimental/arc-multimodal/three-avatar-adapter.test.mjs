@@ -1,4 +1,5 @@
 import test from "node:test";
+import {fakeSkinnedLimbMesh} from "./testing-glb-fixtures.mjs";
 import assert from "node:assert/strict";
 import {inspectLoadedGlb,createThreeAvatarAdapter} from "./three-avatar-adapter.mjs";
 import {planIntegratedScene,runIntegratedScene} from "./integrated-scene-runtime.mjs";
@@ -31,7 +32,7 @@ function gltf(){
   const bones=["LeftHand","RightHand","LeftFoot","RightFoot","Head","LeftEye","RightEye"]
     .map(name=>({name,isBone:true}));
   return {
-    scene:{traverse(fn){[...bones,mesh].forEach(fn);}},
+    scene:{traverse(fn){[...bones,mesh,fakeSkinnedLimbMesh()].forEach(fn);}},
     animations:["Idle","Walk","Run","Sit","Stand"].map(name=>({name})),
     mesh
   };
