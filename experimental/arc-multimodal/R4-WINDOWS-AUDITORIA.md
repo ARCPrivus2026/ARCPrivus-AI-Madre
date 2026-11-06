@@ -76,3 +76,55 @@ Estas pruebas usan modelos ficticios en memoria. Verifican que
 
 La única forma de evaluar los modelos auténticos es ejecutar el escaneo
 dentro de la carpeta R4 que los contiene.
+
+
+## Evidencia nueva: mano con hueso pero sin geometría suficiente
+
+El auditor Blender ahora calcula \`weightedVertexCounts\` para **cada grupo
+de vértices** con un peso mínimo de 0,05 y devuelve las señales:
+\`visibleInRender\`, \`visibleInViewport\`, \`boundToArmature\` y
+\`unboundMeshNames\` (mallas no asociadas a la armadura elegida).
+
+El consolidado \`r4-integral-preflight.mjs\` exige que cada una de las cuatro
+extremidades tenga al menos **tres vértices con influencia suficiente** para
+reportar una estructura candidata a validación visual. El reporte contiene
+para cada personaje, dentro de \`examined\`:
+
+\`\`\`json
+{
+  "limbs": {
+    "rightHand": {
+      "hasBone": true,
+      "hasInfluence": false,
+      "weightedVertices": 2,
+      "minimumVertices": 3,
+      "minimumWeight": 0.05
+    }
+  },
+  "quantitativeWeightEvidence": true,
+  "status": "incompleto"
+}
+\`\`\`
+
+Este JSON es un **ejemplo de diagnóstico**, no es un resultado de Natalia
+ni del Copiloto originales. Si hay un nombre de hueso pero no hay suficientes
+vértices asociados, la auditoría lo denuncia. Si una malla de mano está oculta
+para renderizar, vacía o aparece desconectada del esqueleto, se añade a
+\`issues\` y/o \`warnings\`.
+
+Los números son un criterio preliminar conservador, **no una garantía de
+función anatómica**; una mano requiere geometría visible, topología,
+materiales, pesos correctos, articulaciones y animaciones revisadas en
+Blender y en Three.js. Los modelos originales no se han ejecutado desde
+esta rama de GitHub.
+
+### Validación automatizada de ambos lenguajes
+
+\`\`\`powershell
+node --test .\experimental\arc-multimodal\*.test.mjs
+python -m unittest discover -s experimental/arc-multimodal -p "test_*.py" -v
+\`\`\`
+
+GitHub Actions también realiza las comprobaciones sin invocar Blender de
+forma interactiva ni hacer peticiones a Google. Queda pendiente la ejecución
+en el computador que contiene la carpeta R4 real.
