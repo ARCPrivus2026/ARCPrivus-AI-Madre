@@ -19,7 +19,7 @@ jobs:
         run: node --test experimental/arc-multimodal/*.test.mjs
 
       - name: Compile Blender inventory syntax without bpy
-        run: python -m py_compile experimental/arc-multimodal/blender-rig-inventory.py
+        run: python -m py_compile experimental/arc-multimodal/blender-rig-inventory.py experimental/arc-multimodal/blender-visual-proof.py
 
       - name: Run Blender inventory offline unit tests
         run: python -m unittest discover -s experimental/arc-multimodal -p "test_*.py" -v
