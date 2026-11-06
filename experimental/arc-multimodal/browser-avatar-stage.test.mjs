@@ -61,7 +61,7 @@ test("Web Speech errores son fallos, no voces completadas",async()=>{
   s.queued[0].onerror({error:"synthesis-failed"});
   await assert.rejects(handle.done,/synthesis-failed/);
 });
-test("Carga simultanea de GLB locales Natalia y Copiloto; reproduce eventos",async()=>{
+test("Carga simulada por GLTFLoader para Natalia y Copiloto; reproduce eventos",async()=>{
   const paths=[];
   const loader={async loadAsync(path){paths.push(path);return gltf();}};
   const s=synth();
@@ -79,7 +79,7 @@ test("Carga simultanea de GLB locales Natalia y Copiloto; reproduce eventos",asy
     {atMs:0,character:"copiloto",action:"run"},
     {atMs:0,character:"natalia",action:"speak",text:"Hola"},
     {atMs:0,character:"copiloto",action:"blink"},
-    {atMs:0,character:"copiloto",action:"look"}
+    {atMs:1,character:"copiloto",action:"look"}
   ]);
   assert.equal(result.ok,true,JSON.stringify(result));
   assert.equal(s.queued.length,1);
