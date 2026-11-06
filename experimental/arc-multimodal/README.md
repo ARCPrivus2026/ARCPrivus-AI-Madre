@@ -71,3 +71,73 @@ Los morphs de Blender no sustituyen los visemas temporales de audio.
 - Prueba conjunta filmada/reproducible en el R4 activo, con latencia p50/p95,
   registros de fallos y comparativa frente a la referencia.
 - La propuesta sigue en borrador hasta aprobar verificaciones. `main` intacta.
+
+
+## Nuevo puente Three.js - GLB + voz (sin coste de API)
+- \`three-avatar-adapter.mjs\`: usa AnimationMixer/AnimationAction de Three.js.
+  Resuelve clips reales Idle/Walk/Run/Sit/Stand o un clipMap explicito.
+  Controla morphs jawOpen/eyeBlink y ofrece update(deltaSeconds) para el bucle
+  de renderizado. NO guarda ni modifica el archivo GLB original.
+- \`browser-avatar-stage.mjs\`: carga dos GLB locales por GLTFLoader.loadAsync y
+  conecta el director audiovisual a Web Speech API del navegador.
+- El modelo real se carga **solo cuando el R4 tenga sus GLB listos en una ruta
+  servida por la aplicacion**; no incluye ni inventa un GLB Natalia/Copiloto.
+- Un controlador real de mirada (dependiente de la orientacion de ojos del rig)
+  debe implementarse antes de marcar la etapa integral como lista.
+- El movimiento de labios basado en ritmo del habla es **aproximado**, no
+  sincronizacion de visemas comprobada. La API Web Speech puede depender del
+  navegador, voces instaladas o conexion, y puede exigir un gesto del usuario.
+- La voz del navegador es generica y NO clona a ninguna persona.
+
+### Ejemplo de conexion en un frontend que YA usa Three.js
+Importar desde una aplicacion ESM con dependencias de Three.js configuradas:
+\`\`\`js
+import * as THREE from "three";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+import {
+  createBrowserSpeechDriver,loadArcAvatarStage
+} from "./browser-avatar-stage.mjs";
+
+const voice=createBrowserSpeechDriver({lang:"es-CO"});
+const stage=await loadArcAvatarStage({
+  THREE,loader:new GLTFLoader(),
+  paths:{
+    natalia:"/models/natalia-validada.glb",
+    copiloto:"/models/copiloto-validado.glb"
+  },
+  speakers:{natalia:voice,copiloto:voice},
+  lookControllers:{
+    // REEMPLAZAR con implementaciones reales adecuadas a cada rig.
+    // No colocar una funcion vacia ni afirmar mirada funcional.
+  }
+});
+console.log(stage.audits);
+if(!stage.ready) throw new Error("Etapa sin auditar completamente");
+// Solo tras auditoria y con scene/renderer/camera ya preparados:
+scene.add(stage.roots.natalia,stage.roots.copiloto);
+const clock=new THREE.Clock();
+renderer.setAnimationLoop(()=>{
+  stage.update(clock.getDelta());
+  renderer.render(scene,camera);
+});
+// Activar reproduccion de audio despues de un click del usuario.
+// El director permite comandos simultaneos en canales distintos.
+const result=await stage.play([
+  {atMs:0,character:"natalia",action:"walk"},
+  {atMs:0,character:"copiloto",action:"run"},
+  {atMs:100,character:"natalia",action:"speak",text:"Bienvenido a ARC Privus."},
+  {atMs:150,character:"copiloto",action:"blink"}
+]);
+console.log(result);
+\`\`\`
+El ejemplo es una **plantilla**, no una aplicacion desplegada. No ejecutar
+sin los controladores de mirada reales y los GLB originales verificados.
+La llamada a play informa el inicio de los eventos, no que el sonido haya
+terminado. Para confirmar final de la reproduccion usar waitForVoices().
+
+### Limitaciones y salidas de pruebas
+Los tests emplean **GLTF y voz simulados**; no sustituyen una prueba visual
+sobre los GLB autenticos. Sin esos originales no podemos certificar mano,
+mirada, marcha de 23 anos, ropa, piel, dientes, lengua o lip-sync.
+El objetivo es que el sistema no declare exitoso lo que aun no puede probar.
+Archivos de motor, base de datos y mensajes en main no se modificaron.
