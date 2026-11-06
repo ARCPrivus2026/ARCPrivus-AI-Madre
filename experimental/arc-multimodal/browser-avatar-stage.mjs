@@ -62,7 +62,7 @@ export async function loadArcAvatarStage({
   if(typeof loader?.loadAsync!=="function") throw new TypeError("GLTFLoader.loadAsync requerido");
   if(!paths?.natalia || !paths?.copiloto) throw new Error("Faltan dos rutas GLB");
   for(const path of [paths.natalia,paths.copiloto]){
-    if(typeof path!=="string" || !/^(\/(?!\/)|\.\/)[a-zA-Z0-9_./% -]+\.gl(?:b|tf)$/i.test(path)
+    if(typeof path!=="string" || !/^(\/(?!\/)|\.\/)[a-zA-Z0-9_./ -]+\.gl(?:b|tf)$/i.test(path)
         || path.includes("..")) {
       throw new TypeError("Ruta GLB no local: "+path);
     }
