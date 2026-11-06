@@ -250,3 +250,19 @@ El archivo V4 original no se copia al repositorio público. La
 compatibilidad de la cola cognitiva se ensayó localmente contra el archivo
 compartido; CI usa un simulador de su interfaz. Este PR sigue sin
 desplegarse al R4 principal ni fusionarse a main.
+
+
+## R4: aislamiento PBR de la franja de Natalia (posterior al informe R3)
+Se añade \`pbr-facial-channel-isolation.mjs\` para distinguir por separado
+la textura metálica (B) y de rugosidad (G) \`Image_1\` detectada en R3,
+y \`pbr-facial-channel-isolation.test.mjs\` para verificar restauración de
+materiales aun ante errores. Funciona exclusivamente como ayuda diagnóstica
+en un visor Three.js **real del laboratorio aislado de Windows**: la CI
+prueba solamente materiales y capturas simulados, NO los modelos reales.
+
+Guía de puesta en práctica local:
+[R4-PBR-NATALIA-CANAL-ISOLATION.md](./R4-PBR-NATALIA-CANAL-ISOLATION.md).
+
+R3 ya completó Blender pero NO demostró la causa de la franja. Nunca
+confundir éxito de tests con identidad corregida. Los materiales originales
+se preservan y tampoco se modifican \`main\` ni Messenger.
