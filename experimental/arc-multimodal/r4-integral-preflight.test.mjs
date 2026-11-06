@@ -20,7 +20,13 @@ function fixture(t){
 function inventory(armature){
   return {schema:"arc.blender.rig.inventory.v1",armature,
     bones:["LeftHand","RightHand","LeftFoot","RightFoot"],
-    meshes:[{name:"body",weightedGroups:["LeftHand","RightHand","LeftFoot","RightFoot"]}],
+    meshes:[{
+      name:"body",vertices:400,polygons:200,
+      weightedGroups:["LeftHand","RightHand","LeftFoot","RightFoot"],
+      weightedVertexCounts:{LeftHand:12,RightHand:12,LeftFoot:14,RightFoot:14},
+      weightThreshold:0.05,visibleInRender:true,visibleInViewport:true,
+      boundToArmature:true
+    }],
     morphs:["eyeBlink","jawOpen"],clips:["Idle","Walk","Run","Sit","Stand"],
     clipMap:{idle:"Idle",walk:"Walk",run:"Run",sit:"Sit",stand:"Stand"},
     voiceEnabled:false
@@ -70,6 +76,7 @@ test("R4: aun con hueso, informa mano derecha sin influencias",t=>{
     const v=inventory("Rig");
     if(args.at(-1).toLowerCase().includes("arnold")){
       v.meshes[0].weightedGroups=v.meshes[0].weightedGroups.filter(x=>x!=="RightHand");
+      v.meshes[0].weightedVertexCounts.RightHand=0;
     }
     return {status:0,stdout:"=== ARC_RIG_INVENTORY_BEGIN ===\n"+
       JSON.stringify(v)+"\n=== ARC_RIG_INVENTORY_END ==="};
@@ -135,4 +142,57 @@ test("R4: argumentos y salida Blender invalidos fallan con mensajes claros",()=>
   assert.throws(()=>readBlenderInventory("no json"),/no devolvio inventario/);
   assert.throws(()=>parseR4Args(["--root"]),/Argumentos incorrectos/);
   assert.deepEqual(parseR4Args(["--root","R4"]),{root:"R4"});
+});
+
+
+test("R4: impide falso OK si hay hueso y nombre de grupo pero pocos vertices",t=>{
+  const root=fixture(t);
+  const fakeRunner=()=>{const v=inventory("Rig");
+    v.meshes[0].weightedVertexCounts.RightHand=2;
+    return {status:0,stdout:output("Rig").replace(
+      JSON.stringify(inventory("Rig")),JSON.stringify(v))};};
+  const result=runR4Preflight({
+    root,natalia:"assets/natalia/NATALIA_V095.glb",
+    copiloto:"assets/copiloto/ARNOLD_RC_V23.blend",
+    blender:"blender",runner:fakeRunner
+  });
+  assert.equal(result.examined.natalia.status,"incompleto");
+  assert.equal(result.examined.copiloto.limbs.rightHand.weightedVertices,2);
+  assert.match(result.examined.copiloto.issues.join("; "),/Influencia insuficiente en rightHand/);
+  assert.equal(result.readyForProduction,false);
+});
+test("R4: sin conteos cuantitativos no se certifica estructura",t=>{
+  const root=fixture(t);
+  const fakeRunner=()=>{const v=inventory("Rig");delete v.meshes[0].weightedVertexCounts;
+    return {status:0,stdout:"=== ARC_RIG_INVENTORY_BEGIN ===\n"+
+      JSON.stringify(v)+"\n=== ARC_RIG_INVENTORY_END ===\n"};};
+  const result=runR4Preflight({
+    root,natalia:"assets/natalia/NATALIA_V095.glb",
+    copiloto:"assets/copiloto/ARNOLD_RC_V23.blend",
+    blender:"blender",runner:fakeRunner
+  });
+  assert.equal(result.examined.natalia.quantitativeWeightEvidence,false);
+  assert.match(result.examined.natalia.issues.join("; "),/Sin evidencia cuantitativa/);
+});
+test("R4: mano invisible y pieza suelta quedan marcadas",t=>{
+  const root=fixture(t);
+  const fakeRunner=()=>{const v=inventory("Rig");
+    v.meshes.push({
+      name:"RightHandMesh",vertices:0,polygons:0,
+      weightedGroups:[],weightedVertexCounts:{},
+      weightThreshold:0.05,visibleInRender:false
+    });
+    v.unboundMeshNames=["LeftHandObject"];
+    return {status:0,stdout:"=== ARC_RIG_INVENTORY_BEGIN ===\n"+
+      JSON.stringify(v)+"\n=== ARC_RIG_INVENTORY_END ===\n"};};
+  const result=runR4Preflight({
+    root,natalia:"assets/natalia/NATALIA_V095.glb",
+    copiloto:"assets/copiloto/ARNOLD_RC_V23.blend",
+    blender:"blender",runner:fakeRunner
+  });
+  const a=result.examined.natalia;
+  assert.equal(a.status,"incompleto");
+  assert.ok(a.suspiciousMeshes.includes("RightHandMesh"));
+  assert.ok(a.unboundHandMeshes.includes("LeftHandObject"));
+  assert.match(a.warnings.join(" "),/ocultas/);
 });
