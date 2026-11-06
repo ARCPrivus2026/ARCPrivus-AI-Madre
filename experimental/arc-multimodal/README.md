@@ -208,3 +208,24 @@ La suite incorpora tests de Python sin Blender: \`test_blender_inventory.py\`.
 Ver [R4-WINDOWS-AUDITORIA.md](./R4-WINDOWS-AUDITORIA.md) para ejecución
 integral con los dos originales y un único reporte JSON. Nunca se activa
 \`readyForProduction\` sin inspección real en Windows R4.
+
+
+## Prueba visual integral de Natalia + Copiloto (nueva)
+Se añadió \`blender-visual-proof.py\` y \`r4-integral-visual.mjs\`.
+Sin alterar los originales, la herramienta construye una revisión visual local
+en **una única orden**: siete vistas diagnósticas por personaje y una
+página comparativa \`index.html\` que coloca Natalia y Copiloto lado a lado.
+Incluye informes \`evidence.json\` y hashes SHA-256 de los PNG generados.
+
+Los tests offline comprueban no sobrescribir carpetas, aceptar solo PNG
+válidos y nombres esperados, no permitir rutas de originales fuera de R4,
+registrar controles/acciones faltantes y escapar contenido no confiable
+en el informe HTML. Las pruebas NO ejecutan Blender real en GitHub Actions.
+
+\`blender-visual-proof.py\` trabaja con Blender Workbench a 512 px, máximo
+dos hilos, y \`--disable-autoexec\`; las imágenes son evidencia geométrica
+preliminar, no animación realista, videos ni voces. El script no guarda
+archivos .blend/.glb/.gltf y no altera la rama principal.
+
+**Uso completo:** [R4-PRUEBA-VISUAL-INTEGRAL.md](./R4-PRUEBA-VISUAL-INTEGRAL.md).
+Los modelos originales siguen sin estar disponibles para esta sesión.
