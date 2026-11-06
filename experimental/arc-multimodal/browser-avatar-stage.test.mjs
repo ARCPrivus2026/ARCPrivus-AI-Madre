@@ -102,3 +102,41 @@ test("Rechaza URL remotas y rutas traversal antes de descargar",async()=>{
     );
   }
 });
+
+
+test("ESCENA DOBLE BLOQUEADA: hueso de mano derecha sin vertices no mueve a Natalia",async()=>{
+  let moves=0;
+  const healthy=gltf();
+  const broken=gltf();
+  const face={morphTargetDictionary:{jawOpen:0,eyeBlink:1},morphTargetInfluences:[0,0]};
+  const bones=["LeftHand","RightHand","LeftFoot","RightFoot","Head","LeftEye","RightEye"]
+    .map(name=>({name,isBone:true}));
+  broken.scene.traverse=fn=>[...bones,face,
+    fakeSkinnedLimbMesh({missing:["RightHand"]})].forEach(fn);
+  const loader={
+    async loadAsync(path){return path.includes("natalia")?healthy:broken;}
+  };
+  class CountingMixer extends Mixer {
+    clipAction(){moves++;return new Action();}
+  }
+  const stage=await loadArcAvatarStage({
+    THREE:{AnimationMixer:CountingMixer},loader,
+    paths:{natalia:"/models/natalia.glb",copiloto:"/models/copiloto.glb"},
+    speakers:{
+      natalia:createBrowserSpeechDriver({synth:synth(),Utterance}),
+      copiloto:createBrowserSpeechDriver({synth:synth(),Utterance})
+    },
+    lookControllers:{natalia:async()=>{},copiloto:async()=>{}}
+  });
+  assert.equal(stage.ready,false);
+  assert.match(stage.audits.copiloto.issues.join(" "),/rightHand/);
+  await assert.rejects(
+    stage.play([
+      {atMs:0,character:"natalia",action:"walk"},
+      {atMs:0,character:"copiloto",action:"run"}
+    ]),
+    /Escena bloqueada por auditoria/
+  );
+  assert.equal(moves,0);
+  stage.dispose();
+});
