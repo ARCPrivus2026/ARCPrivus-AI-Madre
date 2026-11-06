@@ -173,3 +173,24 @@ faltando inspección y reproducción visual en el R4 de Windows.
 
 Esta fase es 100% lógica y de solo lectura: ni el GLB ni el blend original
 son reescritos. Los tests usan geometrías sintetizadas en memoria.
+
+
+## NUEVO: Auditoría R4 auténtica de los dos avatares en una sola ejecución
+
+Se agregó \`r4-integral-preflight.mjs\` con una exploración limitada
+del árbol real de Windows R4 y pruebas de seguridad:
+- descubre todas las versiones BLEND/GLB/GLTF sin descargar ni cambiar nada;
+- clasifica candidatos por nombre, pero **nunca selecciona por fecha ni adivina**;
+- exige archivos separados de Natalia y Copiloto para la inspección real;
+- invoca Blender 4.2 en modo \`-b\` para los dos modelos explícitamente elegidos;
+- inspecciona huesos, grupos con peso, morphs y nombres de acciones;
+- produce un único informe con los dos resultados y las incidencias;
+- nunca declara \`readyForProduction=true\` sin verificación visual posterior;
+- sin opción \`--out\`, solo imprime el informe por pantalla;
+- con \`--out\`, solo crea un informe nuevo y no sobrescribe originales.
+
+Instrucciones completas: [R4-WINDOWS-AUDITORIA.md](./R4-WINDOWS-AUDITORIA.md).
+
+La copia pública del repositorio no contiene los archivos BLEND/GLB
+originales del R4, por lo que el resultado sobre los avatares reales
+no puede conocerse desde GitHub sin acceso a esos archivos.
