@@ -79,10 +79,14 @@ export async function loadArcAvatarStage({
       copiloto:{gltf:copiloto,speaker:speakers?.copiloto,look:lookControllers.copiloto,clipMap:clipMaps.copiloto}
     }
   });
-  const audits={
-    natalia:adapter.inspect("natalia").audit,
-    copiloto:adapter.inspect("copiloto").audit
-  };
+  const audits=Object.fromEntries(["natalia","copiloto"].map(name=>{
+    const rig=adapter.inspect(name).audit;
+    const issues=[
+      ...rig.issues,
+      ...(typeof lookControllers[name]!=="function" ? ["mirada sin controlador real"] : [])
+    ];
+    return [name,{ready:issues.length===0,issues}];
+  }));
   return {
     ready:audits.natalia.ready && audits.copiloto.ready,
     audits,roots:{natalia:natalia.scene,copiloto:copiloto.scene},
