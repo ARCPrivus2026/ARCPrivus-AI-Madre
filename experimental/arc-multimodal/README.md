@@ -141,3 +141,35 @@ sobre los GLB autenticos. Sin esos originales no podemos certificar mano,
 mirada, marcha de 23 anos, ropa, piel, dientes, lengua o lip-sync.
 El objetivo es que el sistema no declare exitoso lo que aun no puede probar.
 Archivos de motor, base de datos y mensajes en main no se modificaron.
+
+
+## Auditoría de skinning real (6 de noviembre de 2026)
+Los metadatos del esqueleto, por sí solos, **no prueban** que una mano
+exista en la malla. El nuevo módulo \`skinning-geometry-audit.mjs\` inspecciona
+los atributos \`skinIndex\` y \`skinWeight\` de cada \`SkinnedMesh\` del GLTF
+cargado, y cuenta los vértices suficientemente influidos por huesos de
+mano izquierda, mano derecha y los dos pies.
+
+Salida adicional del inspector \`inspectLoadedGlb\`:
+- \`audit.skinningStatus\`: \`analyzed\` o \`unavailable\`.
+- \`skinning.targets.rightHand.vertices\`: número de vértices relacionados
+  con esa mano (umbral de peso por defecto: 0,05).
+- \`skinning.issues\`: explicación cuando faltan influencias o los datos
+  están incompletos.
+
+Si no hay mallas \`SkinnedMesh\` analizables, el modelo **no recibe
+certificación de rig preparado**. La protección de \`stage.play()\` bloquea
+la escena completa ANTES de arrancar movimientos de Natalia o Copiloto
+cuando alguno no supera las auditorías.
+
+Prueba añadida: dos personajes simulados; el Copiloto tiene un hueso
+\`RightHand\` presente pero cero vértices asociados; el director debe
+rechazar la escena sin ejecutar ni siquiera el movimiento de Natalia.
+
+LIMITACIÓN: contar pesos por hueso no comprueba la silueta de la mano,
+la visibilidad de la malla, ni la correcta orientación de muñeca y dedos.
+Tampoco acredita una prueba de Three.js con GLB auténticos; sigue
+faltando inspección y reproducción visual en el R4 de Windows.
+
+Esta fase es 100% lógica y de solo lectura: ni el GLB ni el blend original
+son reescritos. Los tests usan geometrías sintetizadas en memoria.
