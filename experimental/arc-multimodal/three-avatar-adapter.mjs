@@ -4,6 +4,7 @@
  * A host render loop MUST call update(deltaSeconds); audio is injected.
  */
 import {auditAvatarRig} from "./integrated-scene-runtime.mjs";
+import {inspectSkinInfluence} from "./skinning-geometry-audit.mjs";
 
 const HINTS={idle:["idle","rest"],walk:["walk"],run:["run"],sit:["sit"],stand:["stand"]};
 const JAW=["jawopen","mouthopen","mouth_open"];
@@ -56,7 +57,16 @@ export function inspectLoadedGlb(gltf,{clipMap={},voiceEnabled=false}={}){
   const manifest={
     bones:uniq(bones),morphs:uniq(morphs),clips,clipMap:resolved,voiceEnabled
   };
-  return {manifest,audit:auditAvatarRig(manifest),meshes};
+  const skeletonAudit=auditAvatarRig(manifest);
+  const skinning=inspectSkinInfluence(gltf);
+  const issues=Object.freeze([...skeletonAudit.issues,...skinning.issues]);
+  const audit=Object.freeze({
+    ...skeletonAudit,
+    ready:issues.length===0,
+    issues,
+    skinningStatus:skinning.status
+  });
+  return {manifest,audit,meshes,skinning};
 }
 
 /**
