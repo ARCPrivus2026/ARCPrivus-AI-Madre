@@ -194,3 +194,17 @@ Instrucciones completas: [R4-WINDOWS-AUDITORIA.md](./R4-WINDOWS-AUDITORIA.md).
 La copia pública del repositorio no contiene los archivos BLEND/GLB
 originales del R4, por lo que el resultado sobre los avatares reales
 no puede conocerse desde GitHub sin acceso a esos archivos.
+
+
+## Diagnóstico geométrico R4 v2: pesos reales de Blender
+Actualización 6 nov 2026: \`blender-rig-inventory.py\` ahora calcula
+\`weightedVertexCounts\` por grupo (umbral 0,05), enumera mallas ocultas
+y separa las mallas no vinculadas a la armadura principal. El auditor
+integral exige evidencia cuantitativa y marca como incompletas manos o
+pies con menos de 3 vértices suficientemente ponderados. No confundir
+este umbral preliminar con certificación visual de dedos o de marcha.
+
+La suite incorpora tests de Python sin Blender: \`test_blender_inventory.py\`.
+Ver [R4-WINDOWS-AUDITORIA.md](./R4-WINDOWS-AUDITORIA.md) para ejecución
+integral con los dos originales y un único reporte JSON. Nunca se activa
+\`readyForProduction\` sin inspección real en Windows R4.
