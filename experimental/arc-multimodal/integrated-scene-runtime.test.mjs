@@ -38,8 +38,8 @@ test("AUDITORIA RIG: manos, pies, ojos, boca, animaciones y voz",()=>{
   missing.morphs=["eyeBlink"];
   const broken=auditAvatarRig(missing);
   assert.equal(broken.ready,false);
-  assert.match(broken.issues.join(" "),"mano derecha");
-  assert.match(broken.issues.join(" "),"apertura de boca");
+  assert.match(broken.issues.join(" "),/mano derecha/);
+  assert.match(broken.issues.join(" "),/apertura de boca/);
 });
 test("ENSAYO INTEGRAL: Natalia y Copiloto caminan, corren, hablan y gesticulan en la misma escena",async()=>{
   const plan=planIntegratedScene(scene());
