@@ -87,11 +87,19 @@ export async function loadArcAvatarStage({
     ];
     return [name,{ready:issues.length===0,issues}];
   }));
+  const ready=audits.natalia.ready && audits.copiloto.ready;
   return {
-    ready:audits.natalia.ready && audits.copiloto.ready,
+    ready,
     audits,roots:{natalia:natalia.scene,copiloto:copiloto.scene},
     update:deltaSeconds=>adapter.update(deltaSeconds),
     play:async cues=>{
+      // Se bloquea ANTES de mover a cualquiera de los dos personajes.
+      // Un rig con huesos pero sin pesos de malla NO es un rig verificado.
+      if(!ready) {
+        const problems=Object.entries(audits)
+          .flatMap(([name,audit])=>audit.issues.map(issue=>name+": "+issue));
+        throw new Error("Escena bloqueada por auditoria: "+problems.join("; "));
+      }
       const plan=planIntegratedScene({cues,manifests:adapter.manifests});
       const result=await runIntegratedScene(plan,{adapter});
       // El resultado representa inicio de eventos; la voz puede seguir activa.
