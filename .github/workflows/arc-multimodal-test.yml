@@ -16,4 +16,4 @@ jobs:
         with:
           node-version: "22"
       - name: Offline unit tests (no external API)
-        run: node --test experimental/arc-multimodal/google-interactions.test.mjs
+        run: node --test experimental/arc-multimodal/*.test.mjs
