@@ -79,7 +79,7 @@ export function createThreeAvatarAdapter({THREE,actors,fadeSeconds=0.2}={}){
     });
     states.set(name,{
       cfg,mixer:new THREE.AnimationMixer(cfg.gltf.scene),...inspection,
-      active:null,speaking:false,phase:0,jawLevel:null,blinkLeft:0,
+      active:null,speaking:false,voicePending:false,phase:0,jawLevel:null,blinkLeft:0,
       voices:new Set(),errors:[]
     });
   }
@@ -131,8 +131,8 @@ export function createThreeAvatarAdapter({THREE,actors,fadeSeconds=0.2}={}){
     async voice(event){
       const state=get(event);
       if(event.channel!=="voice") throw new TypeError("Canal incorrecto");
-      if(state.speaking) throw new Error("Ya esta hablando");
-      state.speaking=true;
+      if(state.speaking || state.voicePending) throw new Error("Ya esta hablando o tiene voz pendiente");
+      state.voicePending=true;
       let handle;
       try{
         handle=await state.cfg.speaker.start({
@@ -142,13 +142,14 @@ export function createThreeAvatarAdapter({THREE,actors,fadeSeconds=0.2}={}){
           onJawLevel:x=>{if(Number.isFinite(x))state.jawLevel=Math.max(0,Math.min(1,x));}
         });
         if(typeof handle?.done?.then!=="function") throw new TypeError("Voz debe devolver {done: Promise}");
-      }catch(error){state.speaking=false;throw error;}
+      }catch(error){state.speaking=false;state.voicePending=false;throw error;}
       const record={handle,task:null};
       state.voices.add(record);
       record.task=Promise.resolve(handle.done).catch(error=>{
         state.errors.push(String(error?.message||error));
       }).finally(()=>{
         state.speaking=false;
+        state.voicePending=false;
         state.jawLevel=0;
         setMorph(state.meshes,JAW,0);
         state.voices.delete(record);
