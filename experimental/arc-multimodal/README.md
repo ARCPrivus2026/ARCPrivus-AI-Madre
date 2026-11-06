@@ -229,3 +229,24 @@ archivos .blend/.glb/.gltf y no altera la rama principal.
 
 **Uso completo:** [R4-PRUEBA-VISUAL-INTEGRAL.md](./R4-PRUEBA-VISUAL-INTEGRAL.md).
 Los modelos originales siguen sin estar disponibles para esta sesión.
+
+
+## Motor creativo universal + ARC Consciousness V4 (6 nov 2026)
+Se incorporó una arquitectura opcional para conectar el ARC Consciousness
+Engine V4.0.0 aportado por el propietario con un estudio editorial y
+audiovisual reutilizable. Este proyecto admite proyectos de video,
+película, serie, novela, programa y futuros copilotos. Integra:
+creative-universe.mjs, consciousness-creative-bridge.mjs,
+creative-arc-preset.mjs y local-creative-planner.mjs.
+
+La prueba piloto planifica conjuntamente Natalia y Arnold RC, pero el
+presupuesto, permisos biométricos, archivos originales y render real
+siguen bloqueados o pendientes. El planificador local solo entrega
+guiones y storyboards estructurados, sin generación multimedia.
+
+**Guía:** [ARC-CREATIVE-STUDIO-V4-INTEGRATION.md](./ARC-CREATIVE-STUDIO-V4-INTEGRATION.md).
+
+El archivo V4 original no se copia al repositorio público. La
+compatibilidad de la cola cognitiva se ensayó localmente contra el archivo
+compartido; CI usa un simulador de su interfaz. Este PR sigue sin
+desplegarse al R4 principal ni fusionarse a main.
