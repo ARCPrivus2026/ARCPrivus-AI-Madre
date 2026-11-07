@@ -356,3 +356,20 @@ anclas de UV/triángulo, sin asumir píxeles fijos en caras deformadas.
 [Guía R5 de comparación dirigida en Windows](./R5-NATALIA-TEXEL-PIXEL-MORPH.md).
 Los tests de GitHub usan colores sintéticos, NO los GLB originales.
 No se ha corregido ninguna textura ni se ha alterado producción.
+
+
+### R5 — bloqueo de carga del actor (antes de texel/píxel)
+La sesión local del 7-nov-2026 sirvió GLB y texturas con HTTP OK,
+pero Natalia nunca llegó al gate \`actor.ready\`; no se capturaron
+texeles ni píxeles. No hay prueba todavía de cuál paso de \`loadActor\`
+o del postprocesado V22 falló. No convertir un HTTP 200 en
+\`actor.ready=true\` ni saltarse el gate.
+
+Se añadió \`r5-actor-load-gate-audit.mjs\` para preservar la excepción
+original del loader, registrar snapshots de \`actor.ready\`,
+\`actor.gltf?.scene\`, V22, alertas y errores/rechazos del navegador.
+Es observacional, no modifica el loader ni los GLB.
+[Guía de instrumentación en laboratorio local](./R5-NATALIA-ACTOR-READY-DIAGNOSTICO.md).
+Las pruebas de CI son instrumentación simulada, NO un arranque del
+visor real de Windows. El diagnóstico local debe persistirse en
+disco antes de retomar el muestreo de textura.
