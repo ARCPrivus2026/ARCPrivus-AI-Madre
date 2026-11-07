@@ -85,6 +85,31 @@ function triangle(mesh,faceIndex){
     }
   };
 }
+function nearSameMeshTriangles(hits,region,tolerance){
+  const byRay=new Map();
+  for(const hit of hits){
+    if(hit.rayId===null||hit.distance===null) continue;
+    if(!byRay.has(hit.rayId))byRay.set(hit.rayId,[]);
+    byRay.get(hit.rayId).push(hit);
+  }
+  const candidates=[];
+  for(const [rayId,list] of byRay){
+    const ordered=[...list].sort((a,b)=>a.distance-b.distance);
+    for(let i=0;i<ordered.length-1;i++){
+      const a=ordered[i],b=ordered[i+1];
+      if(a.faceIndex===b.faceIndex)continue;
+      if(b.distance-a.distance<=tolerance){
+        candidates.push({
+          region,rayId,firstFaceIndex:a.faceIndex,
+          secondFaceIndex:b.faceIndex,
+          depthGap:b.distance-a.distance,
+          interpretation:"candidate only; boundary triangles may share ray"
+        });
+      }
+    }
+  }
+  return candidates;
+}
 function hitRead(hit){
   return {
     distance:Number.isFinite(hit.distance)?hit.distance:null,
@@ -92,7 +117,11 @@ function hitRead(hit){
       ?[hit.uv.x,hit.uv.y]:null,
     point:hit.point&&[hit.point.x,hit.point.y,hit.point.z].every(Number.isFinite)
       ?[hit.point.x,hit.point.y,hit.point.z]:null,
-    faceIndex:hit.faceIndex
+    faceIndex:hit.faceIndex,
+    rayId:typeof hit.rayId==="string"||Number.isInteger(hit.rayId)
+      ?String(hit.rayId):null,
+    pixel:hit.pixel&&Number.isFinite(hit.pixel.x)&&Number.isFinite(hit.pixel.y)
+      ?[hit.pixel.x,hit.pixel.y]:null
   };
 }
 /**
@@ -101,7 +130,7 @@ function hitRead(hit){
  * caller should save screen XY/ray metadata separately for pixel attribution.
  */
 export function auditFacialHitTriangles({
-  mesh,stripeHits,controlHits,maxHits=500
+  mesh,stripeHits,controlHits,maxHits=500,nearTolerance=0.002
 }={}){
   if(!mesh?.geometry||!mesh.isMesh && !mesh.isSkinnedMesh)
     throw new TypeError("Malla Three.js real requerida");
@@ -110,6 +139,8 @@ export function auditFacialHitTriangles({
   if(!Number.isInteger(maxHits)||maxHits<1||maxHits>2000
     ||stripeHits.length+controlHits.length>maxHits)
     throw new RangeError("Numero de hits invalido");
+  if(!Number.isFinite(nearTolerance)||nearTolerance<0||nearTolerance>1)
+    throw new RangeError("nearTolerance invalida");
   const faceCache=new Map();
   const inspect=(hits,region)=>hits.map((hit,i)=>{
     if(hit?.object!==mesh)throw new Error("Hit de objeto ajeno a "+mesh.name);
@@ -138,6 +169,11 @@ export function auditFacialHitTriangles({
     stripeFaceDistribution:distribution(stripe),
     controlFaceDistribution:distribution(control),
     uniqueTriangleCount:faceCache.size,
+    nearSameMeshTriangleCandidates:[
+      ...nearSameMeshTriangles(stripe,"stripe",nearTolerance),
+      ...nearSameMeshTriangles(control,"control",nearTolerance)
+    ],
+    rayIdentityAvailable:[...stripe,...control].every(x=>x.rayId!==null),
     morphs:{
       relative:mesh.geometry.morphTargetsRelative??null,
       positionTargets:Array.isArray(morphAttrs.position)?morphAttrs.position.length:0,
@@ -152,6 +188,8 @@ export function auditFacialHitTriangles({
     evidenceSaved:false,
     warnings:[
       "Raycaster UV and triangles may differ from final shaded pixel (alpha/morph/skin/GPU)",
+      "Without rayId/pixel metadata, triangle hits cannot be matched to individual screen samples",
+      "Even near-coincident faces on one ray are candidates, not proven bad overlapping polygons",
       "UV seams, triangle boundaries and normals require spatial comparison with the visible stripe",
       "Identifying a triangle in the ROI is not a demonstrated root cause",
       "Output contains coordinates only; do not publish private biometric textures"
