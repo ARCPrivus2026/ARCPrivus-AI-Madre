@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 1.4 (laboratorio opt-in en navegador local, sin pagos)
+# ARC Global Affiliate & Commerce Engine — MVP 1.5 (borradores comerciales y seguimiento local, sin pagos)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -233,6 +233,55 @@ El archivo `browser-lab-http.integration.test.mjs` se ejecuta dentro del CI aisl
 **No es una plataforma de autenticación para producción.** La URL aleatoria del laboratorio es únicamente una clave de acceso de prueba, **no una cuenta autenticada**. No existe administración real de usuarios, restauración de passkeys, sesiones de servidor duraderas, control de IP/dispositivo, mitigación de actores locales maliciosos ni aislamiento multiusuario. Un operador local con acceso al equipo puede inspeccionar el proceso de laboratorio. El almacenamiento en memoria y la simulación son deliberados.
 
 **No utilizar la instalación R4 para estas pruebas. No activar pagos reales, Cloudflare Tunnel, conexiones públicas, productos reales ni credenciales personales.** La prueba física requerirá una máquina local separada, consentimiento explícito y revisión de los riesgos.
+
+## ARC Market AI 1.5 — Catálogo, borradores promocionales y analítica DEMO
+
+Esta etapa devuelve el foco al objetivo comercial, **sin pretender que el módulo ya venda productos ni facture dinero**. Se añadió `marketing-studio.mjs`, una ampliación del demostrador **SQLite local** `DemoAffiliateEngine`; no usa MySQL R4 ni importa servidores principales.
+
+### Tres propuestas de producto, todavía sin publicar
+
+La acción voluntaria `POST /api/marketing/seed` incorpora una sola vez tres **borradores de ejemplo**, con precios y porcentajes que NO han sido aprobados para cobrar:
+
+| Borrador | Precio ilustrativo COP | Comisión comercial ilustrativa |
+|---|---:|---:|
+| Guía No Frost: diagnóstico paso a paso | 49.000 | 30 % |
+| Guía de lavadoras: sensores y fallas de giro | 39.000 | 30 % |
+| Asesoría remota de diagnóstico técnico | 79.000 | 20 % |
+
+**El material digital completo y el servicio real todavía NO están listos para entrega ni reservación.** Las descripciones, públicos y listas de contenido son propuestas editoriales que deben verificarse y desarrollarse. No existen inventario, citas reservables ni capacidad de cobro.
+
+### Trabajo que ya se puede ensayar en el demostrador
+
+- **Fichas comerciales versionadas:** tabla aditiva `marketing_drafts` con categoría `DIGITAL_GUIDE` o `REMOTE_ADVICE`, slug local, titular, público, resumen, puntos incluidos y número de revisión.
+- **Editor local:** el panel permite modificar el texto y guardar, pero nunca publica. Las versiones concurrentes se comparan y una escritura con revisión antigua se rechaza sin sobrescribir la ficha nueva.
+- **Plantillas de promoción orgánica:** a partir de un enlace de afiliado existente se obtiene un texto de borrador y una vista previa `/?ref=TOKEN`. No hay envío a redes sociales, publicidad automatizada, correo comercial ni URL pública.
+- **Seguimiento DEMO:** `marketing.overview()` agrupa por token de afiliación las visitas contadas, pedidos **simulados** activos, reembolsos **simulados** y totales ficticios de comisión. No incluye ventas directas sin token dentro de campañas atribuibles. No interpreta recargas de página como clientes únicos.
+- **Indicador de referencia, no KPI real:** `demoOrdersPer100Visits` es solamente el número de pedidos simulados activos por 100 eventos de visita del laboratorio. No representa conversión de personas ni tasa de ventas reales; cuando no hay visitas aparece nulo.
+- **Textos protegidos para edición:** nombres y párrafos se manejan como texto, no código HTML; la interfaz utiliza `textContent`. Se rechazan slugs inválidos, contenido con etiquetas HTML y listas editoriales insuficientes.
+- **Compatibilidad:** los productos, afiliados y ventas anteriores permanecen. La tabla nueva es aditiva; no se toca el esquema MySQL ni R4. La inserción de cada borrador de muestra y su producto está protegida por una sola transacción SQLite.
+
+### Endpoints exclusivamente en el servidor localhost de demostración
+
+| Método | Ruta | Propósito |
+|---|---|---|
+| GET | `/api/marketing/catalog` | Ver borradores editoriales |
+| POST | `/api/marketing/seed` | Crear muestras de manera idempotente |
+| POST | `/api/marketing/draft` | Guardar texto con verificación de revisión |
+| GET | `/api/marketing/landing/:token` | Vista editorial del enlace existente |
+| GET | `/api/marketing/promo/:token` | Propuesta de texto orgánico NO PUBLICABLE |
+| GET | `/api/marketing/overview` | Métricas ficticias por enlace |
+
+Todas las llamadas dependen del demostrador SQLite con servidor `127.0.0.1:3197`, sin autenticación para clientes. **No desplegar en internet ni abrir el puerto**. Estas rutas no reciben pagos, no autentican usuarios reales ni validan una cuenta Hotmart.
+
+### Validación y próximos bloqueos
+
+El código incluye pruebas de catálogo idempotente, persistencia de versión editorial, contenido inválido, migración de base anterior, datos completos de campaña, visitas, venta simulada, operación repetida y reversión. También se agregó una prueba HTTP integral `http.test.mjs` que comprueba la navegación y la consistencia de todos esos pasos.
+
+**Verificación de la lógica antes de los cambios documentales:** [GitHub Actions 42377641348](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/42377641348), **64 pruebas generales aprobadas y 42 de MySQL aprobadas, 0 fallidas** (106 ejecuciones exitosas, con casos especializados reservados a su trabajo).
+
+Para publicar un producto real se requiere material terminado y revisado por un profesional, permiso de uso de imágenes y contenidos, descripción y precio aprobados, entrega al comprador, soporte, devoluciones, términos, privacidad, facturación/impuestos y pasarela/plataforma autorizada. No se ha verificado ni vinculado ninguna cuenta de Hotmart en esta etapa.
+
+**No publicar las fichas de ejemplo como productos listos para comprar. No activar dinero real ni fusionar el PR.**
 
 ## Regla comercial demostrativa
 
