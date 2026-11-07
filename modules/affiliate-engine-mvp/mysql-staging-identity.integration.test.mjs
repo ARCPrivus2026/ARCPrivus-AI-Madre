@@ -71,7 +71,8 @@ test('MySQL real: contraseña scrypt y token opaco almacenados únicamente como 
    assert.equal(records[0].token_hash,createHash('sha256').update(session.token).digest('hex'));
    assert.equal(JSON.stringify(records).includes(session.token),false);
    assert.equal((await e.identity.readOrder(session.token,e.order.id)).id,e.order.id);
-   assert.equal((await e.identity.refundOrder(session.token,e.order.id)).status,'SIM_REFUNDED');
+   // WebAuthn-style step-up is now mandatory for simulated admin refunds.
+   await assert.rejects(()=>e.identity.refundOrder(session.token,e.order.id),DemoAuthenticationFailed);
    assert.equal((await e.store.reconcile()).ok,true);
  }finally{await e.pool.end();}
 });
