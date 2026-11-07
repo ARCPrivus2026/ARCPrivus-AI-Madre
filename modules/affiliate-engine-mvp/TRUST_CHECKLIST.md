@@ -1,4 +1,4 @@
-# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.1)
+# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.2)
 
 **Estado:** PILOTO LOCAL CON DINERO SIMULADO. Ninguna sección de este documento autoriza operar una plataforma pública ni recibir fondos de clientes.
 
@@ -94,6 +94,29 @@ Referencia de CI: [run 41946428282](https://github.com/ARCPrivus2026/ARCPrivus-A
 La semilla TOTP y clave privada P-256 solo aparecen en los procesos de prueba. El origen `affiliate.example.test` es un dominio ilustrativo, no un servicio que pertenezca a la plataforma. El subconjunto criptográfico no sustituye una implementación WebAuthn mantenida y auditada. Se requiere un sistema de aprovisionamiento seguro de claves y una autenticación vinculada a sesiones reales antes de abrir una interfaz pública.
 
 Referencia de pruebas: [run 42370688792](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/42370688792), 51 + 27 ejecuciones exitosas, 0 fallidas. Sin acceso a ARNOLRC R4.
+
+## A.5. Registro y autenticación con biblioteca WebAuthn — MVP 1.2
+
+| Control en laboratorio MySQL 8.4 | Estado |
+|---|---|
+| Uso real de biblioteca mantenida `@simplewebauthn/server` versión fijada | Incorporado |
+| Generación oficial de opciones de inscripción y autenticación | Incorporado |
+| Verificación criptográfica por biblioteca de registro CBOR sintético | Comprobado en CI |
+| Verificación por biblioteca de firma de autenticación sintética | Comprobado en CI |
+| Vinculación de RP ID/origen y desafíos a una sesión ficticia | Comprobado en CI |
+| Expiración y un solo uso por desafío con bloqueo transaccional | Comprobado en CI |
+| Requisito WebAuthn previo para inscripción de una segunda clave | Comprobado en CI |
+| Reinicio de autorización de operación sensible tras inscribir otra clave | Comprobado en CI |
+| Contrato inyectable para navegador con `@simplewebauthn/browser` | Solo adapter + mocks |
+| UI y endpoints de navegador realmente operativos | **NO implementados** |
+| Prueba con dispositivo/biometría/llave física real | **NO realizada** |
+| HTTPS público, gestión de sesiones/cookies/CSRF y control IP | **NO implementados** |
+| Almacenamiento definitivo, recuperación y múltiples usuarios reales | **NO implementados** |
+| Pruebas de penetración, conformidad y auditoría externa | **NO realizadas** |
+
+Solo se usan el RP ID `localhost` y el origen `http://localhost:3198` para ilustrar un futuro sitio de pruebas local. **No se inició un servidor en ese puerto ni se instaló el módulo en ARNOLRC R4.**
+
+La evidencia de la biblioteca es un conjunto de registros y firmas fabricados en memoria, verificados con su implementación real, más pruebas contra MySQL. **No acredita la experiencia del usuario en navegador, compatibilidad de dispositivos físicos, accesibilidad ni preparación productiva.** Se mantiene prohibida la conexión a dinero real y la fusión automática de la rama.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
