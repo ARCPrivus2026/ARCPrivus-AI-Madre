@@ -162,12 +162,16 @@ export class MysqlStagingDemoStore {
     }
     return this.byId(committedId);
   }
-  async refund(orderId) {
+  async refund(orderId,{authorizationCheck=null}={}) {
     id(orderId);
+    if(authorizationCheck!==null&&typeof authorizationCheck!=='function')throw new Error('Guardia de autorización inválida');
     const conn=await this.pool.getConnection();
     let inTx=false,found=null;
     try {
       await conn.beginTransaction();inTx=true;
+      // The optional trusted-operation guard is part of the exact same transaction.
+      // It may consume a one-time, order-bound approval before changing the order.
+      if(authorizationCheck)await authorizationCheck(conn,orderId);
       const [rows]=await conn.execute('SELECT * FROM aff_demo_orders WHERE id=? FOR UPDATE',[orderId]);
       found=rows[0];
       if(!found)throw new Error('Pedido inexistente');
