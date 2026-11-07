@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DemoAffiliateEngine } from './engine.mjs';
+import { DemoMarketingStudio } from './marketing-studio.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 // Nunca permitir que una configuración externa convierta el prototipo en pagos reales.
@@ -18,6 +19,7 @@ const port = process.env.ARC_DEMO_PORT === undefined ? 3197 : Number(process.env
 if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('Puerto local inválido');
 let activePort = port;
 const engine = new DemoAffiliateEngine(dbPath);
+const marketing = new DemoMarketingStudio(engine);
 const html = readFileSync(join(here, 'index.html'));
 const appJs = readFileSync(join(here, 'app.js'));
 const styleCss = readFileSync(join(here, 'style.css'));
@@ -95,6 +97,25 @@ const server = createServer(async (req, res) => {
       return json(res, report.ok ? 200 : 503, report);
     }
     if (req.method === 'GET' && route === '/api/summary') return json(res, 200, engine.dashboard());
+    // ARC Affiliate 1.5: all marketing outputs are local, fictional and non-publishable.
+    if (req.method === 'GET' && route === '/api/marketing/catalog')
+      return json(res, 200, marketing.getCatalog());
+    if (req.method === 'GET' && route === '/api/marketing/overview')
+      return json(res, 200, marketing.overview());
+    if (req.method === 'POST' && route === '/api/marketing/seed')
+      return json(res, 201, marketing.seedSampleDrafts());
+    if (req.method === 'POST' && route === '/api/marketing/draft')
+      return json(res, 200, marketing.saveDraft(await body(req)));
+    const landingRoute = route.match(/^\/api\/marketing\/landing\/([a-f0-9]{32})$/);
+    if (req.method === 'GET' && landingRoute) {
+      const page = marketing.landingForReferral(landingRoute[1]);
+      return json(res, page ? 200 : 404, page || {error:'Borrador local inexistente'});
+    }
+    const promoRoute = route.match(/^\/api\/marketing\/promo\/([a-f0-9]{32})$/);
+    if (req.method === 'GET' && promoRoute) {
+      try { return json(res, 200, marketing.promoText(promoRoute[1])); }
+      catch { return json(res, 404, {error:'Texto promocional local inexistente'}); }
+    }
     if (req.method === 'GET' && route === '/api/products') return json(res, 200, engine.getProducts());
     if (req.method === 'GET' && route === '/api/affiliates') return json(res, 200, engine.getAffiliates());
     if (req.method === 'GET' && route === '/api/referrals') return json(res, 200, engine.getReferrals());
