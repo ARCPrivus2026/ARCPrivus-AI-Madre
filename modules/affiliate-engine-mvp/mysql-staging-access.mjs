@@ -108,10 +108,10 @@ export class MysqlDemoRoleGate {
     });
     return order;
   }
-  async refundOrder(actorId,orderId){
+  async refundOrder(actorId,orderId,options={}){
     validId(orderId);
     await this.authorize(actorId,'order.refund');
-    return this.store.refund(orderId);
+    return this.store.refund(orderId,options);
   }
   async disableFixture(actorId){
     validId(actorId);
