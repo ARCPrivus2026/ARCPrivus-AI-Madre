@@ -1,0 +1,29 @@
+{
+  "version": "2026-11-07",
+  "estado": "prelanzamiento",
+  "productos": [
+    {
+      "id": "ARC-TEC-001",
+      "titulo": "Diagnóstico práctico No Frost y lavadoras",
+      "precioCOP": 29900,
+      "formato": "PDF",
+      "checkout": null,
+      "publicado": false,
+      "comisionAfiliadosPropuesta": "25% de la base comisionable; no activado"
+    },
+    {
+      "id": "ARC-TEC-002",
+      "titulo": "Orientación técnica remota (30 min)",
+      "precioCOP": 59900,
+      "publicado": false,
+      "checkout": null
+    },
+    {
+      "id": "ARC-TEC-003",
+      "titulo": "Kit técnico ARC Pro",
+      "precioCOP": 79900,
+      "publicado": false,
+      "checkout": null
+    }
+  ]
+}
