@@ -143,3 +143,26 @@ test('MySQL real: misma aserción concurrente se acepta una sola vez; el contado
    syntheticAuthenticationResponse(e.auth,next,{counter:2})),DemoCeremonyRejected);
  }finally{await e.pool.end();}
 });
+
+
+test('MySQL real: alta de segunda clave exige clave previa y reinicia autorización sensible',
+ {skip:!enabled},async()=>{
+ const e=await setup();
+ try{
+  await register(e);
+  await assert.rejects(()=>e.ceremonies.startRegistration(e.session.token),DemoCeremonyRejected);
+  const firstAuth=await e.ceremonies.startAuthentication(e.session.token);
+  await e.ceremonies.finishAuthentication(e.session.token,
+   syntheticAuthenticationResponse(e.auth,firstAuth,{counter:1}));
+  const secondOptions=await e.ceremonies.startRegistration(e.session.token);
+  const secondKey=createSyntheticAuthenticator();
+  const newCred=syntheticRegistrationResponse(secondKey,secondOptions);
+  assert.equal((await e.ceremonies.finishRegistration(e.session.token,newCred)).verified,true);
+  await assert.rejects(()=>e.identity.refundOrder(e.session.token,e.order.id),DemoAuthenticationFailed);
+  const newAuth=await e.ceremonies.startAuthentication(e.session.token);
+  assert.equal(newAuth.allowCredentials.length,2);
+  await e.ceremonies.finishAuthentication(e.session.token,
+   syntheticAuthenticationResponse(secondKey,newAuth,{counter:1}));
+  assert.equal((await e.identity.refundOrder(e.session.token,e.order.id)).status,'SIM_REFUNDED');
+ }finally{await e.pool.end();}
+});
