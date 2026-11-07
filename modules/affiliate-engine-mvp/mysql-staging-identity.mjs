@@ -1,5 +1,5 @@
 /**
- * ARC Affiliate 1.1 — CI-ONLY credential/session/MFA/passkey-step-up prototype.
+ * ARC Affiliate 1.3 — CI-ONLY credential/session/MFA/order-bound WebAuthn step-up.
  * No HTTP endpoints, no cookies, no real customer accounts and no deployment.
  * Uses its OWN ephemeral MySQL staging schema; never imports ARNOLRC R4.
  * Production still requires browser registration, recovery, rate limits, audits, CSRF, TLS and review.
@@ -8,6 +8,7 @@ import {randomUUID,randomBytes,createHash,timingSafeEqual,scrypt as scryptCallba
 import {promisify} from 'node:util';
 import {getStagingPoolOptions} from './mysql-staging-adapter.mjs';
 import {DemoAccessDenied} from './mysql-staging-access.mjs';
+import {consumeAuthorizedRefund} from './mysql-staging-refund-approval.mjs';
 import {createFixtureMfaSecret,validateTotpOnce,encryptFixtureMfa,decryptFixtureMfa} from './mysql-staging-mfa.mjs';
 
 const derive=promisify(scryptCallback);
@@ -252,7 +253,11 @@ export class MysqlStagingIdentity {
       [hashSession(token),this.now()]
     );
     if(rows.length!==1)throw new DemoAuthenticationFailed();
-    return this.roles.refundOrder(actorId,orderId);
+    return this.roles.refundOrder(actorId,orderId,{
+      authorizationCheck:async(conn,orderId)=>{
+        await consumeAuthorizedRefund(conn,{token,orderId,nowMs:this.now()});
+      }
+    });
   }
   async signOut(token){
     const hash=hashSession(token);
