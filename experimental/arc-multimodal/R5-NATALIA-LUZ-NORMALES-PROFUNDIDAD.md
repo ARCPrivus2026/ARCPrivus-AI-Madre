@@ -102,12 +102,9 @@ const results=await runR5LightingIsolation({
   meshNames:["Mesh_0"], // SOLO si R4 confirma este nombre
   capture:async ({mode})=>{
     renderer.render(scene,camera);
-    const pixels=renderer.domElement.getContext?.("2d")?.getImageData?.(
-      0,0,renderer.domElement.width,renderer.domElement.height
-    );
-    // En WebGL, NO se debe asumir getContext('2d') sobre su canvas.
-    // Codex debe usar el método de lectura/captura ya probado en R4
-    // y traducirlo a ImageData; preferible OffscreenCanvas/PNG decodificado.
+    // Usar el capturador REAL ya validado en R4. Debe guardar un PNG
+    // y devolver ImageData o {width,height,data:RGBA}, leyendo un canvas
+    // auxiliar o el PNG. No pedir getContext("2d") al canvas WebGL.
     const imageData=await captureFrame(mode);
     const roi=measureR5Rois({
       width:imageData.width,height:imageData.height,data:imageData.data,
