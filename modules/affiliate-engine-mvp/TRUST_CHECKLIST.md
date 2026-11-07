@@ -1,4 +1,4 @@
-# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.3)
+# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.4)
 
 **Estado:** PILOTO LOCAL CON DINERO SIMULADO. Ninguna sección de este documento autoriza operar una plataforma pública ni recibir fondos de clientes.
 
@@ -137,6 +137,28 @@ La evidencia de la biblioteca es un conjunto de registros y firmas fabricados en
 Las pruebas limitan su garantía a la fachada protegida `MysqlStagingIdentity.refundOrder()`. **Un usuario que pudiera llamar directamente a los objetos de almacenamiento internos o al pool MySQL eludiría estas validaciones**, por lo que es imprescindible mantenerlos inaccesibles al exterior y realizar un diseño de privilegios de base de datos y servidor antes de producción.
 
 La vinculación criptográfica del desafío al pedido se hace de manera **servidor-lateral** mediante su asociación persistente con el pedido; todavía hace falta una interfaz confiable que muestre al administrador el pedido exacto antes de aprobarlo. No se ha demostrado resistencia total contra engaños del usuario ni comprometimiento de sesión.
+
+## A.7. Laboratorio local de passkeys — MVP 1.4
+
+| Control | Estado |
+|---|---|
+| Servidor de demostración opt-in exclusivo de `127.0.0.1:3198` | Implementado, no ejecutado en Windows R4 |
+| Interfaz en español con identificador, valor y comisiones ficticias | Implementada |
+| Confirmación visual previa de un pedido concreto | Implementada en UI |
+| Registro WebAuthn de laboratorio voluntario y explícito | Implementado; sin prueba de dispositivo físico |
+| Doble confirmación visible del reembolso SIMULADO | Implementada en UI |
+| Restricción del backend por Host, Origin y clave temporal | Implementada |
+| CSP, no-cache, antiframing y tamaño de solicitudes limitado | Implementado |
+| Biblioteca `@simplewebauthn/browser` servida desde el módulo | Implementado (sin CDN externo) |
+| Prueba HTTP de firmas sintéticas y expiración | Automática en CI aislado |
+| Dispositivo físico / lector biométrico probado | **NO** |
+| Autenticación humana real, login, recuperación, cookies seguras | **NO** |
+| Inmunidad ante un proceso local malicioso o sesión comprometida | **NO** |
+| Dinero, reembolso bancario, pagos y habilitación comercial | **PROHIBIDOS** |
+
+El servidor local usa una clave aleatoria temporal, no una sesión de usuario autenticada. En caso de iniciar voluntariamente un ensayo real de passkeys, el dispositivo o gestor del navegador podría guardar un registro para `localhost`. Cerrar el servidor borra el estado del laboratorio, pero no borra por sí mismo las credenciales del dispositivo.
+
+**No arrancar esto en el entorno R4 de producción/pruebas vigentes, no abrir puertos de LAN/WAN y no enlazar Cloudflare Tunnel.** Debe operarse en una máquina aislada, con revisión técnica, consentimiento y sin datos reales.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
