@@ -89,7 +89,7 @@ export class DemoMarketingStudio {
     }
     this.engine=engine;
     this.db=engine.db;
-    this.db.exec(\`
+    this.db.exec(`
       CREATE TABLE IF NOT EXISTS marketing_drafts (
         product_id TEXT PRIMARY KEY REFERENCES products(id),
         slug TEXT NOT NULL UNIQUE,
@@ -101,17 +101,17 @@ export class DemoMarketingStudio {
         revision INTEGER NOT NULL DEFAULT 1 CHECK(revision>=1),
         updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
-    \`);
+    `);
   }
   getCatalog(){
-    const rows=this.db.prepare(\`
+    const rows=this.db.prepare(`
       SELECT p.id AS productId,p.title,p.price_cop AS priceCop,
         p.commission_pct AS commissionPct,
         m.slug,m.kind,m.headline,m.audience,m.summary,m.highlights_json AS highlightsJSON,
         m.revision,m.updated_at AS updatedAt
       FROM marketing_drafts m JOIN products p ON p.id=m.product_id
       ORDER BY p.rowid ASC
-    \`).all();
+    `).all();
     return rows.map(r=>{
       const {highlightsJSON,...page}=r;
       return {...page,highlights:JSON.parse(highlightsJSON),
@@ -141,17 +141,17 @@ export class DemoMarketingStudio {
         values.summary,JSON.stringify(values.highlights),revision
       ];
       if(before){
-        this.db.prepare(\`
+        this.db.prepare(`
           UPDATE marketing_drafts SET slug=?,kind=?,headline=?,audience=?,
             summary=?,highlights_json=?,revision=?,updated_at=CURRENT_TIMESTAMP
-          WHERE product_id=?\`).run(values.slug,values.kind,values.headline,
+          WHERE product_id=?`).run(values.slug,values.kind,values.headline,
           values.audience,values.summary,JSON.stringify(values.highlights),revision,
           values.productId);
       }else{
-        this.db.prepare(\`
+        this.db.prepare(`
           INSERT INTO marketing_drafts
             (product_id,slug,kind,headline,audience,summary,highlights_json,revision)
-          VALUES (?,?,?,?,?,?,?,?)\`).run(...args);
+          VALUES (?,?,?,?,?,?,?,?)`).run(...args);
       }
       this.engine.log('MARKETING_DRAFT_SAVED',values.productId,{
         slug:values.slug,kind:values.kind,revision
@@ -170,11 +170,11 @@ export class DemoMarketingStudio {
         const id=randomUUID();
         this.db.prepare('INSERT INTO products(id,title,price_cop,commission_pct) VALUES(?,?,?,?)')
           .run(id,template.title,template.priceCop,template.commissionPct);
-        this.db.prepare(\`
+        this.db.prepare(`
           INSERT INTO marketing_drafts
             (product_id,slug,kind,headline,audience,summary,highlights_json,revision)
           VALUES (?,?,?,?,?,?,?,1)
-        \`).run(id,template.slug,template.kind,template.headline,template.audience,
+        `).run(id,template.slug,template.kind,template.headline,template.audience,
           template.summary,JSON.stringify(template.highlights));
         this.engine.log('PRODUCT_CREATED',id,{
           title:template.title,priceCop:template.priceCop,commissionPct:template.commissionPct,
@@ -215,7 +215,7 @@ export class DemoMarketingStudio {
     });
   }
   overview(){
-    const rows=this.db.prepare(\`
+    const rows=this.db.prepare(`
       SELECT l.token,l.product_id AS productId,l.affiliate_id AS affiliateId,
        p.title AS product,a.name AS affiliate,l.clicks,
        COALESCE(s.confirmed,0) AS simulatedOrders,
@@ -236,7 +236,7 @@ export class DemoMarketingStudio {
         GROUP BY referral_token
       ) s ON s.referral_token=l.token
       ORDER BY l.rowid DESC
-    \`).all();
+    `).all();
     const campaigns=rows.map(r=>({
       ...r,
       demoOrdersPer100Visits:r.clicks>0
