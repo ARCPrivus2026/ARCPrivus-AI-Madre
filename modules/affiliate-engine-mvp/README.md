@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 1.0 (MFA administrativo simulado, identidad y sesiones aisladas)
+# ARC Global Affiliate & Commerce Engine — MVP 1.1 (paso administrativo firmado, CI-only)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -122,6 +122,31 @@ Se añadieron `mysql-staging-mfa.mjs` y pruebas automáticas del segundo factor 
 **No introducir semillas reales, contraseñas personales ni credenciales de R4.** No exponer `signIn()`, `enrollFixtureAdminMfa()` ni los objetos de almacenamiento como endpoints públicos. El trabajo se ejecuta exclusivamente en MySQL efímero de GitHub Actions.
 
 **Evidencia técnica de la lógica v1.0:** [GitHub Actions 41946428282](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41946428282), **46 pruebas aprobadas en la batería general** y **23 pruebas aprobadas con MySQL real**, 0 fallidas. Entre las pruebas añadidas están el bloqueo tras cinco códigos TOTP incorrectos y dos intentos simultáneos con un único código, de los que se autoriza solo uno. El commit final de documentación requerirá su propia ejecución de CI.
+
+## ARC Affiliate 1.1 — Paso adicional firmado (subconjunto WebAuthn, CI-only)
+
+**Estado: únicamente prueba criptográfica y transaccional. No hay servicio de navegador, cuentas reales, pasarelas ni pagos.**
+
+El nuevo `mysql-staging-passkey-verify.mjs` comprueba aserciones sintéticas de una clave P-256. Siguiendo parte de la verificación de aserciones WebAuthn, el demo valida:
+
+- Desafío aleatorio de **32 bytes**, almacenado en MySQL únicamente como hash SHA-256, vinculado a la sesión de administrador.
+- Coincidencia exacta de `clientDataJSON.type = webauthn.get`, desafío y `origin` con **`https://affiliate.example.test`**, un origen ficticio que no se usa como servicio real.
+- `rpIdHash` igual a SHA-256 de **`affiliate.example.test`**, banderas de presencia/verificación del usuario (UP y UV), firma ES256 de `authenticatorData || SHA256(clientDataJSON)`.
+- Contador de firmas **estrictamente creciente y positivo**: este requisito solo funciona con el autenticador sintético y rechazaría algunos dispositivos reales que no incrementan el contador.
+- Desafíos válidos durante 2 minutos y marcados como utilizados después de una tentativa, incluso cuando la firma no es válida; las respuestas concurrentes a un mismo desafío no autorizan dos verificaciones.
+- Una clave pública se registra **solo como fixture de CI**, sin implementar la ceremonia real de registro, autenticador hardware, attestation ni evaluación de extensiones WebAuthn.
+
+La tabla `aff_demo_passkeys` contiene únicamente la clave pública de prueba y contador. `aff_demo_passkey_challenges` guarda desafíos con caducidad y control de uso. La clave **privada se genera solo en memoria de la prueba** mediante `mysql-staging-passkey.fixture.mjs`, no se persiste en el repositorio ni en R4.
+
+En el método de laboratorio `MysqlStagingIdentity.refundOrder` se exige que la sesión de `SIM_ADMIN` esté marcada como **`mfa_verified=1` y `webauthn_verified=1`**. La segunda marca se establece únicamente después de verificar la aserción en MySQL mediante `MysqlStagingPasskey.finishChallenge`. Un administrador con contraseña+TOTP, pero sin aserción correcta, **no puede ejecutar ese reembolso simulado**. Los afiliados y comerciantes siguen sin permiso para realizar reembolsos.
+
+**Advertencia de diseño:** este código es **un subconjunto de verificación WebAuthn, no una implementación interoperable ni certificada**. Faltan la ceremonia de registro `navigator.credentials.create()`, la autenticación real `navigator.credentials.get()`, soporte de autenticadores de contador cero, credenciales sincronizadas, evaluación de copias de seguridad, extensiones, recuperación, múltiples claves, WebAuthn de cliente y controles completos de servidor web. El acceso programático directo a los objetos internos del demo y su usuario MySQL tiene permisos elevados; el verdadero límite de confianza de una API de producción todavía debe diseñarse.
+
+No activar este código en Windows ARNOLRC R4 ni cambiar el origen ficticio por un dominio real sin una revisión de arquitectura y seguridad. Ningún componente principal de Messenger, Copilot, Natalia o ARNOLD RC importa estos archivos.
+
+**Verificación de la lógica v1.1:** [GitHub Actions 42370688792](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/42370688792), 51 pruebas generales y 27 contra MySQL 8.4 real aprobadas, 0 fallidas. El commit final de documentación requiere una nueva confirmación CI.
+
+Referencia normativa: [W3C Web Authentication](https://www.w3.org/TR/webauthn/) y [MDN Web Authentication API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API).
 
 ## Regla comercial demostrativa
 
