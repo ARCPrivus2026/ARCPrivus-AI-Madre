@@ -65,7 +65,8 @@ test('MySQL real: refund admin denegado sin desafío firmado, aprobado tras veri
   );
   assert.equal(challengeRows[0].used,1);
   assert.equal(challengeRows[0].challenge_hash,createHash('sha256').update(ch.challenge).digest('hex'));
-  assert.equal((await e.identity.refundOrder(session.token,e.order.id)).status,'SIM_REFUNDED');
+  // Legacy session-level step-up cannot authorize any particular refund in v1.3.
+  await assert.rejects(()=>e.identity.refundOrder(session.token,e.order.id));
   assert.equal((await e.store.reconcile()).ok,true);
  }finally{await e.pool.end();}
 });
@@ -91,7 +92,8 @@ test('MySQL real: origen falso consume desafío y no habilita reembolso',
   await e.passkey.finishChallenge(session.token,{
     ...fixtureAssertion(e.fixture,next.challenge,{counter:1}),challenge:next.challenge
   });
-  assert.equal((await e.identity.refundOrder(session.token,e.order.id)).status,'SIM_REFUNDED');
+  // Legacy session-level step-up cannot authorize any particular refund in v1.3.
+  await assert.rejects(()=>e.identity.refundOrder(session.token,e.order.id));
  }finally{await e.pool.end();}
 });
 
