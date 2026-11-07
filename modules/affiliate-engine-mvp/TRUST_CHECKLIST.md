@@ -1,4 +1,4 @@
-# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.0)
+# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.1)
 
 **Estado:** PILOTO LOCAL CON DINERO SIMULADO. Ninguna sección de este documento autoriza operar una plataforma pública ni recibir fondos de clientes.
 
@@ -75,6 +75,25 @@ La presencia de hashes, contraseñas o sesiones en un demo **no significa autent
 La clave de cifrado se crea de forma efímera en el propio proceso de pruebas. Su gestión, rotación y respaldo seguros no están resueltos para operación real. El código de inscripción de usuarios simulados **no valida identidad fuera del proceso de CI**. Un atacante con acceso a las contraseñas y al código TOTP en tiempo real podría suplantar una sesión; WebAuthn y una arquitectura de servidor web deben evaluarse antes de producción.
 
 Referencia de CI: [run 41946428282](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/41946428282), 46 + 23 ejecuciones de pruebas aprobadas, 0 fallidas en el commit previo a documentación final. Se comprueba bloqueo tras cinco TOTP erróneos y antirrepetición ante dos intentos concurrentes.
+
+## A.4. Aserciones firmadas tipo WebAuthn — MVP 1.1
+
+| Control de CI aislado | Estado |
+|---|---|
+| Desafío aleatorio, hash persistido y vinculación a sesión | Verificado con MySQL 8.4 de prueba |
+| `clientDataJSON`: origen, tipo, desafío, contexto cruzado | Probado con aserciones firmadas sintéticas |
+| `rpIdHash`, banderas UP y UV, firma ES256 | Probado con claves P-256 efímeras |
+| Contador positivo creciente y prohibición de reutilizar desafío | Verificado en CI |
+| Rechazo de firmas desde origen de suplantación | Verificado en CI |
+| Reembolso simulado exige contraseña + TOTP + aserción firmada | Verificado en CI |
+| Registro WebAuthn real mediante navegador/dispositivo | **NO implementado** |
+| Autenticadores sincronizados, contador cero y extensiones | **NO soportados** |
+| MFA real, recuperación segura, HTTPS/CSRF, rate limiting por IP | **NO implementados** |
+| Pruebas de seguridad independiente y producción | **NO autorizadas** |
+
+La semilla TOTP y clave privada P-256 solo aparecen en los procesos de prueba. El origen `affiliate.example.test` es un dominio ilustrativo, no un servicio que pertenezca a la plataforma. El subconjunto criptográfico no sustituye una implementación WebAuthn mantenida y auditada. Se requiere un sistema de aprovisionamiento seguro de claves y una autenticación vinculada a sesiones reales antes de abrir una interfaz pública.
+
+Referencia de pruebas: [run 42370688792](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/42370688792), 51 + 27 ejecuciones exitosas, 0 fallidas. Sin acceso a ARNOLRC R4.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
