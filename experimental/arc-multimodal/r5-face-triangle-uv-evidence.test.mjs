@@ -98,3 +98,30 @@ test("TRIANGLE: número de muestras limitado para equipos de pocos recursos",()=
   assert.throws(()=>auditFacialHitTriangles({mesh,
     stripeHits:[],controlHits:null}),/hits de ambas ROI/);
 });
+
+
+test("TRIANGLE: identifica candidatos dentro de una MISMA malla por rayId, sin afirmar causa",()=>{
+  const mesh=sampleMesh();
+  const a=hit(mesh,0,[.3,.4]);
+  a.distance=2;a.rayId="stripe-1";a.pixel={x:125,y:65};
+  const b=hit(mesh,1,[.3,.4]);
+  b.distance=2.0005;b.rayId="stripe-1";b.pixel={x:125,y:65};
+  const c=hit(mesh,1,[.4,.7]);
+  c.distance=2.001;c.rayId="control-1";c.pixel={x:234,y:65};
+  const report=auditFacialHitTriangles({mesh,stripeHits:[a,b],controlHits:[c]});
+  assert.equal(report.rayIdentityAvailable,true);
+  assert.deepEqual(report.stripeHits[0].pixel,[125,65]);
+  assert.equal(report.nearSameMeshTriangleCandidates.length,1);
+  assert.equal(report.nearSameMeshTriangleCandidates[0].firstFaceIndex,0);
+  assert.equal(report.nearSameMeshTriangleCandidates[0].secondFaceIndex,1);
+  assert.equal(report.verdict,"INCONCLUSIVE_REQUIRES_PIXEL_AND_TEXTURE_VALIDATION");
+});
+test("TRIANGLE: rechaza atribuir superposición sin identidad de rayo",()=>{
+  const mesh=sampleMesh();
+  const a=hit(mesh,0,[.2,.4]);a.distance=2;
+  const b=hit(mesh,1,[.4,.6]);b.distance=2;
+  const report=auditFacialHitTriangles({mesh,
+    stripeHits:[a,b],controlHits:[]});
+  assert.equal(report.rayIdentityAvailable,false);
+  assert.deepEqual(report.nearSameMeshTriangleCandidates,[]);
+});
