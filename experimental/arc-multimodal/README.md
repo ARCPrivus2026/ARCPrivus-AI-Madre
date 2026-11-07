@@ -317,3 +317,22 @@ entera sea una reparación de la franja.
 
 [Protocolo dirigido a Codex Windows R5 — capas faciales](./R5-NATALIA-ATRIBUCION-CAPAS.md).
 El PR sigue aislado y los tests siguen siendo simulados.
+
+
+### R5 — verificación de triángulos y UV dentro de Mesh_0_1
+El informe de procedencia local del 7 de noviembre asocia \`Mesh_0_1\`
+a glTF mesh 0/primitive 0, con 7.974 índices y material facial
+ARNOLRC_V17_ROSTRO_MORPHS_PROTEGIDOS. En las muestras de raycasting
+informadas, la franja y la zona de control apuntan a la misma malla;
+ocultarla hace desaparecer gran parte del rostro, no el defecto solo.
+
+Por eso se añadió \`r5-face-triangle-uv-evidence.mjs\`, para recopilar
+\`faceIndex\` reales de raycasts, triángulos, UV, normales, material,
+datos de morphs y candidatos a superficies casi coincidentes dentro
+de la **misma** malla, siempre sin editar el GLB. Exige persistir
+\`rayId\`/\`pixel\` para comparaciones de superficies que caigan en un
+mismo rayo. Sus tests de CI son sintéticos.
+
+[Protocolo dirigido en el laboratorio R5 ya existente](./R5-NATALIA-TRIANGULOS-UV-NORMALES.md).
+Ni la coincidencia de un triángulo ni los rayos prueban que el shader
+dibujó un pixel concreto. Dictamen actual: CAUSA NO DEMOSTRADA.
