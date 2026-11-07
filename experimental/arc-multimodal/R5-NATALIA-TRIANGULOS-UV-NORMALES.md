@@ -42,8 +42,9 @@ Reutilizar el JSON de procedencia ya creado:
 y el cruce \`gltf-primitive-crosswalk.json\`.
 
 1. Verificar el ejecutor y el visor real ya funcionales.
-2. Reutilizar 50 rayos de la franja y 50 del control si los hits CRUDOS
-   aún están en memoria o en el informe; NO reconstruir falsos
+2. Reutilizar las muestras efectivamente registradas en franja y control
+   si los hits CRUDOS aún están en memoria o en el informe; no asumir
+   que fueron 50 por cada región ni reconstruir falsos
    \`THREE.Intersection\` a partir de promedios o nombres.
 3. Si faltan \`faceIndex\` y \`rayId\`, lanzar SOLAMENTE un raycast de
    hasta 50 muestras/ROI del mismo fotograma, guardando el pixel y el
