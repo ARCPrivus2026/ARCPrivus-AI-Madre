@@ -118,7 +118,7 @@ test("VISIBILIDAD: nombres ambiguos o mallas ausentes se bloquean",async()=>{
   const model=actors();
   await assert.rejects(
     runFaceVisibilityProbes({root:model.root,names:["Unknown"],capture:async()=>{}}),
-    /ambigua o ausente/
+    /ambiguo o ausente/
   );
   await assert.rejects(
     runFaceVisibilityProbes({root:model.root,names:["Mesh_0","Mesh_0"],capture:async()=>{}}),
