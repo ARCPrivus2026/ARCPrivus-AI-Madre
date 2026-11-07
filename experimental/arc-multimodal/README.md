@@ -298,3 +298,22 @@ Windows](./R5-SESION-EVIDENCIA-REPRODUCIBLE.md).
 Los datos de CI son simulados: falta correrlo sobre la copia de Windows,
 producir los ocho PNG y verificar SHA-256 de los originales. El módulo no
 realiza escrituras GLB ni acredita hash de archivos locales.
+
+
+### R5: atribución de capas después de inspeccionar el PNG real
+La comparativa visual real R5 muestra una banda oscura de bordes definidos
+alrededor de nariz y mejillas, y fragmentos de boca texturizados en pases
+de normales/profundidad donde el resto de la superficie cambia de material.
+La prioridad ahora es identificar todas las mallas que forman el rostro
+(no solo Mesh_0), sus materiales, orden de render y posibles superficies
+superpuestas, sin seguir cambiando iluminación/normal maps al azar.
+
+\`facial-layer-attribution.mjs\` ofrece auditoría por raycasting de las
+regiones de franja y piel sana y pruebas reversibles ocultando una única
+malla por captura. Esto solo propone objetos candidatos: raycast NO
+sustituye verificación pixel a pixel en el WebGL real, especialmente
+si hay transparencia o alphaTest. Nunca declarar que eliminar la cara
+entera sea una reparación de la franja.
+
+[Protocolo dirigido a Codex Windows R5 — capas faciales](./R5-NATALIA-ATRIBUCION-CAPAS.md).
+El PR sigue aislado y los tests siguen siendo simulados.
