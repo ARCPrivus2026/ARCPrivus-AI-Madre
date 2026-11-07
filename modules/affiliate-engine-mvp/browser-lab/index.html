@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>ARC Affiliate 1.4 · Laboratorio local</title>
+  <link rel="stylesheet" href="/lab/styles.css">
+  <script defer src="/vendor/webauthn.js"></script>
+  <script defer src="/lab/app.js"></script>
+</head>
+<body>
+  <main class="layout">
+    <header class="head">
+      <span class="brand">ARC PRIVUS AI MADRE</span>
+      <h1>Laboratorio local de passkeys</h1>
+      <p>Demostración técnica de autorización por pedido. No es una tienda, no hay clientes ni se mueve dinero.</p>
+      <div class="warning" role="status"><strong>SOLO SIMULACIÓN</strong> · No existen cargos, pagos ni reembolsos bancarios en esta página.</div>
+    </header>
+
+    <section class="panel" aria-labelledby="order-title">
+      <div class="section-heading"><h2 id="order-title">Pedido que vas a revisar</h2><span id="order-status" class="status">Cargando…</span></div>
+      <p id="product" class="product">Cargando producto ficticio…</p>
+      <p class="label">Identificador exacto del pedido</p>
+      <p id="order-id" class="id">—</p>
+      <dl class="amounts">
+        <div><dt>Importe del pedido</dt><dd id="price">—</dd></div>
+        <div><dt>Comerciante ficticio</dt><dd id="merchant">—</dd></div>
+        <div><dt>Afiliado ficticio</dt><dd id="affiliate">—</dd></div>
+        <div><dt>ARC ficticio</dt><dd id="arc">—</dd></div>
+      </dl>
+      <p class="explain">Estos valores corresponden únicamente al pedido mostrado. Una autorización para este pedido no se podrá utilizar en otro.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="security-title">
+      <h2 id="security-title">Verificación del navegador</h2>
+      <p id="compatibility" class="hint">Comprobando compatibilidad de WebAuthn…</p>
+      <p class="hint"><strong>Antes de registrar una passkey:</strong> tu navegador puede ofrecer guardar una credencial de prueba en el dispositivo o gestor de contraseñas. No uses cuentas reales. Al cerrar este servidor se perderán los datos del laboratorio; cualquier credencial guardada en el dispositivo podrá necesitar eliminación manual.</p>
+      <button type="button" id="register" disabled>1. Registrar passkey de prueba (acción voluntaria)</button>
+      <div class="rule"></div>
+      <label class="ack">
+        <input type="checkbox" id="ack" disabled>
+        <span>He revisado el nombre, el identificador y el importe del pedido ficticio. Solo autorizo la simulación para este pedido exacto.</span>
+      </label>
+      <button type="button" id="verify" disabled>2. Confirmar este pedido con passkey</button>
+      <button type="button" id="execute" class="danger" disabled>3. Ejecutar REEMBOLSO SIMULADO</button>
+      <p class="hint">La autorización vence en 60 segundos y solo sirve una vez. Siempre verás el pedido antes de confirmarlo.</p>
+    </section>
+    <section class="panel" aria-label="Resultado de la prueba">
+      <h2>Resultado</h2>
+      <p id="message" aria-live="polite">Ninguna operación realizada.</p>
+      <p id="receipt" class="id"></p>
+    </section>
+    <footer>ARC Affiliate 1.4 · localhost · sin conexión a MySQL R4, Messenger, Copilot o pasarelas de pagos.</footer>
+  </main>
+</body>
+</html>
