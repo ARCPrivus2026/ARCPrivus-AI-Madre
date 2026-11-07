@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 1.2 (ceremonias SimpleWebAuthn aisladas con MySQL)
+# ARC Global Affiliate & Commerce Engine — MVP 1.3 (autorización por pedido y preparación de navegador local)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -175,6 +175,34 @@ Tras registrar una primera passkey en el laboratorio, **no se permite añadir ot
 - `server.js`, `config/db.js` y el sistema R4 no importan ninguna de estas piezas. **Nunca habilitar las banderas `ARC_AFF_MYSQL_CI_TEST` o `ARC_AFF_STAGING_SCHEMA_TEST` en R4**.
 
 **Referencias oficiales:** [SimpleWebAuthn servidor](https://simplewebauthn.dev/docs/packages/server) y [SimpleWebAuthn navegador](https://simplewebauthn.dev/docs/packages/browser).
+
+## ARC Affiliate 1.3 — Autorización vinculada al pedido (únicamente CI)
+
+**Objetivo:** impedir que una verificación WebAuthn válida para una sesión pueda aprobar cualquier reembolso simulado. La prueba 1.2 autorizaba una *sesión*; esta etapa introduce una autorización de **un único pedido, una sola vez y por 60 segundos**.
+
+### Flujo de reembolso simulado
+
+1. El administrador ficticio obtiene una sesión mediante contraseña y TOTP y se autentica con una passkey sintética a través de `@simplewebauthn/server`.
+2. La función interna `beginRefundAuthorization(sessionToken,orderId)` verifica que la sesión sea administrativa, tenga WebAuthn previo y que el pedido exista y esté `SIM_CONFIRMED`. Genera un nuevo desafío WebAuthn. Su vinculación con el pedido se guarda **en el servidor MySQL**.
+3. `finishRefundAuthorization(sessionToken,orderId,response)` comprueba la aserción firmada del origen `http://localhost:3198`, su vigencia, uso único, sesión y pedido. Si pasa, crea una autorización de **60 segundos para ese pedido exacto**. Una firma fallida consume su desafío.
+4. `MysqlStagingIdentity.refundOrder(token,orderId)` comprueba la autorización del pedido y la consume **dentro de la misma transacción InnoDB** que cambia el estado del pedido, invierte la comisión y registra el asiento. Si la transacción falla, también se revierte el consumo de autorización.
+5. Una nueva autorización sustituye la autorización pendiente anterior de la sesión. No se puede usar el permiso para otro pedido, una segunda ejecución o una sesión revocada.
+
+Tablas exclusivas del laboratorio: `aff_demo_wa_refund_challenges` (sesión + pedido + desafío + vencimiento + uso) y `aff_demo_wa_refund_grants` (sesión + pedido + autorización + vencimiento + consumo).
+
+**Límite de confianza:** los métodos internos `MysqlStagingDemoStore.refund()` y `MysqlDemoRoleGate.refundOrder()` también se usan directamente por otras pruebas del prototipo. Esos métodos **no deben exponerse a clientes ni tomarse como API segura**; la comprobación descrita se aplica a la fachada `MysqlStagingIdentity.refundOrder()`, no a cualquier llamada arbitraria desde código con acceso privilegiado al pool MySQL. Para una plataforma real será obligatorio imponer políticas de mínimo privilegio en toda la capa de datos.
+
+### Preparación de prueba local con navegador
+
+Se añadió `browser-passkey-preflight.mjs`, que comprueba de manera **inerte**, sin red ni crear credenciales, si el contexto corresponde al origen de laboratorio `http://localhost:3198`, si el navegador indica contexto seguro y si dispone de API WebAuthn.
+
+**Importante:** la disponibilidad de API no prueba que exista un autenticador real disponible ni que el usuario haya realizado registro. No hay página de pruebas desplegada, servidor iniciado, acceso a dispositivo físico, biometría real ni consentimiento del usuario para registrar credenciales. Esta fase prepara la arquitectura para una prueba futura, que tendrá que habilitarse conscientemente en un entorno local separado y protegido.
+
+### Validación y restricciones
+
+Pruebas MySQL contra pedidos diferentes, autorización caducada, desafío invalidado, dos reembolsos concurrentes y rollback después de consumir el permiso. Ninguna de ellas procesa dinero auténtico ni realiza reembolsos bancarios.
+
+No conectar `ARC_AFF_MYSQL_CI_TEST`, `ARC_AFF_STAGING_SCHEMA_TEST` ni estas tablas a R4. No fusionar ni publicar sin autenticación web real, limitación de solicitudes, protección CSRF, eventos auditables independientes, un modelo de privacidad y controles transaccionales revisados.
 
 ## Regla comercial demostrativa
 
