@@ -64,7 +64,8 @@ async function readJSON(req){
   }catch{throw deny('INVALID_JSON');}
 }
 function send(res,status,body,headers={}){
-  const data=typeof body==='string'?body:JSON.stringify(body);
+  const data=Buffer.isBuffer(body)?body:
+    (typeof body==='string'?body:JSON.stringify(body));
   res.writeHead(status,{
     'Cache-Control':'no-store',
     'Referrer-Policy':'no-referrer',
