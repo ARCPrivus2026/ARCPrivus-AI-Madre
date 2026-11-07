@@ -6,6 +6,7 @@ import {MysqlStagingDemoStore} from './mysql-staging-store.mjs';
 import {MysqlDemoRoleGate} from './mysql-staging-access.mjs';
 import {MysqlStagingIdentity,DemoAuthenticationFailed} from './mysql-staging-identity.mjs';
 import {totpAt} from './mysql-staging-mfa.mjs';
+import {DemoRefundApprovalRejected} from './mysql-staging-refund-approval.mjs';
 import {
   MysqlStagingWebAuthnCeremony,DemoCeremonyRejected,RP_ID,RP_ORIGIN
 } from './mysql-staging-webauthn-ceremony.mjs';
@@ -85,7 +86,7 @@ test('MySQL real y SimpleWebAuthn: registra clave sintética y verifica firma an
   const response=syntheticAuthenticationResponse(e.auth,options,{counter:1});
   const approved=await e.ceremonies.finishAuthentication(e.session.token,response);
   assert.equal(approved.verified,true);
-  await assert.rejects(()=>e.identity.refundOrder(e.session.token,e.order.id),DemoAuthenticationFailed);
+  await assert.rejects(()=>e.identity.refundOrder(e.session.token,e.order.id),DemoRefundApprovalRejected);
   await approveRefund(e,e.order.id);
   const refunded=await e.identity.refundOrder(e.session.token,e.order.id);
   assert.equal(refunded.status,'SIM_REFUNDED');
@@ -170,7 +171,7 @@ test('MySQL real: alta de segunda clave exige clave previa y reinicia autorizaci
   assert.equal(newAuth.allowCredentials.length,2);
   await e.ceremonies.finishAuthentication(e.session.token,
    syntheticAuthenticationResponse(secondKey,newAuth,{counter:1}));
-  await assert.rejects(()=>e.identity.refundOrder(e.session.token,e.order.id),DemoAuthenticationFailed);
+  await assert.rejects(()=>e.identity.refundOrder(e.session.token,e.order.id),DemoRefundApprovalRejected);
   await approveRefund(e,e.order.id,secondKey);
   assert.equal((await e.identity.refundOrder(e.session.token,e.order.id)).status,'SIM_REFUNDED');
  }finally{await e.pool.end();}
