@@ -1,4 +1,6 @@
 const $ = id => document.getElementById(id);
+let marketingCatalog = [];
+let marketingCopy = '';
 const cop = n => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(n);
 async function api(path, options) {
   const r = await fetch('/api/' + path, { headers: { 'Content-Type': 'application/json' }, ...options });
@@ -22,7 +24,12 @@ async function updateIntegrity() {
   }
 }
 async function reload() {
-  const [sum, products, affiliates, sales, refs] = await Promise.all([api('summary'),api('products'),api('affiliates'),api('sales'),api('referrals')]);
+  const [sum, products, affiliates, sales, refs, catalog, campaigns] =
+    await Promise.all([
+      api('summary'),api('products'),api('affiliates'),
+      api('sales'),api('referrals'),
+      api('marketing/catalog'),api('marketing/overview')
+    ]);
   $('sales').textContent=sum.sales; $('affiliate').textContent=cop(sum.affiliateCop);
   $('arc').textContent=cop(sum.arcCop); $('gross').textContent=cop(sum.grossCop);
   fill('productId',products,p=>p.title+' — '+cop(p.priceCop));
@@ -48,6 +55,12 @@ async function reload() {
     }
     return li;
   }));
+  marketingCatalog = catalog;
+  const selected = $('marketingProductId').value;
+  fill('marketingProductId',products,p=>p.title+' — '+cop(p.priceCop));
+  if(products.some(p=>p.id===selected))$('marketingProductId').value=selected;
+  loadMarketingEditor($('marketingProductId').value);
+  renderMarketingCatalog(catalog,campaigns);
   await updateIntegrity();
 }
 async function execute(fn) {
@@ -74,13 +87,106 @@ $('refForm').addEventListener('submit',e=>{
     await reload();
   });
 });
+
+function renderMarketingCatalog(catalog,overview) {
+  $('marketingCatalog').replaceChildren(...catalog.map(p=>
+    element('li',p.title+' — '+cop(p.priceCop)+' — '+p.kind+
+      ' — revisión '+p.revision+' — BORRADOR, NO PUBLICADO')
+  ));
+  const t=overview.totals;
+  $('marketingTotals').textContent='Visitas DEMO: '+t.clicks+
+    ' · Pedidos SIMULADOS vigentes: '+t.simulatedOrders+
+    ' · Reembolsos SIMULADOS: '+t.simulatedRefunds+
+    ' · Total ficticio atribuido: '+cop(t.demoGrossCop)+
+    ' · ARC ficticio: '+cop(t.demoArcCop)+
+    ' · Ventas reales: 0 COP.';
+  $('marketingCampaigns').replaceChildren(...overview.campaigns.map(c=>{
+    const ratio=c.demoOrdersPer100Visits===null?'sin visitas':
+      c.demoOrdersPer100Visits+' pedidos simulados por cada 100 visitas';
+    return element('li',c.product+' · '+c.affiliate+' · visitas '+c.clicks+
+      ' · pedidos demo '+c.simulatedOrders+' · reembolsos demo '+c.simulatedRefunds+
+      ' · '+ratio);
+  }));
+}
+function loadMarketingEditor(productId) {
+  const p=marketingCatalog.find(x=>x.productId===productId);
+  $('marketingKind').value=p?.kind||'DIGITAL_GUIDE';
+  $('marketingSlug').value=p?.slug||'';
+  $('marketingHeadline').value=p?.headline||'';
+  $('marketingAudience').value=p?.audience||'';
+  $('marketingSummary').value=p?.summary||'';
+  $('marketingHighlights').value=p?.highlights.join('\n')||'';
+  $('marketingRevision').textContent='Revisión actual: '+(p?.revision||0)+
+    ' · Esta ficha no está publicada.';
+}
+$('seedDrafts').addEventListener('click',()=>{
+  execute(async()=>{
+    await api('marketing/seed',{method:'POST',body:'{}'});
+    await reload();
+    $('message').textContent='Se crearon o recuperaron los tres borradores ficticios. No se ha publicado nada.';
+  });
+});
+$('marketingProductId').addEventListener('change',e=>loadMarketingEditor(e.target.value));
+$('marketingEditForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const productId=$('marketingProductId').value;
+  const before=marketingCatalog.find(p=>p.productId===productId);
+  const highlights=$('marketingHighlights').value
+    .split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+  execute(async()=>{
+    await api('marketing/draft',{
+      method:'POST',
+      body:JSON.stringify({
+        productId,slug:$('marketingSlug').value,
+        kind:$('marketingKind').value,
+        headline:$('marketingHeadline').value,
+        audience:$('marketingAudience').value,
+        summary:$('marketingSummary').value,
+        highlights,expectedRevision:before?.revision||0
+      })
+    });
+    await reload();
+    $('marketingProductId').value=productId;
+    loadMarketingEditor(productId);
+    $('message').textContent='Borrador local guardado. NO ha sido publicado ni vendido.';
+  });
+});
+$('copyPromo').addEventListener('click',()=>{
+  execute(async()=>{
+    if(!marketingCopy)throw new Error('No existe todavía un texto promocional de prueba.');
+    if(!navigator.clipboard?.writeText)throw new Error('El navegador no permite copiar aquí.');
+    await navigator.clipboard.writeText(marketingCopy);
+    $('message').textContent='Texto de BORRADOR copiado; revísalo antes de cualquier publicación.';
+  });
+});
+
 async function openReferralPage(){
   const token=new URLSearchParams(location.search).get('ref');
   if (!token) return;
   if (!/^[a-f0-9]{32}$/.test(token)) { $('message').textContent='Enlace de prueba inválido.'; return; }
   try{
     const link=await api('referrals/'+token);
-    $('landingInfo').textContent='Producto: '+link.product+' · Afiliado: '+link.affiliate;
+    $('landingInfo').textContent='Producto: '+link.product+' · Afiliado de prueba: '+link.affiliate;
+    try {
+      const landing=await api('marketing/landing/'+token);
+      const draft=landing.page;
+      $('landingHeadline').textContent=draft.headline;
+      $('landingAudience').textContent='Dirigido a: '+draft.audience;
+      $('landingSummary').textContent=draft.summary;
+      $('landingHighlights').replaceChildren(...draft.highlights.map(v=>element('li',v)));
+      const promo=await api('marketing/promo/'+token);
+      marketingCopy=promo.copy;
+      $('landingPromo').textContent=marketingCopy;
+      $('copyPromo').disabled=false;
+    } catch {
+      marketingCopy='';
+      $('landingHeadline').textContent='Producto de prueba sin ficha redactada';
+      $('landingAudience').textContent='Borrador pendiente.';
+      $('landingSummary').textContent='Todavía no se ha redactado la descripción de este producto ficticio.';
+      $('landingHighlights').replaceChildren();
+      $('landingPromo').textContent='Pendiente de contenido comercial.';
+      $('copyPromo').disabled=true;
+    }
     $('landing').hidden=false;
     $('simulatePurchase').addEventListener('click',()=>execute(async()=>{
       await api('referrals/'+token+'/demo-sale',{method:'POST',
