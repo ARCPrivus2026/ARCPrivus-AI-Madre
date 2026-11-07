@@ -1,8 +1,8 @@
 /**
- * ARC Affiliate 1.0 — CI-ONLY credential/session/MFA prototype.
+ * ARC Affiliate 1.1 — CI-ONLY credential/session/MFA/passkey-step-up prototype.
  * No HTTP endpoints, no cookies, no real customer accounts and no deployment.
  * Uses its OWN ephemeral MySQL staging schema; never imports ARNOLRC R4.
- * Production still requires WebAuthn, recovery, rate limits, audits, CSRF, TLS and review.
+ * Production still requires browser registration, recovery, rate limits, audits, CSRF, TLS and review.
  */
 import {randomUUID,randomBytes,createHash,timingSafeEqual,scrypt as scryptCallback} from 'node:crypto';
 import {promisify} from 'node:util';
@@ -36,6 +36,7 @@ export const identityDDL=Object.freeze([
    "token_hash CHAR(64) NOT NULL UNIQUE,"+
    "expires_at_ms BIGINT UNSIGNED NOT NULL,revoked BOOLEAN NOT NULL DEFAULT FALSE,"+
    "mfa_verified BOOLEAN NOT NULL DEFAULT FALSE,"+
+   "webauthn_verified BOOLEAN NOT NULL DEFAULT FALSE,"+
    "FOREIGN KEY(account_id) REFERENCES aff_demo_accounts(id),"+
    "INDEX idx_demo_expiry(expires_at_ms)) ENGINE=InnoDB",
   "CREATE TABLE IF NOT EXISTS aff_demo_admin_mfa ("+
@@ -238,6 +239,19 @@ export class MysqlStagingIdentity {
   }
   async refundOrder(token,orderId){
     const actorId=await this.authenticatedActor(token);
+    const actor=await this.roles.principal(actorId);
+    // Preserve role-specific denials: merchants/affiliates never gain refund rights.
+    if(actor?.role!=='SIM_ADMIN')return this.roles.refundOrder(actorId,orderId);
+    const [rows]=await this.pool.execute(
+      "SELECT s.id FROM aff_demo_sessions s "+
+      "JOIN aff_demo_accounts a ON a.id=s.account_id "+
+      "JOIN aff_demo_principals p ON p.id=a.principal_id "+
+      "WHERE s.token_hash=? AND s.revoked=0 AND s.expires_at_ms>? "+
+      "AND a.enabled=1 AND p.enabled=1 AND p.role='SIM_ADMIN' "+
+      "AND s.mfa_verified=1 AND s.webauthn_verified=1",
+      [hashSession(token),this.now()]
+    );
+    if(rows.length!==1)throw new DemoAuthenticationFailed();
     return this.roles.refundOrder(actorId,orderId);
   }
   async signOut(token){
