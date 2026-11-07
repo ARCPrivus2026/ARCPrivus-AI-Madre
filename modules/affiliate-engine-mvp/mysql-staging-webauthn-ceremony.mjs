@@ -81,7 +81,7 @@ export class MysqlStagingWebAuthnCeremony{
   async accountFromVerifiedSession(sessionToken,conn=this.pool){
     const actor=await this.identity.authenticatedActor(sessionToken);
     const [rows]=await conn.execute(
-      "SELECT s.id AS session_id,s.account_id,a.username "+
+      "SELECT s.id AS session_id,s.account_id,a.username,s.webauthn_verified "+
       "FROM aff_demo_sessions s JOIN aff_demo_accounts a ON a.id=s.account_id "+
       "JOIN aff_demo_principals p ON p.id=a.principal_id "+
       "WHERE p.id=? AND p.role='SIM_ADMIN' AND p.enabled=1 "+
@@ -94,6 +94,13 @@ export class MysqlStagingWebAuthnCeremony{
   }
   async startRegistration(sessionToken){
     const account=await this.accountFromVerifiedSession(sessionToken);
+    const [prior]=await this.pool.execute(
+      'SELECT COUNT(*) AS total FROM aff_demo_wa_credentials WHERE account_id=?',
+      [account.account_id]
+    );
+    // Once there is a passkey, an existing passkey-confirmed session is
+    // required to add another; a stolen TOTP-only session cannot replace it.
+    if(Number(prior[0].total)>0&&!account.webauthn_verified)throw reject();
     const lib=await this.lib();
     const opts=await lib.generateRegistrationOptions({
       rpName:'ARC Affiliate CI (sin usuarios reales)',
@@ -183,6 +190,16 @@ export class MysqlStagingWebAuthnCeremony{
               'INSERT INTO aff_demo_wa_credentials(id,account_id,public_key,sign_counter,transports_json) VALUES(?,?,?,?,?)',
               [credential.id,account.account_id,Buffer.from(credential.publicKey),
                 credential.counter||0,JSON.stringify(credential.transports||[])]
+            );
+            // Enrolling another credential invalidates assurance of the old
+            // session, and revokes all OTHER sessions for the account.
+            await conn.execute(
+              'UPDATE aff_demo_sessions SET revoked=1 WHERE account_id=? AND id<>?',
+              [account.account_id,account.session_id]
+            );
+            await conn.execute(
+              'UPDATE aff_demo_sessions SET webauthn_verified=0 WHERE id=?',
+              [account.session_id]
             );
             accepted=true;
             result={verified:true,kind:'REGISTRATION_CI_ONLY',credentialId:credential.id};
