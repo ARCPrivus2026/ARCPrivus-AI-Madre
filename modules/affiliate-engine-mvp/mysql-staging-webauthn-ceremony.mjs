@@ -255,7 +255,7 @@ export class MysqlStagingWebAuthnCeremony{
     try{
       await conn.beginTransaction();active=true;
       const [sessions]=await conn.execute(
-        'SELECT id FROM aff_demo_sessions WHERE id=? AND revoked=0 AND expires_at_ms>? FOR UPDATE',
+        'SELECT id FROM aff_demo_sessions WHERE id=? AND revoked=0 AND mfa_verified=1 AND webauthn_verified=1 AND expires_at_ms>? FOR UPDATE',
         [account.session_id,this.identity.now()]
       );
       if(sessions.length!==1)throw reject();
@@ -307,7 +307,7 @@ export class MysqlStagingWebAuthnCeremony{
     try{
       await conn.beginTransaction();active=true;
       const [sessions]=await conn.execute(
-        'SELECT id FROM aff_demo_sessions WHERE id=? AND revoked=0 AND expires_at_ms>? FOR UPDATE',
+        'SELECT id FROM aff_demo_sessions WHERE id=? AND revoked=0 AND mfa_verified=1 AND webauthn_verified=1 AND expires_at_ms>? FOR UPDATE',
         [account.session_id,this.identity.now()]
       );
       if(sessions.length!==1)throw reject();
