@@ -11,6 +11,7 @@
 import {getStagingPoolOptions} from './mysql-staging-adapter.mjs';
 import {DemoAuthenticationFailed} from './mysql-staging-identity.mjs';
 import {randomUUID} from 'node:crypto';
+import {refundApprovalDDL,refundApprovalOrderId} from './mysql-staging-refund-approval.mjs';
 
 export const RP_ID='localhost';
 export const RP_ORIGIN='http://localhost:3198';
@@ -76,7 +77,7 @@ export class MysqlStagingWebAuthnCeremony{
     return this.library;
   }
   async initializeSchema(){
-    for(const sql of ceremonyDDL)await this.pool.query(sql);
+    for(const sql of [...ceremonyDDL,...refundApprovalDDL])await this.pool.query(sql);
   }
   async accountFromVerifiedSession(sessionToken,conn=this.pool){
     const actor=await this.identity.authenticatedActor(sessionToken);
@@ -238,5 +239,124 @@ export class MysqlStagingWebAuthnCeremony{
     }finally{conn.release();}
     if(!accepted)throw reject();
     return Object.freeze(result);
+  }
+
+  /**
+   * One challenge for one simulated order. Only an already WebAuthn-verified
+   * administrator session may request the authorization.
+   */
+  async beginRefundAuthorization(sessionToken,orderId){
+    refundApprovalOrderId(orderId);
+    const account=await this.accountFromVerifiedSession(sessionToken);
+    if(!account.webauthn_verified)throw reject();
+    const lib=await this.lib();
+    const conn=await this.pool.getConnection();
+    let active=false;
+    try{
+      await conn.beginTransaction();active=true;
+      const [sessions]=await conn.execute(
+        'SELECT id FROM aff_demo_sessions WHERE id=? AND revoked=0 AND expires_at_ms>? FOR UPDATE',
+        [account.session_id,this.identity.now()]
+      );
+      if(sessions.length!==1)throw reject();
+      const [orders]=await conn.execute(
+        "SELECT status FROM aff_demo_orders WHERE id=? FOR UPDATE",[orderId]
+      );
+      if(orders.length!==1||orders[0].status!=='SIM_CONFIRMED')throw reject();
+      const [credentials]=await conn.execute(
+        'SELECT id,transports_json FROM aff_demo_wa_credentials WHERE account_id=?',
+        [account.account_id]
+      );
+      if(credentials.length===0)throw reject();
+      const options=await lib.generateAuthenticationOptions({
+        rpID:RP_ID,userVerification:'required',timeout:CEREMONY_TTL_MS,
+        allowCredentials:credentials.map(c=>({
+          id:c.id,transports:JSON.parse(c.transports_json)
+        }))
+      });
+      if(typeof options?.challenge!=='string'||!options.challenge)throw reject();
+      // Starting a new sensitive operation invalidates every older grant.
+      await conn.execute(
+        'DELETE FROM aff_demo_wa_refund_grants WHERE session_id=?',[account.session_id]
+      );
+      await conn.execute(
+        "INSERT INTO aff_demo_wa_refund_challenges"+
+        "(session_id,order_id,challenge,expires_ms,used) VALUES(?,?,?,?,0) "+
+        "ON DUPLICATE KEY UPDATE order_id=VALUES(order_id),"+
+        "challenge=VALUES(challenge),expires_ms=VALUES(expires_ms),used=0",
+        [account.session_id,orderId,options.challenge,this.identity.now()+CEREMONY_TTL_MS]
+      );
+      await conn.commit();active=false;
+      return Object.freeze({...options,simulatedOrderId:orderId});
+    }catch(error){if(active)await conn.rollback();throw reject();}
+    finally{conn.release();}
+  }
+
+  /**
+   * A signed WebAuthn assertion is bound to a server-side session AND order.
+   * Successful verification grants ONE refund of that order for 60 seconds.
+   */
+  async finishRefundAuthorization(sessionToken,orderId,response){
+    refundApprovalOrderId(orderId);
+    validResponse(response);
+    const account=await this.accountFromVerifiedSession(sessionToken);
+    if(!account.webauthn_verified)throw reject();
+    const lib=await this.lib();
+    const conn=await this.pool.getConnection();
+    let active=false,approved=false;
+    try{
+      await conn.beginTransaction();active=true;
+      const [sessions]=await conn.execute(
+        'SELECT id FROM aff_demo_sessions WHERE id=? AND revoked=0 AND expires_at_ms>? FOR UPDATE',
+        [account.session_id,this.identity.now()]
+      );
+      if(sessions.length!==1)throw reject();
+      const [pending]=await conn.execute(
+        "SELECT order_id,challenge,expires_ms,used FROM aff_demo_wa_refund_challenges "+
+        "WHERE session_id=? FOR UPDATE",[account.session_id]
+      );
+      const item=pending[0];
+      if(!item||item.used||item.order_id!==orderId||
+         Number(item.expires_ms)<=this.identity.now())throw reject();
+      // Failed cryptographic verification also consumes the challenge.
+      await conn.execute(
+        'UPDATE aff_demo_wa_refund_challenges SET used=1 WHERE session_id=?',[account.session_id]
+      );
+      const [credentials]=await conn.execute(
+        'SELECT id,public_key,sign_counter,transports_json FROM aff_demo_wa_credentials '+
+        'WHERE account_id=? AND id=? FOR UPDATE',[account.account_id,response.id]
+      );
+      if(credentials.length===1){
+        const c=credentials[0];
+        try{
+          const verified=await lib.verifyAuthenticationResponse({
+            response,expectedChallenge:item.challenge,expectedOrigin:RP_ORIGIN,
+            expectedRPID:RP_ID,requireUserVerification:true,
+            credential:{
+              id:c.id,publicKey:new Uint8Array(c.public_key),
+              counter:c.sign_counter,transports:JSON.parse(c.transports_json)
+            }
+          });
+          if(verified?.verified&&Number.isSafeInteger(verified.authenticationInfo?.newCounter)){
+            await conn.execute(
+              'UPDATE aff_demo_wa_credentials SET sign_counter=? WHERE id=?',
+              [verified.authenticationInfo.newCounter,c.id]
+            );
+            await conn.execute(
+              "INSERT INTO aff_demo_wa_refund_grants(session_id,order_id,expires_ms,used) "+
+              "VALUES(?,?,?,0) ON DUPLICATE KEY UPDATE "+
+              "order_id=VALUES(order_id),expires_ms=VALUES(expires_ms),used=0",
+              [account.session_id,orderId,this.identity.now()+60000]
+            );
+            approved=true;
+          }
+        }catch{approved=false;}
+      }
+      await conn.commit();active=false;
+    }catch(error){if(active)await conn.rollback();throw reject();}
+    finally{conn.release();}
+    if(!approved)throw reject();
+    return Object.freeze({approved:true,orderId,validForMs:60000,
+      simulationOnly:true,paymentExecuted:false});
   }
 }
