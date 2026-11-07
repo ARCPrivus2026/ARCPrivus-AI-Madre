@@ -282,3 +282,19 @@ basadas solamente en oscurecimiento global.
 Los tests GitHub usan Three.js y fotogramas simulados: NO son evidencia
 de que la franja facial haya sido corregida ni certificación anatómica.
 Los GLB de producción siguen sin acceso desde este repositorio. 
+
+
+### R5 — sesión reproducible y control de deriva
+Se sumaron \`r5-evidence-session.mjs\` y \`r5-scene-fingerprint.mjs\`.
+R5 permite ahora congelar un visor de laboratorio, capturar las siete
+variantes más un baseline final de control, exigir PNG verificables,
+comparar medianas de zonas de franja y piel sana, y rechazar la sesión si
+cambian cámara, luces, pose, resolución o los valores de referencia.
+\`PARTIAL_VISUAL_REVIEW_REQUIRED\` no implica rostro reparado.
+
+[Guía para ejecutar una sola sesión con capturas auténticas en R5
+Windows](./R5-SESION-EVIDENCIA-REPRODUCIBLE.md).
+
+Los datos de CI son simulados: falta correrlo sobre la copia de Windows,
+producir los ocho PNG y verificar SHA-256 de los originales. El módulo no
+realiza escrituras GLB ni acredita hash de archivos locales.
