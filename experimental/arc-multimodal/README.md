@@ -336,3 +336,23 @@ mismo rayo. Sus tests de CI son sintéticos.
 [Protocolo dirigido en el laboratorio R5 ya existente](./R5-NATALIA-TRIANGULOS-UV-NORMALES.md).
 Ni la coincidencia de un triángulo ni los rayos prueban que el shader
 dibujó un pixel concreto. Dictamen actual: CAUSA NO DEMOSTRADA.
+
+
+### R5 — cotejo directo de textura (albedo) y pixel WebGL
+El informe local del 7-nov-2026 obtuvo \`faceIndex\` de 50 rayos
+(25 franja y 25 piel sana) sobre \`Mesh_0_1\`. Halló candidatos a
+costuras UV en ambas regiones (9/10), sin diferencias de normales
+demostradas en los vértices duplicados ni triángulos próximos detectados
+en esas muestras. NO demuestra la causa de la franja.
+
+\`r5-face-texel-pixel-evidence.mjs\` contrasta pares de muestras de
+la textura de color REAL (no metallicRoughness Image_1) y los píxeles
+WebGL capturados en el mismo fotograma. Requiere metadatos explícitos
+de albedo, colorSpace, UV, pose, lectura y pixels; si no se han
+muestreado, no permite presentarlos como hechos. El comparador
+\`compareFaceMorphAnchors\` ayuda a evaluar neutral/morph mediante
+anclas de UV/triángulo, sin asumir píxeles fijos en caras deformadas.
+
+[Guía R5 de comparación dirigida en Windows](./R5-NATALIA-TEXEL-PIXEL-MORPH.md).
+Los tests de GitHub usan colores sintéticos, NO los GLB originales.
+No se ha corregido ninguna textura ni se ha alterado producción.
