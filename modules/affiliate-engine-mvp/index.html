@@ -9,7 +9,43 @@
 <form class="card" id="saleForm"><h2>Registrar venta simulada</h2><label>Producto<select id="productId" required></select></label><label>Afiliado<select id="affiliateId" required></select></label><button>Simular venta</button><small>El comerciante recibe el valor menos la comisión comercial. ARC recibe 10 % de esa comisión, no del precio.</small></form>
 <form class="card" id="refForm"><h2>Crear enlace de afiliación local</h2><label>Producto<select id="refProductId" required></select></label><label>Afiliado<select id="refAffiliateId" required></select></label><button>Crear enlace demostrativo</button><small>El enlace funciona solo en este computador. No es un enlace para compartir comercialmente.</small></form>
 </section>
-<section id="landing" class="card" hidden><h2>Vista del enlace de promoción (simulado)</h2><p id="landingInfo"></p><p class="muted">La apertura de esta página se cuenta como visita de prueba; no hay pago ni compra de un producto real.</p><button type="button" id="simulatePurchase">Simular compra atribuida a este enlace</button></section>
+<section class="card" aria-labelledby="market-title">
+  <h2 id="market-title">ARC Market AI 1.5 — Catálogo y campañas de laboratorio</h2>
+  <p class="banner"><strong>SOLO BORRADORES.</strong> Estos productos, precios y enlaces son ejemplos ficticios. Los materiales no están terminados, no existe un checkout ni se pueden recibir pagos aquí.</p>
+  <button id="seedDrafts" type="button">Crear tres borradores de ejemplo (No Frost, lavadoras y asesoría)</button>
+  <p class="muted">Esta acción es idempotente: pulsarla otra vez no duplica los productos de muestra.</p>
+  <h3>Catálogo editorial no publicado</h3>
+  <ul id="marketingCatalog"></ul>
+  <form id="marketingEditForm" class="editor" aria-label="Editor local de borradores">
+    <h3>Editar ficha comercial local</h3>
+    <label>Producto<select id="marketingProductId" required></select></label>
+    <label>Tipo de oferta<select id="marketingKind"><option value="DIGITAL_GUIDE">Guía digital</option><option value="REMOTE_ADVICE">Asesoría remota</option></select></label>
+    <label>Slug de página (solo minúsculas y guiones)<input id="marketingSlug" minlength="3" maxlength="60" required></label>
+    <label>Titular<input id="marketingHeadline" minlength="12" maxlength="140" required></label>
+    <label>Público objetivo<input id="marketingAudience" minlength="12" maxlength="180" required></label>
+    <label>Descripción del borrador<textarea id="marketingSummary" minlength="30" maxlength="480" rows="4" required></textarea></label>
+    <label>Puntos incluidos (uno por línea, mínimo 2 y máximo 5)<textarea id="marketingHighlights" rows="5" required></textarea></label>
+    <p id="marketingRevision" class="muted">La versión editorial se comprueba para evitar sobrescribir cambios.</p>
+    <button type="submit">Guardar borrador local sin publicar</button>
+  </form>
+  <h3>Seguimiento de enlaces y conversiones simuladas</h3>
+  <p id="marketingTotals">Cargando cifras de demostración…</p>
+  <ul id="marketingCampaigns"></ul>
+  <small>Las visitas son eventos, no personas únicas. Las compras, porcentajes de conversión y comisiones son ficticios; el panel no detecta clientes reales.</small>
+</section>
+<section id="landing" class="card" hidden>
+  <h2>Vista previa de página promocional — BORRADOR</h2>
+  <h3 id="landingHeadline"></h3>
+  <p id="landingInfo"></p>
+  <p id="landingAudience"></p>
+  <p id="landingSummary"></p>
+  <ul id="landingHighlights"></ul>
+  <p class="banner">No es una página de venta real. El contenido editorial debe prepararse y aprobarse antes de publicar.</p>
+  <button type="button" id="simulatePurchase">Simular compra atribuida a este enlace</button>
+  <h3>Texto orgánico propuesto (no publicar todavía)</h3>
+  <pre id="landingPromo" class="promo"></pre>
+  <button type="button" id="copyPromo">Copiar borrador (sin publicarlo)</button>
+</section>
 <p role="status" id="message" aria-live="polite"></p>
 <section class="grid"><article class="card"><h2>Productos</h2><ul id="products"></ul></article><article class="card"><h2>Afiliados y códigos</h2><ul id="affiliates"></ul></article></section>
 <section class="card"><h2>Enlaces y visitas (datos simulados)</h2><ul id="referrals"></ul></section>
