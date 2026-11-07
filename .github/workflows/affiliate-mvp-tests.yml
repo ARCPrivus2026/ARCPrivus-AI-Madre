@@ -7,7 +7,7 @@ on:
 
 # Evita dos ejecuciones por cada commit y cancela las antiguas del mismo PR.
 concurrency:
-  group: affiliate-mvp-v13-${{ github.event.pull_request.number || github.ref }}
+  group: affiliate-mvp-v14-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -56,6 +56,9 @@ jobs:
       - run: node --check modules/affiliate-engine-mvp/mysql-staging-refund-approval.mjs
       - run: node --check modules/affiliate-engine-mvp/mysql-staging-refund-approval.integration.test.mjs
       - run: node --check modules/affiliate-engine-mvp/browser-webauthn-bridge.mjs
+      - run: node --check modules/affiliate-engine-mvp/browser-lab-server.mjs
+      - run: node --check modules/affiliate-engine-mvp/browser-lab/app.js
+      - run: node --check modules/affiliate-engine-mvp/browser-lab-http.integration.test.mjs
       - run: node --check modules/affiliate-engine-mvp/http.test.mjs
       - run: node --test modules/affiliate-engine-mvp/*.test.mjs
 
@@ -100,4 +103,4 @@ jobs:
           ARC_AFF_DB_PASSWORD: ci-only-affiliate-password-2026
           ARC_LIVE_PAYMENTS: '0'
           ARC_ENABLE_PAYOUTS: '0'
-        run: timeout --signal=TERM --kill-after=10s 180s node --test --test-concurrency=1 mysql-staging.integration.test.mjs mysql-staging-store.integration.test.mjs mysql-staging-security.integration.test.mjs mysql-staging-identity.integration.test.mjs mysql-staging-mfa.integration.test.mjs mysql-staging-passkey.integration.test.mjs mysql-staging-webauthn-ceremony.integration.test.mjs mysql-staging-refund-approval.integration.test.mjs
+        run: timeout --signal=TERM --kill-after=10s 180s node --test --test-concurrency=1 mysql-staging.integration.test.mjs mysql-staging-store.integration.test.mjs mysql-staging-security.integration.test.mjs mysql-staging-identity.integration.test.mjs mysql-staging-mfa.integration.test.mjs mysql-staging-passkey.integration.test.mjs mysql-staging-webauthn-ceremony.integration.test.mjs mysql-staging-refund-approval.integration.test.mjs browser-lab-http.integration.test.mjs
