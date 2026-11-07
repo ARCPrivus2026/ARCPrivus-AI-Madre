@@ -76,7 +76,8 @@ test("R5 INTEGRAL: siete renders y baseline final verificado; originales intacto
   assert.equal(out.drift.stable,true);
   assert.equal(out.rootCauseIsolated,false);
   assert.equal(out.anatomyCorrected,false);
-  assert.equal(out.assetsModified,false);
+  assert.equal(out.sourceWriteOperationsByModule,false);
+  assert.equal(out.sourceHashesVerified,false);
   assert.equal(a.calls.freeze,1);
   assert.equal(a.calls.resume,1);
   assert.equal(a.gltf.face.material,a.original);
