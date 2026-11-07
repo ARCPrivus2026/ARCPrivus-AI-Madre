@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 1.3 (autorización por pedido y preparación de navegador local)
+# ARC Global Affiliate & Commerce Engine — MVP 1.4 (laboratorio opt-in en navegador local, sin pagos)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -203,6 +203,36 @@ Se añadió `browser-passkey-preflight.mjs`, que comprueba de manera **inerte**,
 Pruebas MySQL contra pedidos diferentes, autorización caducada, desafío invalidado, dos reembolsos concurrentes y rollback después de consumir el permiso. Ninguna de ellas procesa dinero auténtico ni realiza reembolsos bancarios.
 
 No conectar `ARC_AFF_MYSQL_CI_TEST`, `ARC_AFF_STAGING_SCHEMA_TEST` ni estas tablas a R4. No fusionar ni publicar sin autenticación web real, limitación de solicitudes, protección CSRF, eventos auditables independientes, un modelo de privacidad y controles transaccionales revisados.
+
+## ARC Affiliate 1.4 — Laboratorio de navegador local con pedido visible
+
+La versión 1.4 incluye un pequeño **servidor Node.js independiente**, una interfaz en español de alto contraste y un flujo de prueba de registro y autenticación de passkeys mediante las bibliotecas `@simplewebauthn/server` y `@simplewebauthn/browser` fijadas en el módulo.
+
+**Este servidor no se ha encendido en el computador Windows R4, ni se ha probado con un dispositivo físico real.** Se ha diseñado para una prueba posterior, únicamente en una máquina de laboratorio separada.
+
+### Funcionamiento
+
+- **No arranca automáticamente.** Solo inicia si el operador configura **las dos variables explícitas** `ARC_AFF_BROWSER_LAB=1` y `ARC_AFF_BROWSER_LAB_ACK=SIMULATION_ONLY` y ejecuta `npm run lab:browser` dentro del propio módulo.
+- Escucha **solo en `127.0.0.1:3198`** y acepta el Host `localhost:3198`; está separado del puerto 3100 de R4 y de su configuración MySQL.
+- Al iniciar, el proceso crea una URL aleatoria y temporal para acceder al laboratorio; exige la clave en las solicitudes de API, una cabecera antifalsificación para solicitudes internas y verifica el origen `http://localhost:3198`. No usa cookies, credenciales de R4 ni claves del usuario.
+- Toda la información reside **solo en memoria**, sin escrituras a disco o base de datos: existe un pedido **ficticio** de COP 100.000, distribuido en COP 70.000 para comerciante, COP 27.000 para afiliado y COP 3.000 para ARC; **ninguna cifra representa dinero pagado, por cobrar o cobrable**.
+- La pantalla muestra primero **nombre, identificador, importe y distribución del pedido**. El operador debe marcar expresamente que revisó ese pedido exacto, antes de poder solicitar una autenticación WebAuthn.
+- El botón **Registrar passkey de prueba** requiere intervención humana y presenta una advertencia: el dispositivo o gestor de contraseñas podría conservar una credencial `localhost` incluso después de cerrar el laboratorio. No hay creación silenciosa de credenciales.
+- Después de verificar la passkey, el servidor concede permiso durante **60 segundos** y solo para ese pedido. La acción final exige una **segunda confirmación visible** de que se simulará un reembolso; no hay pasarela bancaria.
+- Un desafío alterado, de otro origen, vencido, repetido, de otro pedido o sin confirmación previa se rechaza. Los datos se pierden al cerrar el proceso Node.
+- El paquete de navegador se sirve **desde la copia local de `node_modules`**, sin cargar scripts de un CDN externo.
+
+**Protecciones adicionales:** política CSP restrictiva, encabezados para no almacenar en caché, no enmarcar y no enviar referencias, petición limitada a 128 KiB, verificación del origen y clave temporal y comprobación de dirección de conexión loopback.
+
+### Comprobación automatizada
+
+El archivo `browser-lab-http.integration.test.mjs` se ejecuta dentro del CI aislado de GitHub mediante un servidor de prueba en un puerto **efímero**, no en Windows R4. Utiliza claves P-256 sintéticas en memoria para comprobar el registro y firma criptográfica reales contra SimpleWebAuthn, restricciones de Host/Origin y cabeceras, vencimiento, uso único y ausencia de pagos. No se prueba ningún usuario ni dispositivo físico.
+
+### Límites de seguridad
+
+**No es una plataforma de autenticación para producción.** La URL aleatoria del laboratorio es únicamente una clave de acceso de prueba, **no una cuenta autenticada**. No existe administración real de usuarios, restauración de passkeys, sesiones de servidor duraderas, control de IP/dispositivo, mitigación de actores locales maliciosos ni aislamiento multiusuario. Un operador local con acceso al equipo puede inspeccionar el proceso de laboratorio. El almacenamiento en memoria y la simulación son deliberados.
+
+**No utilizar la instalación R4 para estas pruebas. No activar pagos reales, Cloudflare Tunnel, conexiones públicas, productos reales ni credenciales personales.** La prueba física requerirá una máquina local separada, consentimiento explícito y revisión de los riesgos.
 
 ## Regla comercial demostrativa
 
