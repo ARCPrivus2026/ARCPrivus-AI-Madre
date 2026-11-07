@@ -99,7 +99,7 @@ const morphActive={
 test("MORPH: compara posiciones re-proyectadas bajo mismo UV y triangulo",()=>{
   const result=compareFaceMorphAnchors({neutral:morphBase,active:morphActive});
   assert.equal(result.pairedAnchors,2);
-  assert.equal(result.rows[0].deltaLuma,50);
+  assert.ok(Math.abs(result.rows[0].deltaLuma-50)<1e-9);
   assert.equal(result.rows[1].deltaLuma,0);
   assert.equal(result.causeDemonstrated,false);
 });
