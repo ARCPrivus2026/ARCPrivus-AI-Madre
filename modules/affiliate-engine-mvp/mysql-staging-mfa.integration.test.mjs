@@ -62,7 +62,8 @@ test('MySQL real: admin jamás obtiene sesión solo con contraseña, incluso sin
    const otp=totpAt(seed,e.now()).code;
    const session=await e.identity.signIn({username:admin.username,password,totpCode:otp});
    assert.equal((await e.identity.readOrder(session.token,e.order.id)).id,e.order.id);
-   assert.equal((await e.identity.refundOrder(session.token,e.order.id)).status,'SIM_REFUNDED');
+   // WebAuthn-style step-up is now mandatory for simulated admin refunds.
+   await assert.rejects(()=>e.identity.refundOrder(session.token,e.order.id),DemoAuthenticationFailed);
    const [records]=await e.pool.execute('SELECT mfa_verified FROM aff_demo_sessions WHERE token_hash=?',
      [createHash('sha256').update(session.token).digest('hex')]);
    assert.equal(records.length,1);
