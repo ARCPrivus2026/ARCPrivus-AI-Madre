@@ -1,4 +1,4 @@
-# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.2)
+# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.3)
 
 **Estado:** PILOTO LOCAL CON DINERO SIMULADO. Ninguna sección de este documento autoriza operar una plataforma pública ni recibir fondos de clientes.
 
@@ -117,6 +117,26 @@ Referencia de pruebas: [run 42370688792](https://github.com/ARCPrivus2026/ARCPri
 Solo se usan el RP ID `localhost` y el origen `http://localhost:3198` para ilustrar un futuro sitio de pruebas local. **No se inició un servidor en ese puerto ni se instaló el módulo en ARNOLRC R4.**
 
 La evidencia de la biblioteca es un conjunto de registros y firmas fabricados en memoria, verificados con su implementación real, más pruebas contra MySQL. **No acredita la experiencia del usuario en navegador, compatibilidad de dispositivos físicos, accesibilidad ni preparación productiva.** Se mantiene prohibida la conexión a dinero real y la fusión automática de la rama.
+
+## A.6. Aprobación WebAuthn por pedido — MVP 1.3 (solo CI)
+
+| Control de seguridad en simulación | Estado |
+|---|---|
+| Desafío con sesión y pedido concreto en MySQL | Implementado y bajo pruebas |
+| Autorización válida durante un máximo de 60 segundos | Implementado y bajo pruebas |
+| Rechazo de uso en pedido diferente o bajo firma inválida | Implementado y bajo pruebas |
+| Uso único del permiso en la misma transacción InnoDB que el reembolso | Implementado y bajo pruebas |
+| Dos reembolsos simultáneos con un mismo permiso | Bajo pruebas, solo uno debe aceptarse |
+| Error inyectado tras consumir permiso: rollback de permiso y pedido | Bajo pruebas |
+| Preflight inerte de navegador y origen `http://localhost:3198` | Implementado, sin conexión ni credenciales |
+| Prueba WebAuthn en navegador/dispositivo físico | **NO realizada** |
+| Garantía de acceso por *todos* los métodos internos del pool | **NO**, existen métodos internos CI directos |
+| Backend HTTP de identidad con cookies/CSRF/rate limit/controles de IP | **NO implementado** |
+| Producción, cobros y reembolsos financieros reales | **PROHIBIDOS** |
+
+Las pruebas limitan su garantía a la fachada protegida `MysqlStagingIdentity.refundOrder()`. **Un usuario que pudiera llamar directamente a los objetos de almacenamiento internos o al pool MySQL eludiría estas validaciones**, por lo que es imprescindible mantenerlos inaccesibles al exterior y realizar un diseño de privilegios de base de datos y servidor antes de producción.
+
+La vinculación criptográfica del desafío al pedido se hace de manera **servidor-lateral** mediante su asociación persistente con el pedido; todavía hace falta una interfaz confiable que muestre al administrador el pedido exacto antes de aprobarlo. No se ha demostrado resistencia total contra engaños del usuario ni comprometimiento de sesión.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
