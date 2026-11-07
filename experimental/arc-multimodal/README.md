@@ -266,3 +266,19 @@ Guía de puesta en práctica local:
 R3 ya completó Blender pero NO demostró la causa de la franja. Nunca
 confundir éxito de tests con identidad corregida. Los materiales originales
 se preservan y tampoco se modifican \`main\` ni Messenger.
+
+
+## R5 Natalia - iluminación, normales y profundidad (posterior a R4)
+R4 reportó siete capturas PBR sin corregir la franja. Desactivar
+metalnessMap redujo tanto la franja como la piel sana; no era una mejora.
+Se incorpora \`r5-light-normal-depth-audit.mjs\`, una comparación aislada
+mediante materiales temporales de Lambert suave/plano, PBR plano,
+visualización de normales y profundidad. Incluye medidas ROI con
+validación de coordenadas y una barrera para evitar declarar mejoras
+basadas solamente en oscurecimiento global.
+
+[Instrucciones para el laboratorio local Windows R5](./R5-NATALIA-LUZ-NORMALES-PROFUNDIDAD.md).
+
+Los tests GitHub usan Three.js y fotogramas simulados: NO son evidencia
+de que la franja facial haya sido corregida ni certificación anatómica.
+Los GLB de producción siguen sin acceso desde este repositorio. 
