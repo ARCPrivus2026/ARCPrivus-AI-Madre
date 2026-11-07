@@ -154,3 +154,85 @@ test('servidor se niega a habilitar cobros reales o a abrir base ajena',()=>{
   assert.notEqual(hijack.status,0);
   assert.match(hijack.stderr,/base SQLite de la DEMO/i);
 });
+
+
+test('ARC Market 1.5 HTTP: catálogo local, landing, enlace, campaña, reversión e integridad',async()=>{
+  const {url,child}=await startLocalServer();
+  try{
+    const first=await (await fetch(url+'/api/marketing/catalog')).json();
+    assert.deepEqual(first,[]);
+    const seeded=await post(url+'/api/marketing/seed',{});
+    assert.equal(seeded.status,201);
+    const catalog=await seeded.json();
+    assert.equal(catalog.length,3);
+    assert.equal(catalog.filter(x=>x.kind==='DIGITAL_GUIDE').length,2);
+    assert.ok(catalog.every(x=>x.state==='DEMO_DRAFT'&&x.realProduct===false));
+    assert.deepEqual((await (await post(url+'/api/marketing/seed',{})).json())
+      .map(x=>x.productId),catalog.map(x=>x.productId));
+    const html=await (await fetch(url)).text();
+    assert.match(html,/ARC Market AI 1\.5/);
+    assert.match(html,/marketingEditForm/);
+    const script=await (await fetch(url+'/app.js')).text();
+    assert.match(script,/marketing\/overview/);
+    const affiliate=await (await post(url+'/api/affiliates',{name:'Afiliado de campaña local'})).json();
+    const link=await (await post(url+'/api/referrals',{
+      productId:catalog[0].productId,affiliateId:affiliate.id
+    })).json();
+    const landing=await (await fetch(url+'/api/marketing/landing/'+link.token)).json();
+    assert.equal(landing.page.headline,catalog[0].headline);
+    assert.equal(landing.paymentsEnabled,false);
+    assert.equal(landing.publicLink,false);
+    const promo=await (await fetch(url+'/api/marketing/promo/'+link.token)).json();
+    assert.equal(promo.publishable,false);
+    assert.match(promo.copy,/BORRADOR SIN COMPRA/);
+    assert.equal(promo.localPreviewPath,'/?ref='+link.token);
+    for(let i=0;i<4;i++)assert.equal(
+      (await post(url+'/api/referrals/'+link.token+'/visit',{})).status,200
+    );
+    const made=await (await post(url+'/api/referrals/'+link.token+'/demo-sale',{
+      requestId:'market-15-http'
+    })).json();
+    const replay=await (await post(url+'/api/referrals/'+link.token+'/demo-sale',{
+      requestId:'market-15-http'
+    })).json();
+    assert.equal(replay.id,made.id);
+    let overview=await (await fetch(url+'/api/marketing/overview')).json();
+    assert.equal(overview.totals.clicks,4);
+    assert.equal(overview.totals.simulatedOrders,1);
+    assert.equal(overview.totals.simulatedRefunds,0);
+    assert.equal(overview.totals.demoGrossCop,49000);
+    assert.equal(overview.totals.demoArcCop,1470);
+    assert.equal(overview.actualRevenueCop,0);
+    const rejected=await post(url+'/api/marketing/draft',{
+      productId:catalog[0].productId,slug:'wrong<script>',kind:'DIGITAL_GUIDE',
+      headline:catalog[0].headline,audience:catalog[0].audience,
+      summary:catalog[0].summary,highlights:catalog[0].highlights,expectedRevision:1
+    });
+    assert.equal(rejected.status,400);
+    const changed=await post(url+'/api/marketing/draft',{
+      productId:catalog[0].productId,slug:catalog[0].slug,kind:'DIGITAL_GUIDE',
+      headline:'Curso de diagnóstico técnico No Frost mejorado',
+      audience:catalog[0].audience,summary:catalog[0].summary,
+      highlights:catalog[0].highlights,expectedRevision:1
+    });
+    assert.equal(changed.status,200);
+    assert.equal((await changed.json()).revision,2);
+    const conflicting=await post(url+'/api/marketing/draft',{
+      productId:catalog[0].productId,slug:catalog[0].slug,kind:'DIGITAL_GUIDE',
+      headline:catalog[0].headline,audience:catalog[0].audience,
+      summary:catalog[0].summary,highlights:catalog[0].highlights,expectedRevision:1
+    });
+    assert.equal(conflicting.status,400);
+    assert.equal((await post(url+'/api/demo-sales/'+made.id+'/refund',{})).status,200);
+    overview=await (await fetch(url+'/api/marketing/overview')).json();
+    assert.equal(overview.totals.simulatedOrders,0);
+    assert.equal(overview.totals.simulatedRefunds,1);
+    assert.equal(overview.totals.demoGrossCop,0);
+    assert.equal((await (await fetch(url+'/api/integrity')).json()).ok,true);
+  }finally{
+    await new Promise(resolve=>{
+      if(child.exitCode!==null||child.killed){child.kill();resolve();return;}
+      child.once('exit',resolve);child.kill();
+    });
+  }
+});
