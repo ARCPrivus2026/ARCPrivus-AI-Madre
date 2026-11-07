@@ -55,6 +55,11 @@ async function register(e){
  const response=syntheticRegistrationResponse(e.auth,options);
  return {options,response,result:await e.ceremonies.finishRegistration(e.session.token,response)};
 }
+async function approveRefund(e,orderId,auth=e.auth,counter=2){
+ const challenge=await e.ceremonies.beginRefundAuthorization(e.session.token,orderId);
+ return e.ceremonies.finishRefundAuthorization(e.session.token,orderId,
+  syntheticAuthenticationResponse(auth,challenge,{counter}));
+}
 
 test('MySQL real y SimpleWebAuthn: registra clave sintética y verifica firma antes de reembolso',
  {skip:!enabled},async()=>{
@@ -80,6 +85,8 @@ test('MySQL real y SimpleWebAuthn: registra clave sintética y verifica firma an
   const response=syntheticAuthenticationResponse(e.auth,options,{counter:1});
   const approved=await e.ceremonies.finishAuthentication(e.session.token,response);
   assert.equal(approved.verified,true);
+  await assert.rejects(()=>e.identity.refundOrder(e.session.token,e.order.id),DemoAuthenticationFailed);
+  await approveRefund(e,e.order.id);
   const refunded=await e.identity.refundOrder(e.session.token,e.order.id);
   assert.equal(refunded.status,'SIM_REFUNDED');
   assert.equal((await e.store.reconcile()).ok,true);
@@ -163,6 +170,8 @@ test('MySQL real: alta de segunda clave exige clave previa y reinicia autorizaci
   assert.equal(newAuth.allowCredentials.length,2);
   await e.ceremonies.finishAuthentication(e.session.token,
    syntheticAuthenticationResponse(secondKey,newAuth,{counter:1}));
+  await assert.rejects(()=>e.identity.refundOrder(e.session.token,e.order.id),DemoAuthenticationFailed);
+  await approveRefund(e,e.order.id,secondKey);
   assert.equal((await e.identity.refundOrder(e.session.token,e.order.id)).status,'SIM_REFUNDED');
  }finally{await e.pool.end();}
 });
