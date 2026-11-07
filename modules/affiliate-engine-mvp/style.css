@@ -1,0 +1,14 @@
+
+:root{font-family:system-ui,Arial;color:#edf4ff;background:#101c30}*{box-sizing:border-box}body{margin:0;max-width:1100px;padding:25px;margin:auto}header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}h1{font-size:clamp(25px,5vw,38px);margin:10px 0}h2{margin:0 0 14px;font-size:20px}p{line-height:1.5}.banner{border:1px solid #ffca79;background:#45331f;color:#fff3dd;border-radius:10px;padding:15px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:14px}.card{background:#1a2b46;border:1px solid #334a6d;border-radius:14px;padding:18px;margin:12px 0}.metric{font-size:29px;font-weight:750;margin:10px 0;color:#8ff0d6}.muted{color:#bbcae0;font-size:14px}label{display:block;margin-top:12px;font-size:14px}input,select,button{width:100%;font:inherit;border-radius:8px;padding:11px;margin-top:6px}input,select{background:#101e34;color:white;border:1px solid #607492}button{background:#3cd5b4;color:#0b2335;font-weight:bold;border:0;cursor:pointer;margin-top:17px}button:hover{background:#8ff0d6}button:focus-visible{outline:3px solid white}ul{padding-left:18px;overflow-wrap:anywhere}li{margin:6px 0}#message{min-height:25px;color:#8ff0d6}code{color:#9fe2fe}small{display:block;margin-top:8px;color:#bdd1e5}a{color:#99e8ff;overflow-wrap:anywhere}a:focus-visible{outline:3px solid #fff}
+
+
+h3{font-size:19px;margin:22px 0 12px;color:#daedff}
+.editor{margin:24px 0;padding:18px;background:#12223a;border:1px solid #49607e;border-radius:12px}
+textarea{width:100%;font:inherit;border-radius:8px;padding:11px;margin-top:6px;
+  background:#101e34;color:#fff;border:1px solid #607492;resize:vertical;min-height:95px}
+textarea:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.promo{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:15px;line-height:1.6;
+  background:#0a172b;border:1px solid #49607e;border-radius:10px;padding:15px}
+#marketingCatalog li,#marketingCampaigns li{padding:8px 2px;border-bottom:1px solid #374b69;line-height:1.5}
+#landingHeadline{font-size:24px;color:#9fe2fe}
+#marketingTotals{background:#10233c;border-radius:10px;padding:15px;font-weight:650;line-height:1.55}

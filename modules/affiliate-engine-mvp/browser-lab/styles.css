@@ -1,0 +1,33 @@
+:root{color-scheme:light;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:#f3f6fb;color:#14223a;font-size:18px}
+*{box-sizing:border-box}
+body{margin:0}
+.layout{width:min(900px,calc(100% - 28px));margin:26px auto 60px}
+.head{margin-bottom:20px}
+.brand{font-size:14px;font-weight:800;letter-spacing:.14em;color:#16477f}
+h1{font-size:clamp(30px,5vw,43px);line-height:1.14;margin:12px 0}
+h2{font-size:clamp(23px,3.4vw,28px);margin:0 0 16px}
+p{line-height:1.5}
+.warning{background:#fff1d8;border-left:7px solid #9b4d02;padding:16px 18px;border-radius:9px;font-weight:650}
+.panel{background:#fff;border:1px solid #d7dfeb;border-radius:15px;padding:clamp(18px,4vw,30px);margin:18px 0;box-shadow:0 3px 15px #192a4d10}
+.section-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.section-heading h2{margin-bottom:8px}
+.status{background:#e4eefa;border-radius:100px;padding:7px 12px;font-size:14px;font-weight:700}
+.product{font-size:23px;font-weight:700;margin:14px 0 8px}
+.label{color:#55647d;margin-bottom:3px;font-size:15px}
+.id{font-family:ui-monospace,Consolas,monospace;overflow-wrap:anywhere;font-weight:650}
+.amounts{margin:20px 0;border-top:1px solid #d6dfea}
+.amounts div{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:1px solid #d6dfea;padding:14px 0}
+dt{font-size:16px;color:#394962}dd{margin:0;font-size:19px;text-align:right;font-variant-numeric:tabular-nums;font-weight:750}
+.amounts div:first-child dd{font-size:26px;color:#104b8f}
+.explain,.hint{font-size:16px;color:#43516b}
+.ack{display:flex;align-items:flex-start;gap:12px;padding:17px;background:#edf3fc;border-radius:10px;line-height:1.5;font-weight:600;cursor:pointer}
+.ack input{width:23px;height:23px;flex-shrink:0;accent-color:#1763aa}
+button{font:inherit;display:block;width:100%;padding:16px;border:0;border-radius:10px;background:#15589e;color:white;font-weight:750;cursor:pointer;margin:18px 0}
+button:hover:not(:disabled){background:#0b3d73}button:focus-visible,input:focus-visible{outline:4px solid #f6a029;outline-offset:4px}
+button:disabled{background:#bdc5d2;color:#344050;cursor:not-allowed;opacity:.85}
+button.danger{background:#972d20}
+button.danger:hover:not(:disabled){background:#742017}
+.rule{border-top:1px solid #d6dfea;margin:24px 0}
+#message{font-size:19px;font-weight:650}
+footer{font-size:14px;color:#526176;text-align:center;line-height:1.6;padding:20px}
+@media(max-width:550px){.amounts div{align-items:flex-start}dt{max-width:54%}dd{font-size:17px}}

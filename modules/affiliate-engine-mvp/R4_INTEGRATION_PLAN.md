@@ -1,0 +1,154 @@
+# Plan de integración segura ARC Affiliate ↔ ARNOLRC R4
+
+**Fecha de revisión:** 2026-11-04  
+**Estado:** preparado para evaluar compatibilidad. **NO conectado a R4.** No hay pagos, clientes reales ni autorización para publicar.
+
+## Sistemas a conservar
+
+- ARNOLRC R4 (referencia de trabajo del usuario): Windows, Node.js 24, servicio local conocido por puerto 3100, base de datos MySQL de staging.
+- Motores existentes: Messenger, Copilot, IA Madre, Studio audiovisual, Natalia, comunicaciones voz/video TURN, SMTP y Cloudflare Tunnel.
+- Este MVP: servicio **aislado** que, cuando se abre manualmente, atiende solo `127.0.0.1:3197` y usa **su propio archivo de simulación SQLite**.
+- La documentación de `main` no equivale a una auditoría del árbol R4: el repositorio incluye archivos SQLite y código heredado, mientras que el entorno del usuario usa MySQL en staging. **No asumir equivalencia de árboles.**
+
+## Reglas que no se pueden romper
+
+1. No cambiar `server.js`, `package.json`, `config/db.js`, `database/db.js` ni la configuración de producción/R4 desde esta rama.
+2. No importar el servidor de afiliados dentro del arranque de Messenger, IA Madre o Copilot; no reservar el puerto 3100.
+3. No reutilizar contraseñas, sesiones, cuentas, API keys ni conexiones de base de datos de otros módulos. Hacer primero una auditoría de autenticación; no compartir sesiones heredadas.
+4. No alterar tablas MySQL existentes, hacer migraciones, transferir registros personales ni iniciar pagos en esta etapa.
+5. No exponer el prototipo SQLite por Cloudflare Tunnel, Vercel, proxies, rutas públicas ni red local.
+6. La variable de activación comercial debe **permanecer desactivada**. Integrar identidad, pagos, antifraude y conciliación solo después de cumplir `TRUST_CHECKLIST.md`.
+7. Los enlaces de demo no pueden anunciarse como enlaces que cobran o remuneran en dinero real.
+
+## Diagnóstico confirmado en Windows R4 — 4 de noviembre de 2026
+
+Las comprobaciones **de solo lectura** realizadas en el equipo Windows del proyecto devolvieron:
+
+| Indicador | Resultado observado |
+|---|---|
+| Carpeta R4 | Existe |
+| Paquete R4 | `arnolrc-platform` |
+| Módulos | `type: module` |
+| Archivo de inicio | `server.js` |
+| Referencia desde servidor | `config/db` |
+| `config/db.js` | Hace referencia a `mysql2` |
+| `mysql2/promise` | Sí |
+| `createPool` | Sí |
+| `createConnection` | No detectado |
+| `process.env` | Sí |
+| `export default` | Sí |
+| `connectionLimit` | Sí |
+
+**Alcance de la evidencia:** las búsquedas de texto confirman declaraciones y referencias, **no** una conexión activa, no la base de datos seleccionada ni que todos los módulos utilicen ese mismo pool. El listado de `package.json` también incluye `sqlite3`, `better-sqlite3` y `mongoose`; su instalación no demuestra su uso efectivo.
+
+### Contrato de aislamiento propuesto (sin ejecutar)
+
+1. Mantener totalmente intacto el pool MySQL actual de `config/db.js`; **no** importarlo ni compartirlo con Affiliate.
+2. Diseñar un pool propio de Affiliate con `mysql2/promise` y variables exclusivas del motor comercial (por ejemplo `ARC_AFF_DB_HOST`, `ARC_AFF_DB_USER`, `ARC_AFF_DB_NAME`); nunca almacenar credenciales en el repositorio.
+3. Establecer un esquema independiente de *staging* que no sea el de R4 y un usuario MySQL con permisos limitados exclusivamente a ese esquema. No crear la base ni el usuario en esta etapa.
+4. Mantener el módulo apagado por defecto; no añadir rutas, procesos ni tareas a `server.js` o al puerto 3100.
+5. Una interrupción de Affiliate no debe bloquear el pool R4 ni la ejecución de Messenger, Copilot, Natalia u otros motores.
+6. La siguiente inspección deberá comprobar patrones de uso de consultas y dependencias **sin mostrar el contenido de `.env` ni cadenas de conexión**.
+
+## Diagnóstico de uso del pool MySQL en el servidor R4 — verificado con CMD
+
+La última comprobación **de solo lectura** de `server.js` y la carpeta local R4 mostró:
+
+- `IMPORTA_CONFIG_DB=True` — referencia al módulo de conexión existente
+- `DB_QUERY=9` — nueve coincidencias textuales de `db.query(`
+- `DB_EXECUTE=0` — sin coincidencias textuales de `db.execute(`
+- `DB_GETCONNECTION=1` — una coincidencia textual de `db.getConnection(`
+- `EXISTE_AFFILIATE=False` — el módulo de Affiliate todavía no está instalado en R4
+
+**Interpretación limitada:** estos son conteos de patrones de texto, no una inspección dinámica del flujo de ejecución ni una auditoría de los bloqueos de transacciones. No se ha leído la consulta SQL completa, ni se ha comprobado que los nueve usos sean seguros.
+
+### Adaptador preparado en la rama, todavía desconectado
+
+El archivo `mysql-staging-adapter.mjs` existe únicamente en la rama de revisión de GitHub.
+
+- No está importado por `server.mjs` ni por el `server.js` de R4.
+- **No abre conexiones automáticamente.** Su modo normal es apagado.
+- Las pruebas utilizan un controlador ficticio (mock) que no accede a MySQL.
+- Una futura conexión de pruebas requeriría una autorización explícita (`ARC_AFF_STAGING_CONNECT=1` y `ARC_AFF_STAGING_ONLY=1`), host MySQL local, usuario dedicado `arc_aff_*`, contraseña propia, base nueva `arc_affiliate_staging_*` y permisos limitados del servidor de base de datos.
+- Prohíbe las variables de activación de pagos reales; el software aún no está autorizado para manejar dinero.
+- **No configurar esas variables ni crear la base** durante la revisión actual.
+
+La validación de nombres no sustituye los permisos MySQL de mínimo privilegio; antes de crear el esquema debe aprobarse el diseño de seguridad del entorno R4.
+
+## Revisión adicional de llamadas al pool en R4 — captura de Windows
+
+El análisis de patrones de `server.js` confirmó:
+
+| Patrón buscado | Coincidencias |
+|---|---:|
+| `getConnection(` | 1 |
+| `beginTransaction(` | 0 |
+| `commit(` | 0 |
+| `rollback(` | 0 |
+| `release(` | 1 |
+
+Esto **no demuestra** que el objeto liberado sea el mismo que se obtuvo, ni que `release()` ocurra en una cláusula `finally`. Tampoco constituye prueba de ausencia de transacciones en otros módulos, porque la lectura cubrió solo `server.js`.
+
+### Condición previa de revisión
+
+Antes de instalar siquiera una copia del módulo Affiliate junto a R4, verificar de solo lectura los números de línea de `getConnection()`, `release()` y `finally`; inspeccionar después el alcance y manejo de errores sin exponer credenciales ni código sensible. No cambiar la conexión R4 como parte del trabajo comercial.
+
+## Bloque de prueba `testDatabase()` — comprobación final en R4
+
+Lectura de las líneas **184–204** del `server.js` local, compartidas con las cadenas de texto ocultas:
+
+- Línea 189: `async function testDatabase()`.
+- Línea 190: bloque `try`.
+- Línea 191: `const connection = await db.getConnection();`.
+- Línea 192: solo una llamada de registro de consola.
+- Línea 193: `connection.release();`, liberación explícita antes de establecer `runtime.database` y retornar.
+- Líneas 196–200: `catch` registra el error y devuelve `false`.
+- No se observó `finally` en este bloque.
+
+**Conclusión acotada:** es una prueba de conectividad (no un bloque de transacción comercial). La liberación ocurre en el camino normal, sin consulta SQL ni `await` entre adquisición y liberación. Si excepcionalmente fallara el registro de consola tras adquirir la conexión, no se alcanzaría `release()`; `finally` sería una mejora defensiva. No hay evidencia que justifique modificar el `server.js` de R4 para incorporar Affiliate.
+
+**Decisión técnica:** cerrar la inspección del bloque `testDatabase` sin cambios a R4 y continuar el desarrollo de Affiliate en una rama aislada. No afirmar que todos los demás usos del pool fueron auditados.
+
+## Secuencia de integración, por puertas
+
+### Puerta 0 — Auditoría de solo lectura (se permite ahora)
+`r4-preflight.mjs` lee *solo* `package.json` y metadatos de rutas concretas. No lee `.env`, claves, correos, contraseñas ni tablas MySQL. No ejecuta comandos del proyecto ni abre puertos.
+
+Ejemplo de uso cuando el repositorio con esta rama esté disponible en Windows:
+
+```powershell
+node .\modules\affiliate-engine-mvp\r4-preflight.mjs "D:\ARC\ARNOLRC_PRUEBA_INSTALACION_LIMPIA_FINAL_2026-09-16\ARNOLRC_R4_6_12_13_PREPUBLICACION_WINDOWS_2026-09-16"
+```
+
+El informe JSON `integrationEnabled: false` es deliberado. Una salida sin `blockers` **no significa que la integración sea segura**; solo que hay estructura mínima para una siguiente auditoría.
+
+### Puerta 1 — Pruebas
+- GitHub Actions debe mostrar resultado `success` para el commit exacto que se pretenda integrar.
+- Reproducir la batería en Node 24 de Windows y validar carga, reinicio, respaldos de la base **de prueba**, y revertir sin pérdida.
+- Levantar R4 de forma separada en staging solo cuando la inspección del proyecto sea satisfactoria; comprobar que el MVP no interactúa con él.
+
+### Puerta 2 — Contrato de integración SIN conexión operativa
+- Diseñar contratos versionados `catalog`, `affiliate`, `attribution`, `order`, `commission`, `reconciliation`, y `audit`.
+- Crear interfaz de servicio interna con autenticación fuerte propia, separación por roles y ambiente, y desactivación rápida, **no** una dependencia directa en el servidor principal.
+- Definir esquema MySQL nuevo y aislado en staging, **sin ejecutar migraciones en R4**.
+- Redactar políticas comerciales y revisar obligaciones en Colombia antes de registrar clientes.
+
+### Puerta 3 — Piloto real (aún prohibido)
+- Solo con revisión jurídica y contrato de proveedor de pagos apto para marketplace.
+- Confirmaciones exclusivamente desde el proveedor de pago por webhook firmado, reconciliado e idempotente.
+- Separar comisiones devengadas, retenidas, liberadas, revertidas y pagadas; controles de disputas y fraude.
+- Auditabilidad y protección de información personal, validación independiente y métricas netas (no promesas de rentabilidad).
+
+## Criterios de reversibilidad
+
+- Antes de habilitar integración: **cero modificaciones** del servidor R4 y MySQL existente; cerrar el proceso local termina la prueba sin afectar ningún motor.
+- Para futuras integraciones: cada cambio requerirá revisión, respaldo, rama propia, pruebas, y un plan de reversión documentado.
+- Un fallo de los módulos comerciales nunca debe apagar Messenger, Copilot, Natalia ni audio/video.
+
+## Puntos de bloqueo detectados en revisión de código de `main`
+
+Se observaron implementaciones de servidor y mecanismos de acceso heterogéneos; no existe todavía validación técnica de que la versión de GitHub sea idéntica al entorno R4 activo. Es obligatorio revisar la seguridad de la autenticación **antes de reutilizarla** para afiliados o pagos.
+
+## Estado de CI observado
+
+La ejecución oficial de GitHub Actions del commit `387f6abdc0d280326d83b90188b3118b76f06d73` terminó con **19 pruebas aprobadas y 0 fallidas** (run 41867895187), incluido el control de archivos fuera de alcance. Estos resultados no verifican todavía la instalación de Windows R4 ni autorizan integrar pagos. Toda modificación posterior del documento requerirá su propia comprobación de CI para ese nuevo commit.

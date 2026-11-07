@@ -1,0 +1,53 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ARC Market AI 1.5 · Demostración local</title><link rel="stylesheet" href="/style.css"></head><body>
+<header><div><strong>ARC PRIVUS AI MADRE</strong><h1>Affiliate & Commerce Engine</h1><span class="muted">Laboratorio local ARC Market AI · Versión 1.5 — SIN VENTAS REALES</span></div><span>🧪 DEMOSTRACIÓN</span></header>
+<div class="banner"><b>NO ES DINERO REAL.</b> Las ventas y ganancias de esta pantalla son simulaciones. No existe pasarela de pagos, retiro, inscripción pública ni garantía de ingresos.</div>
+<section class="card" role="status" aria-live="polite"><h2>Control de consistencia local</h2><p id="integrity" class="muted">Comprobando base de datos de prueba...</p><small>Esta comprobación detecta diferencias contables básicas, no certifica seguridad ni pagos reales.</small></section>
+<section class="grid"><article class="card"><h2>Ventas de prueba vigentes</h2><div class="metric" id="sales">—</div></article><article class="card"><h2>Comisiones afiliados</h2><div class="metric" id="affiliate">—</div></article><article class="card"><h2>Comisión ARC (10 %)</h2><div class="metric" id="arc">—</div></article><article class="card"><h2>Ventas simuladas</h2><div class="metric" id="gross">—</div></article></section>
+<section class="grid">
+<form class="card" id="productForm"><h2>Crear producto demostrativo</h2><label>Nombre del producto<input name="title" minlength="3" maxlength="120" required placeholder="Curso de ejemplo"></label><label>Precio en pesos colombianos<input name="priceCop" type="number" min="1" max="1000000000" step="1" value="100000" required></label><label>Comisión comercial (%)<input name="commissionPct" type="number" min="1" max="80" step="1" value="30" required></label><button>Guardar producto</button></form>
+<form class="card" id="affiliateForm"><h2>Crear afiliado demostrativo</h2><label>Nombre de prueba<input name="name" minlength="3" maxlength="120" required placeholder="Afiliado de prueba"></label><button>Crear afiliado</button><small>Esta creación no genera comisión. Solo las ventas simuladas tienen distribución contable.</small></form>
+<form class="card" id="saleForm"><h2>Registrar venta simulada</h2><label>Producto<select id="productId" required></select></label><label>Afiliado<select id="affiliateId" required></select></label><button>Simular venta</button><small>El comerciante recibe el valor menos la comisión comercial. ARC recibe 10 % de esa comisión, no del precio.</small></form>
+<form class="card" id="refForm"><h2>Crear enlace de afiliación local</h2><label>Producto<select id="refProductId" required></select></label><label>Afiliado<select id="refAffiliateId" required></select></label><button>Crear enlace demostrativo</button><small>El enlace funciona solo en este computador. No es un enlace para compartir comercialmente.</small></form>
+</section>
+<section class="card" aria-labelledby="market-title">
+  <h2 id="market-title">ARC Market AI 1.5 — Catálogo y campañas de laboratorio</h2>
+  <p class="banner"><strong>SOLO BORRADORES.</strong> Estos productos, precios y enlaces son ejemplos ficticios. Los materiales no están terminados, no existe un checkout ni se pueden recibir pagos aquí.</p>
+  <button id="seedDrafts" type="button">Crear tres borradores de ejemplo (No Frost, lavadoras y asesoría)</button>
+  <p class="muted">Esta acción es idempotente: pulsarla otra vez no duplica los productos de muestra.</p>
+  <h3>Catálogo editorial no publicado</h3>
+  <ul id="marketingCatalog"></ul>
+  <form id="marketingEditForm" class="editor" aria-label="Editor local de borradores">
+    <h3>Editar ficha comercial local</h3>
+    <label>Producto<select id="marketingProductId" required></select></label>
+    <label>Tipo de oferta<select id="marketingKind"><option value="DIGITAL_GUIDE">Guía digital</option><option value="REMOTE_ADVICE">Asesoría remota</option></select></label>
+    <label>Slug de página (solo minúsculas y guiones)<input id="marketingSlug" minlength="3" maxlength="60" required></label>
+    <label>Titular<input id="marketingHeadline" minlength="12" maxlength="140" required></label>
+    <label>Público objetivo<input id="marketingAudience" minlength="12" maxlength="180" required></label>
+    <label>Descripción del borrador<textarea id="marketingSummary" minlength="30" maxlength="480" rows="4" required></textarea></label>
+    <label>Puntos incluidos (uno por línea, mínimo 2 y máximo 5)<textarea id="marketingHighlights" rows="5" required></textarea></label>
+    <p id="marketingRevision" class="muted">La versión editorial se comprueba para evitar sobrescribir cambios.</p>
+    <button type="submit">Guardar borrador local sin publicar</button>
+  </form>
+  <h3>Seguimiento de enlaces y conversiones simuladas</h3>
+  <p id="marketingTotals">Cargando cifras de demostración…</p>
+  <ul id="marketingCampaigns"></ul>
+  <small>Las visitas son eventos, no personas únicas. Las compras, porcentajes de conversión y comisiones son ficticios; el panel no detecta clientes reales.</small>
+</section>
+<section id="landing" class="card" hidden>
+  <h2>Vista previa de página promocional — BORRADOR</h2>
+  <h3 id="landingHeadline"></h3>
+  <p id="landingInfo"></p>
+  <p id="landingAudience"></p>
+  <p id="landingSummary"></p>
+  <ul id="landingHighlights"></ul>
+  <p class="banner">No es una página de venta real. El contenido editorial debe prepararse y aprobarse antes de publicar.</p>
+  <button type="button" id="simulatePurchase">Simular compra atribuida a este enlace</button>
+  <h3>Texto orgánico propuesto (no publicar todavía)</h3>
+  <pre id="landingPromo" class="promo"></pre>
+  <button type="button" id="copyPromo">Copiar borrador (sin publicarlo)</button>
+</section>
+<p role="status" id="message" aria-live="polite"></p>
+<section class="grid"><article class="card"><h2>Productos</h2><ul id="products"></ul></article><article class="card"><h2>Afiliados y códigos</h2><ul id="affiliates"></ul></article></section>
+<section class="card"><h2>Enlaces y visitas (datos simulados)</h2><ul id="referrals"></ul></section>
+<section class="card"><h2>Historial de ventas demostrativas</h2><ul id="history"></ul></section>
+<script src="/app.js" defer></script></body></html>
