@@ -176,6 +176,9 @@ export class MysqlStagingDemoStore {
       found=rows[0];
       if(!found)throw new Error('Pedido inexistente');
       if(found.status==='SIM_CONFIRMED'){
+        // Test-only failure injection: prove permission consumption and refund
+        // always roll back together under the SAME InnoDB transaction.
+        if(this.hooks.beforeRefundUpdate)await this.hooks.beforeRefundUpdate();
         await conn.execute("UPDATE aff_demo_orders SET status='SIM_REFUNDED' WHERE id=?",[orderId]);
         await conn.execute("UPDATE aff_demo_commissions SET state='SIM_REVERSED' WHERE order_id=?",[orderId]);
         await conn.execute("INSERT INTO aff_demo_audit(id,order_id,event_type) VALUES(?,?,'SIM_ORDER_REFUNDED')",[randomUUID(),orderId]);
