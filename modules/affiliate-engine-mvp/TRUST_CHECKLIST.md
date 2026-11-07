@@ -1,4 +1,4 @@
-# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.4)
+# ARC Affiliate & Commerce Engine — Puertas de confianza (MVP 1.5)
 
 **Estado:** PILOTO LOCAL CON DINERO SIMULADO. Ninguna sección de este documento autoriza operar una plataforma pública ni recibir fondos de clientes.
 
@@ -159,6 +159,28 @@ La vinculación criptográfica del desafío al pedido se hace de manera **servid
 El servidor local usa una clave aleatoria temporal, no una sesión de usuario autenticada. En caso de iniciar voluntariamente un ensayo real de passkeys, el dispositivo o gestor del navegador podría guardar un registro para `localhost`. Cerrar el servidor borra el estado del laboratorio, pero no borra por sí mismo las credenciales del dispositivo.
 
 **No arrancar esto en el entorno R4 de producción/pruebas vigentes, no abrir puertos de LAN/WAN y no enlazar Cloudflare Tunnel.** Debe operarse en una máquina aislada, con revisión técnica, consentimiento y sin datos reales.
+
+## A.8. Catálogo promocional y campañas locales — MVP 1.5
+
+| Componente comercial | Estado |
+|---|---|
+| Tres propuestas editoriales de diagnóstico de No Frost, lavadoras y asesoría | BORRADORES de laboratorio |
+| Precio y comisión configurados | Valores ficticios, no aprobados comercialmente |
+| Fichas con titular, público, resumen y puntos de contenido | Implementadas en SQLite local |
+| Control de versiones para impedir sobreescritura editorial | Implementado y comprobado |
+| Landing de prueba por token de afiliación | Implementado, solo localhost |
+| Borrador de texto promocional orgánico | Implementado; nunca publicado automáticamente |
+| Visitas de prueba, ventas simuladas, reembolsos y totales por token | Comprobados; no hay compradores reales |
+| Entrega automática del contenido digital terminado | **NO implementada** |
+| Programa de afiliados real con contratos, identidad y pagos | **NO implementado** |
+| Información legal, garantías, privacidad, impuestos y facturación aprobados | **NO implementados/verificados** |
+| Plataforma de cobro real o cuenta Hotmart conectada | **NO implementada ni verificada** |
+| Publicación de páginas, campañas reales o anuncios | **NO autorizada** |
+| Soporte postventa y capacidad de asesoría remota | **Pendiente de definir/validar** |
+
+La tabla SQLite `marketing_drafts` es completamente independiente del MySQL del servidor R4. Los valores de `marketing.overview()` derivan de eventos de **prueba**, no de compradores, depósitos bancarios o datos de publicidad real. El cociente de pedidos ficticios por 100 visitas no puede usarse para afirmar una tasa de conversión real.
+
+La prueba HTTP integral valida borradores, enlace, conteo de visitas, venta simulada y reversión, sin cambiar R4. La aprobación del código **no representa aprobación de lanzamiento comercial**; deben satisfacerse los controles de entrega, cumplimiento, pagos y atención al comprador antes de cualquier anuncio o cobro.
 
 ## B. Condiciones bloqueantes antes de lanzar un comercio real
 
