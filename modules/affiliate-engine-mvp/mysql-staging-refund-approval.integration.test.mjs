@@ -129,3 +129,27 @@ test('MySQL real: dos reembolsos concurrentes con mismo permiso ejecutan solo un
   assert.equal((await e.store.reconcile()).ok,true);
  }finally{await e.pool.end();}
 });
+
+
+test('MySQL real: error de reembolso revierte pedido y consumo de permiso en una transacción', {skip:!enabled},async()=>{
+ const e=await setup();
+ try {
+  const [a]=e.orders;
+  await e.authorize(a.id);
+  e.store.hooks.beforeRefundUpdate=async()=>{throw new Error('FALLA_REEMBOLSO_CONTROLADA');};
+  await assert.rejects(()=>e.identity.refundOrder(e.token,a.id),/FALLA_REEMBOLSO_CONTROLADA/);
+  const [grants]=await e.pool.execute(
+    'SELECT used FROM aff_demo_wa_refund_grants WHERE order_id=?',[a.id]
+  );
+  assert.equal(grants.length,1);
+  assert.equal(grants[0].used,0);
+  assert.equal((await e.store.byId(a.id)).status,'SIM_CONFIRMED');
+  assert.equal((await e.store.reconcile()).ok,true);
+  delete e.store.hooks.beforeRefundUpdate;
+  assert.equal((await e.identity.refundOrder(e.token,a.id)).status,'SIM_REFUNDED');
+  const [used]=await e.pool.execute(
+    'SELECT used FROM aff_demo_wa_refund_grants WHERE order_id=?',[a.id]
+  );
+  assert.equal(used[0].used,1);
+ }finally{await e.pool.end();}
+});
