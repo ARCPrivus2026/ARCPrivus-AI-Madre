@@ -1,4 +1,4 @@
-# ARC Global Affiliate & Commerce Engine — MVP 1.1 (paso administrativo firmado, CI-only)
+# ARC Global Affiliate & Commerce Engine — MVP 1.2 (ceremonias SimpleWebAuthn aisladas con MySQL)
 
 **Estado: demostración local.** Este módulo se creó de forma aislada en una rama; **NO está conectado** al servidor principal, no vende nada, no realiza cargos, no crea cuentas de clientes reales, no paga comisiones ni soporta acceso público.
 
@@ -147,6 +147,34 @@ No activar este código en Windows ARNOLRC R4 ni cambiar el origen ficticio por 
 **Verificación de la lógica v1.1:** [GitHub Actions 42370688792](https://github.com/ARCPrivus2026/ARCPrivus-AI-Madre/actions/runs/42370688792), 51 pruebas generales y 27 contra MySQL 8.4 real aprobadas, 0 fallidas. El commit final de documentación requiere una nueva confirmación CI.
 
 Referencia normativa: [W3C Web Authentication](https://www.w3.org/TR/webauthn/) y [MDN Web Authentication API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API).
+
+## ARC Affiliate 1.2 — SimpleWebAuthn mantenido y pruebas de registro/autenticación
+
+**Alcance real de esta versión:** ya usamos la biblioteca mantenida `@simplewebauthn/server` para generar opciones WebAuthn y verificar criptográficamente un **registro y una autenticación completos con autenticador sintético**. No se han usado dispositivos físicos, huellas reales, cuentas de clientes ni endpoints públicos. Toda esta capa continúa **CI-only**.
+
+### Componentes nuevos
+
+- Dependencias independientes del módulo, versionadas exactamente: `@simplewebauthn/server@14.0.3` y `@simplewebauthn/browser@14.0.0`. No se agregaron a R4. Ambas bibliotecas ofrecen las APIs oficiales `generateRegistrationOptions`, `verifyRegistrationResponse`, `generateAuthenticationOptions`, `verifyAuthenticationResponse`, `startRegistration({optionsJSON})` y `startAuthentication({optionsJSON})`.
+- `mysql-staging-webauthn-ceremony.mjs`: backend de prueba usando las cuatro funciones oficiales del servidor. `aff_demo_wa_credentials` guarda credenciales públicas en COSE, contador y referencias a la cuenta; `aff_demo_wa_pending` guarda un desafío por sesión y su caducidad de dos minutos. El uso se marca transaccionalmente para impedir repeticiones simultáneas.
+- `mysql-staging-webauthn.fixture.mjs`: autenticador sintético in-memory que crea un par de claves P-256, un objeto CBOR de registro y respuestas de autenticación firmadas; **solo es código de pruebas** y nunca se distribuye al navegador.
+- `browser-webauthn-bridge.mjs`: contrato del lado navegador mediante funciones inyectables, que pasan `optionsJSON` a los métodos oficiales. **No tiene interfaz, endpoints ni red activados**; las pruebas del puente utilizan adaptadores falsos.
+- `mysql-staging-webauthn-ceremony.integration.test.mjs`: pruebas de registro, autenticación, denegación de origen falso, desafío vencido, desafío reutilizado, solicitudes simultáneas y limitaciones de altas adicionales.
+- La cuenta administrativa simulada requiere una sesión previa con contraseña y TOTP. Después de autenticar la passkey, el servidor marca `webauthn_verified=1`, necesario para ejecutar un **reembolso simulado**. No existe liquidación ni movimiento de dinero.
+
+### Protección de nuevas credenciales y dispositivos
+
+Tras registrar una primera passkey en el laboratorio, **no se permite añadir otra únicamente con la sesión TOTP**: se exige un paso WebAuthn previo. Al añadir una nueva clave, se elimina la autorización para reembolsos y se revocan las demás sesiones de esa cuenta. La siguiente operación sensible requiere verificar una passkey de nuevo.
+
+### Origen de laboratorio y controles pendientes
+
+- El RP ID actual es **`localhost`**, con origen fijo **`http://localhost:3198`**; solo es una configuración de ejemplo para origen local confiable del navegador. **No se inició servidor HTTP ni se abrió puerto** en esta etapa.
+- Las claves del autenticador sintético son únicamente de CI. La biblioteca verifica el registro CBOR y la firma de autenticación de esas claves; esto **no demuestra compatibilidad con los dispositivos físicos reales**.
+- Para un piloto humano se requiere servidor de origen seguro real, endpoints autenticados, cookie `Secure`/`HttpOnly`/`SameSite`, protección CSRF, control por IP, observabilidad, inscripción de dispositivos con consentimiento, límites de tamaño, almacenamiento durable de credenciales, sesiones, múltiples dispositivos y recuperación de cuenta con controles anti-secuestro.
+- Los desafíos de laboratorio están almacenados temporalmente en MySQL de CI y no deben considerarse un diseño de producción endurecido. No hay un proceso multiinstancia ni revisión externa de seguridad.
+- El módulo anterior `mysql-staging-passkey.mjs` (P-256 hecho a mano para v1.1) se conserva solamente como comparación/regresión de CI, **no como opción para producción**. La nueva implementación utiliza la biblioteca mantenida.
+- `server.js`, `config/db.js` y el sistema R4 no importan ninguna de estas piezas. **Nunca habilitar las banderas `ARC_AFF_MYSQL_CI_TEST` o `ARC_AFF_STAGING_SCHEMA_TEST` en R4**.
+
+**Referencias oficiales:** [SimpleWebAuthn servidor](https://simplewebauthn.dev/docs/packages/server) y [SimpleWebAuthn navegador](https://simplewebauthn.dev/docs/packages/browser).
 
 ## Regla comercial demostrativa
 
