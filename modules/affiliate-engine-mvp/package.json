@@ -1,6 +1,6 @@
 {
   "name": "@arcprivus/affiliate-engine-mvp",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "description": "Isolated ARC Affiliate CI staging laboratory; not a production payment or identity system",
