@@ -1,6 +1,6 @@
 {
   "name": "@arcprivus/affiliate-engine-mvp",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "private": true,
   "type": "module",
   "description": "Isolated ARC Affiliate CI staging laboratory; not a production payment or identity system",
@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "node --test *.test.mjs",
-    "test:mysql-ci": "node --test --test-concurrency=1 mysql-staging*.integration.test.mjs"
+    "test:mysql-ci": "node --test --test-concurrency=1 mysql-staging*.integration.test.mjs",
+    "lab:browser": "node browser-lab-server.mjs"
   },
   "dependencies": {
     "mysql2": "3.22.3",
