@@ -1,0 +1,25 @@
+name: ARC multimodal experimental tests
+on:
+  pull_request:
+    paths:
+      - "experimental/arc-multimodal/**"
+      - ".github/workflows/arc-multimodal-test.yml"
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Offline unit tests (no external API)
+        run: node --test experimental/arc-multimodal/*.test.mjs
+
+      - name: Compile Blender inventory syntax without bpy
+        run: python -m py_compile experimental/arc-multimodal/blender-rig-inventory.py experimental/arc-multimodal/blender-visual-proof.py
+
+      - name: Run Blender inventory offline unit tests
+        run: python -m unittest discover -s experimental/arc-multimodal -p "test_*.py" -v
