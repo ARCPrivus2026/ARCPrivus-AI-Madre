@@ -373,3 +373,17 @@ Es observacional, no modifica el loader ni los GLB.
 Las pruebas de CI son instrumentación simulada, NO un arranque del
 visor real de Windows. El diagnóstico local debe persistirse en
 disco antes de retomar el muestreo de textura.
+
+
+### R5 — desglosar Runtime GLTF binding mismatch (9 nov)
+Natalia READY, gate R5 confirmado y payload JS válido. La última
+sesión paró ANTES de leer colores por \`Runtime GLTF binding mismatch\`,
+una validación compuesta que no conservó cuál asociación difirió.
+Se incorpora \`r5-gltf-binding-diagnostics.mjs\` para separar
+los índices del mesh, primitiva, material y albedo
+entre el runtime Three.js, el parser GLTF y la referencia validada,
+sin esconder asociaciones faltantes por clonación de materiales.
+[Guía de reparación limitada del ejecutor](./R5-NATALIA-GLTF-BINDING-MISMATCH.md).
+No ejecutar más sesiones largas de Edge hasta registrar el índice
+exacto. Las pruebas CI son sintéticas; no hay nuevos texeles/píxeles
+reales ni corrección facial.
