@@ -87,7 +87,7 @@ const preflight=evaluateR5SamplingPreflight({
     gltfTextureIndex:INDICE_GLTF_TEX_REAL,
     textureSourceKind:TIPO_ORIGEN_REAL,
     textureSha256:SHA256_IMAGEN_EXTERNA_SI_APLICA,
-    runtimeTextureUuid:actor.gltf.scene /* sustituir por */ && MATERIAL_MAP_UUID_REAL,
+    runtimeTextureUuid:MATERIAL_MAP_UUID_REAL,
     shaVerifiedFromBytes:true // solo si digest realmente calculado
   },
   frame:{textureUuid:TEXTURA_DE_LA_CAPTURA_ACTUAL},
