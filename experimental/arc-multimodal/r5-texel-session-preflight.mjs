@@ -17,10 +17,11 @@ function gateOK(gate){
   const events=Array.isArray(gate.events)?gate.events:[];
   if(events.length){
     // Actual traceR5FaceLayerGate saves readiness in EACH event.
-    return events.some(x=>x?.status==="BOTH_GATES_CONFIRMED"
-      &&x?.canStartTexelPixel===true
-      &&x?.independent?.readyObserved===true
-      &&x?.gate?.sceneTraversable===true);
+    const latest=events.at(-1);
+    return latest?.status==="BOTH_GATES_CONFIRMED"
+      &&latest?.canStartTexelPixel===true
+      &&latest?.independent?.readyObserved===true
+      &&latest?.gate?.sceneTraversable===true;
   }
   // Only a direct inspectR5FaceLayerContext snapshot can use this shape.
   return gate.status==="BOTH_GATES_CONFIRMED"
