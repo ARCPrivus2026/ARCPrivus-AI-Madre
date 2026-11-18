@@ -66,3 +66,24 @@ node auditor.mjs status
 ```
 
 El archivo de Blender debe ejecutarse en el entorno Blender; no puede validarse mediante Python estándar porque importa `bpy`.
+
+## Misión completa encomendada a Copilot — dos personajes
+
+La autorización funcional incluye preparar **Natalia V2 y Arnold RC** de extremo a extremo: cuerpo, rostro, ojos/párpados, boca anatómica con dientes y lengua, cabello/piel, rig corporal y facial, caminar, correr, sentarse, gestos, voz autorizada, sincronía labial, vestuario, renderizado, correcciones y candidato GLB para uso interno.
+
+- El contrato declarativo está en \`mision_total.json\`. No presupone que todas las herramientas estén instaladas.
+- \`node mission_runner.mjs status\` presenta el estado de ambos personajes.
+- \`node mission_runner.mjs run\` intenta automáticamente el inventario de **ambos** modelos registrados, genera un informe global y deja el resto de etapas \`PENDIENTE_MOTOR_VALIDADO\`. Una primera ejecución no significa que haya terminado los personajes.
+- Los motores de remodelación, animación y voz se incorporarán a un registro local de herramientas revisadas. Copilot no recibirá acceso a ejecutar comandos arbitrarios desde chat o red.
+- Hasta comprobar conexión y permisos en Windows, **el puente no está instalado en Copilot ni conectado al panel de ARC**.
+- Copilot tendrá autonomía sobre las **pruebas locales reversibles**, sin exigir aprobación humana por cada fase. Si una etapa falla tras hasta tres intentos controlados, debe quedar bloqueada con informe en lugar de entrar en una cadena infinita.
+- **Prohibido publicar, subir a Internet, desplegar, fusionar a producción, sustituir archivos originales, distribuir voces o datos personales sin consentimiento o cambiar servidor principal.** Estos permisos no se conceden con la misión de preparación.
+- La revisión de semejanza facial, calidad artística, naturalidad de voz y activación pública necesita una autorización humana final.
+
+### Prioridad de ingeniería
+
+1. Comprobar en Windows las **copias correctas** de Natalia V2 y Arnold RC (no seleccionar automáticamente una malla vieja).
+2. Integrar el inventario y el sistema de copias/huellas con el Copilot local y su panel mediante cola y autorización local.
+3. Añadir motores de modelado/rig/animaciones verificados uno a uno, pero **sin entregar una tarea nueva al usuario por cada etapa**.
+4. Incorporar controles para comparar fotogramas reales y bloquear renders idénticos.
+5. Producir una escena y GLB **internos**, con resultados visuales verificables, conservando la prohibición de publicar.
