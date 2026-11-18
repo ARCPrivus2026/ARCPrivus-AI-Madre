@@ -1,0 +1,52 @@
+{
+  "schema": "arc.3d.full_mission.v1",
+  "title": "Preparacion autonoma Natalia V2 y Arnold RC en laboratorio",
+  "characters": [
+    "natalia",
+    "arnold"
+  ],
+  "instructions": "Copilot recibe toda la mision: preparar de principio a fin los dos personajes con herramientas locales verificadas; no pedir aprobacion por cada prueba reversible y segura. No afirmar que hay motores instalados sin comprobarlos.",
+  "allowed_in_laboratory": [
+    "discover_sources_without_selecting_automatically",
+    "backup_and_hash",
+    "inspect_geometry",
+    "create_candidate_on_copy",
+    "remodel_face_eyes_eyelids_mouth_teeth_tongue_hair",
+    "rig_body_and_face",
+    "animate_walk_run_sit_gestures_blink_talk",
+    "apply_authorized_voice_recordings_locally",
+    "render_compare_and_measure",
+    "iterate_with_bounded_attempts",
+    "prepare_internal_preview_and_candidate_glb",
+    "write_integrity_and_quality_reports"
+  ],
+  "always_forbidden_without_separate_explicit_user_authorization": [
+    "publish_characters_or_images_publicly",
+    "upload_to_external_server_or_cloud",
+    "deploy_or_merge_to_production",
+    "replace_or_modify_original_models",
+    "alter_messenger_or_mysql_or_public_arc_server",
+    "share_biometric_or_voice_data",
+    "disable_backups_or_safety_checks"
+  ],
+  "human_final_checks": [
+    "likeness_to_original_appearance",
+    "realistic_natural_movement_and_voice",
+    "production_activation_and_all_publication"
+  ],
+  "goals_for_each_character": [
+    "clean_and_coherent_full_body_model",
+    "face_with_functional_eye_and_eyelid_motion",
+    "mouth_cavity_moving_jaw_teeth_and_tongue",
+    "facial_expressions_and_lipsync_preparation",
+    "existing_rig_preservation_or_safe_adaptation",
+    "walking_running_sitting_and_gestures",
+    "skin_hair_eyes_clothing_material_quality",
+    "voice_using_only_authorized_recordings",
+    "integrated_internal_3d_preview_with_passed_tests",
+    "exportable_glb_candidate_not_public"
+  ],
+  "max_attempts_per_stage": 3,
+  "on_failed_checks": "STOP_STAGE_KEEP_LOG_AND_CANDIDATE_UNAPPROVED",
+  "execution_state": "NOT_CONNECTED_TO_WINDOWS_COPILOT_YET"
+}
