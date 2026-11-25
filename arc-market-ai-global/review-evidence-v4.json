@@ -1,0 +1,62 @@
+{
+  "reviewedAt": "2026-11-24",
+  "scope": "Revisión de fichas públicas y capturas del titular; no equivale a auditoría del contenido ni aprobación de campaña.",
+  "affiliate": [
+    {
+      "id": "EXT-821513",
+      "hotmartId": 821513,
+      "producer": "Dantec Tutorials",
+      "publicPage": "https://hotmart.com/es/marketplace/productos/manual-practico-como-instalar-un-aire-acondicionado-split-paso-a-paso/B32594675J",
+      "destinationVerified": false,
+      "materialStatus": "Banner no cargó; modelos de texto disponibles en captura.",
+      "next": "Pedir índice, muestra, procedimientos seguros, garantía y permiso de promoción."
+    },
+    {
+      "id": "EXT-1237207",
+      "hotmartId": 1237207,
+      "producer": "MasterClasses.La",
+      "publicPage": "https://hotmart.com/es/marketplace/productos/lavadoras-xpert/P46201372U",
+      "destinationVerified": false,
+      "materialStatus": "Sin material publicado en panel.",
+      "next": "Pedir temario vigente, muestra, soporte, garantía y permisos."
+    },
+    {
+      "id": "EXT-PATRON-PREMIUM",
+      "hotmartId": 1170980,
+      "producer": "Por verificar con ficha exacta",
+      "publicPage": null,
+      "relatedPage": "https://hotmart.com/es/marketplace/productos/patronaje-digital/N102534578O",
+      "destinationVerified": false,
+      "materialStatus": "Sin material publicado en panel.",
+      "next": "Confirmar identidad del producto exacto, software, licencias, costos y muestra."
+    }
+  ],
+  "candidates": [
+    {
+      "id": "CAND-X80346848A",
+      "rating": 4.8,
+      "reviews": 30,
+      "publicPage": "https://hotmart.com/es/marketplace/productos/inteligencia-artificial-para-emprendedores/X80346848A",
+      "next": "Verificar afiliación, precio, comisión, garantía y vigencia."
+    },
+    {
+      "id": "CAND-I94004538M",
+      "rating": 4.8,
+      "reviews": 11,
+      "publicPage": "https://hotmart.com/es/marketplace/productos/inteligencia-artificial-para-crear-contenido/I94004538M",
+      "next": "Verificar afiliación y costos de herramientas."
+    },
+    {
+      "id": "CAND-N90262089Y",
+      "rating": 4.9,
+      "reviews": 260,
+      "publicPage": "https://hotmart.com/es/marketplace/productos/inteligencia-artificial-aplicada-a-la-educacion/N90262089Y",
+      "next": "Verificar afiliación y fechas; el productor anuncia lanzamientos dos veces por mes."
+    }
+  ],
+  "policy": {
+    "publishAffiliates": false,
+    "paidAds": false,
+    "doNotUseUnreviewedMaterials": true
+  }
+}
