@@ -1,0 +1,24 @@
+import {mkdir,writeFile} from "node:fs/promises";
+import path from "node:path";
+import {CATALOG,gate,publicCatalog,prepareDrafts,selfTest} from "./commerce-pipeline-v4.mjs";
+const month=process.argv[2]||"2026-12";
+const usedArg=process.argv[3];
+if(usedArg===undefined||!/^\d+$/.test(usedArg))throw Error("Indica el consumo mensual confirmado; ejemplo: node run-commerce-v4.mjs 2026-12 0");
+const used=Number(usedArg);
+const quota=20; // límite conservador de referencia; comprobar plan antes de publicar
+const test=selfTest();
+const approved=publicCatalog(CATALOG);
+const drafts=prepareDrafts(CATALOG,month,quota,used);
+const out=path.resolve("ARC_MARKET_V4_"+month+"_"+Date.now());
+await mkdir(out,{recursive:false});
+await mkdir(path.join(out,"PUBLICO"));
+await mkdir(path.join(out,"PRIVADO"));
+const save=(folder,name,obj)=>writeFile(path.join(out,folder,name),JSON.stringify(obj,null,2)+"\n",{flag:"wx"});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const cards=approved.map(p=>`<article><small>${esc(p.category)}</small><h2>${esc(p.name)}</h2><p>${esc(p.description)}</p><p>Garantía informada: ${p.guaranteeDays} días. Consulta condiciones y precio vigente.</p><p>${esc(p.disclosure)}</p><a href="${esc(p.link)}" rel="noopener sponsored">Consultar producto en Hotmart</a></article>`).join("");
+const html=`<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ARNOL RC | Catálogo de prueba</title><style>body{font:18px/1.65 system-ui;background:#f4f6fa;color:#142338;margin:0}main{max-width:1000px;margin:auto;padding:32px 20px}header{border-bottom:2px solid #142338;padding-bottom:16px}article{background:white;padding:24px;margin:20px 0;border:1px solid #c8d1df;border-radius:12px}a{display:inline-block;background:#14385e;color:white;padding:12px 18px;border-radius:8px;text-decoration:none}small{font-weight:bold}h1{line-height:1.2}footer{margin-top:32px}</style><main><header><small>ARNOL RC · ARC MARKET AI GLOBAL</small><h1>Conocimiento para avanzar</h1><p>Recursos digitales en español. Vista de prueba, no publicación oficial.</p></header>${cards}<footer>Las compras y condiciones se gestionan en Hotmart. No se prometen resultados.</footer></main></html>`;
+await save("PUBLICO","catalog.json",approved);
+await writeFile(path.join(out,"PUBLICO","index.html"),html,{flag:"wx"});
+await save("PRIVADO","auditoria.json",CATALOG.map(p=>({id:p.id,name:p.name,source:p.source||null,link:p.link||null,...gate(p)})));
+await save("PRIVADO","borradores.json",drafts);
+console.log(JSON.stringify({test,publicProducts:approved.length,drafts:drafts.queue.length,available:drafts.available,autoPublish:false,spendCOP:0,output:out},null,2));
