@@ -1,14 +1,19 @@
 import {mkdir,writeFile} from "node:fs/promises";
 import path from "node:path";
 import {CATALOG,gate,publicCatalog,prepareDrafts,selfTest} from "./commerce-pipeline-v4.mjs";
+import {buildHandoff,selfTestHandoff} from "./delivery-guard-v4.mjs";
 const month=process.argv[2]||"2026-12";
 const usedArg=process.argv[3];
 if(usedArg===undefined||!/^\d+$/.test(usedArg))throw Error("Indica el consumo mensual confirmado; ejemplo: node run-commerce-v4.mjs 2026-12 0");
 const used=Number(usedArg);
 const quota=20; // límite conservador de referencia; comprobar plan antes de publicar
 const test=selfTest();
+const guardTest=selfTestHandoff();
 const approved=publicCatalog(CATALOG);
 const drafts=prepareDrafts(CATALOG,month,quota,used);
+// CLI numbers are a planning assumption, not a verified provider quota.
+const handoff=buildHandoff({drafts,quota:{month,limit:quota,used,confirmed:false},approvedProducts:approved.map(p=>p.id),stop:true,now:new Date().toISOString()});
+if(handoff.eligible!==0)throw Error("Parada de seguridad no respetada");
 const out=path.resolve("ARC_MARKET_V4_"+month+"_"+Date.now());
 await mkdir(out,{recursive:false});
 await mkdir(path.join(out,"PUBLICO"));
@@ -21,4 +26,5 @@ await save("PUBLICO","catalog.json",approved);
 await writeFile(path.join(out,"PUBLICO","index.html"),html,{flag:"wx"});
 await save("PRIVADO","auditoria.json",CATALOG.map(p=>({id:p.id,name:p.name,source:p.source||null,link:p.link||null,...gate(p)})));
 await save("PRIVADO","borradores.json",drafts);
-console.log(JSON.stringify({test,publicProducts:approved.length,drafts:drafts.queue.length,available:drafts.available,autoPublish:false,spendCOP:0,output:out},null,2));
+await save("PRIVADO","entrega-controlada.json",handoff);
+console.log(JSON.stringify({test,guardTest,handoffEligible:handoff.eligible,quotaVerified:handoff.quotaVerified,publicProducts:approved.length,drafts:drafts.queue.length,available:drafts.available,autoPublish:false,spendCOP:0,output:out},null,2));
