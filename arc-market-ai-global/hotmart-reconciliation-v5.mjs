@@ -23,7 +23,7 @@ export function reconcileOwnProducts(catalog,report,{now=new Date().toISOString(
    if(!Number.isSafeInteger(found.warranty_days)||found.warranty_days<1||found.warranty_days!==p.guaranteeDays)blockers.push("Garantía sin confirmar o modificada");
   }
   const complete=cleanSummary(found?.complete),producerCommissions=cleanCommissions(found?.producer_commissions);
-  return {id:p.id,hotmartId:p.hotmartId,name:p.name,eligibleForPreview:!blockers.length,blockers,metrics:problems.length?{complete:null,producerCommissions:null}:{complete,producerCommissions}};
+  return {id:p.id,hotmartId:p.hotmartId,name:p.name,eligibleForPreview:!blockers.length,blockers,metrics:blockers.length?{complete:null,producerCommissions:null}:{complete,producerCommissions}};
  });
  return {checkedAt:now,sourceGeneratedAt:typeof report?.generated_at==="string"?report.generated_at:null,mode:"READ_ONLY_RECONCILIATION",status:rows.every(r=>r.eligibleForPreview)?"PREVIEW_READY":"BLOCKED",problems,rows,pricesVerified:false,affiliateCatalogVerified:false,payoutBalanceVerified:false,autoPublish:false,spendCOP:0};
 }
@@ -51,5 +51,6 @@ export function selfTestReconciliation(){
  assert(run({...report,catalog:[{...p,complete:null}]}).rows[0].metrics.complete===null,"unavailable not zero");
  assert(run({...report,catalog:[{...p,complete:[{count:1,amount:"7",currency:"USD"}]}]}).rows[0].metrics.complete===null,"invalid amount");
  assert(run({...report,status:"PARTIAL"}).rows[0].metrics.complete===null,"no stale metrics");
- return "16/16 PASS";
+ assert(run({...report,catalog:[{...p,name:"Different"}]}).rows[0].metrics.complete===null,"no misattributed metrics");
+ return "17/17 PASS";
 }
