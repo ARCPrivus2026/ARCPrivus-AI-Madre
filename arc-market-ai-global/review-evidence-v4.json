@@ -1,0 +1,91 @@
+{
+  "reviewedAt": "2026-11-24",
+  "scope": "Revisión de fichas públicas y capturas del titular; no equivale a auditoría del contenido ni aprobación de campaña.",
+  "affiliate": [
+    {
+      "id": "EXT-821513",
+      "hotmartId": 821513,
+      "producer": "Dantec Tutorials",
+      "publicPage": "https://hotmart.com/es/marketplace/productos/manual-practico-como-instalar-un-aire-acondicionado-split-paso-a-paso/B32594675J",
+      "destinationVerified": false,
+      "materialStatus": "Banner no cargó; modelos de texto disponibles en captura.",
+      "next": "Pedir índice, muestra, procedimientos seguros, garantía y permiso de promoción."
+    },
+    {
+      "id": "EXT-1237207",
+      "hotmartId": 1237207,
+      "producer": "MasterClasses.La",
+      "publicPage": "https://hotmart.com/es/marketplace/productos/lavadoras-xpert/P46201372U",
+      "destinationVerified": false,
+      "materialStatus": "Sin material publicado en panel.",
+      "next": "Pedir temario vigente, muestra, soporte, garantía y permisos."
+    },
+    {
+      "id": "EXT-PATRON-PREMIUM",
+      "hotmartId": 1170980,
+      "producer": "Tito Lucero Gonzalez (ficha pública)",
+      "publicPage": "https://hotmart.com/es/marketplace/productos/patronaje-digital-premium/P44240102P",
+      "destinationVerified": false,
+      "materialStatus": "Sin material publicado en panel.",
+      "next": "Confirmar que HotLink propio abre esta ficha; solicitar muestra, versión y licencia de Modaris, costo adicional, garantía y derechos de promoción.",
+      "software": "Lectra Modaris"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "CAND-X80346848A",
+      "rating": 4.8,
+      "reviews": 30,
+      "publicPage": "https://hotmart.com/es/marketplace/productos/inteligencia-artificial-para-emprendedores/X80346848A",
+      "next": "Verificar afiliación, precio, comisión, garantía y vigencia.",
+      "approved": false
+    },
+    {
+      "id": "CAND-I94004538M",
+      "rating": 4.8,
+      "reviews": 11,
+      "publicPage": "https://hotmart.com/es/marketplace/productos/inteligencia-artificial-para-crear-contenido/I94004538M",
+      "next": "Verificar afiliación y costos de herramientas.",
+      "approved": false
+    },
+    {
+      "id": "CAND-N90262089Y",
+      "rating": 4.9,
+      "reviews": 260,
+      "publicPage": "https://hotmart.com/es/marketplace/productos/inteligencia-artificial-aplicada-a-la-educacion/N90262089Y",
+      "next": "Verificar afiliación y fechas; el productor anuncia lanzamientos dos veces por mes.",
+      "approved": false
+    },
+    {
+      "id": "CAND-Q14040580C",
+      "name": "CURSO COSTURA PREMIUM C.P.",
+      "rating": 4.6,
+      "reviews": 222,
+      "publicPage": "https://hotmart.com/es/marketplace/productos/costura-premium/Q14040580C",
+      "next": "Verificar afiliación, comisión, muestra, garantía y costo. No aprobado para publicación.",
+      "approved": false
+    },
+    {
+      "id": "CAND-L44240590K",
+      "name": "Diseño de Moda Premium",
+      "rating": 4.8,
+      "reviews": 13,
+      "publicPage": "https://hotmart.com/es/marketplace/productos/diseno-de-modas-premium/L44240590K",
+      "next": "Verificar afiliación, comisión, muestra, garantía y costo. No aprobado para publicación.",
+      "approved": false
+    }
+  ],
+  "policy": {
+    "publishAffiliates": false,
+    "paidAds": false,
+    "doNotUseUnreviewedMaterials": true
+  },
+  "campaignDecision": {
+    "month": "2026-12",
+    "limitObservedInAccount": 20,
+    "scheduledDistributions": 10,
+    "planningReserve": 10,
+    "spendCOP": 0,
+    "next": "Priorizar reserva según analítica observada y productos aprobados; no llenar cupos automáticamente."
+  }
+}

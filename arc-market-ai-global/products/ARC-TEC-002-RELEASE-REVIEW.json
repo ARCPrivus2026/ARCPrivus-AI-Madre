@@ -1,0 +1,30 @@
+{
+  "id": "ARC-TEC-002",
+  "edition": "1.0-review",
+  "status": "technical_review_required",
+  "approved": false,
+  "deliverable": {
+    "filename": "ARNOL_RC_Cuaderno_Tecnico_ARC_TEC_002.pdf",
+    "pages": 11,
+    "format": "PDF carta imprimible",
+    "sha256": "e2e4aa6576a7b4a30a1fb0ad14b288c73d366369bddeff2f313025cd4e0ef5c5",
+    "storage": "Generated conversation artifact; binary not committed to repository"
+  },
+  "contents": [
+    "Guía de uso",
+    "Siete fichas reproducibles",
+    "Dos casos prácticos con orientación de respuesta"
+  ],
+  "proposedPriceCOP": 19900,
+  "priceConfirmed": false,
+  "commercialDescription": "Cuaderno imprimible para organizar recepción, evidencias de diagnóstico, presupuesto, reparación, pruebas finales, retornos y revisión mensual de un taller. Incluye dos ejercicios guiados. No sustituye manuales de servicio, formación especializada ni obligaciones legales.",
+  "reviewRequired": [
+    "Validar contenido técnico por profesional",
+    "Probar formularios en órdenes reales sin exponer datos personales",
+    "Confirmar derechos, precio y condiciones de venta",
+    "Registrar producto en Hotmart y comprobar enlace"
+  ],
+  "published": false,
+  "autoPublish": false,
+  "spendCOP": 0
+}

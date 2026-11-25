@@ -1,0 +1,206 @@
+{
+  "month": "2026-12",
+  "status": "draft_not_scheduled",
+  "quotaConfirmed": false,
+  "paidAds": false,
+  "notes": [
+    "Las fechas y horas se fijarán después de confirmar cuota y resultados de noviembre.",
+    "No se han producido ni revisado los nuevos recursos multimedia de este lote.",
+    "Los tableros y permisos efectivos deben comprobarse antes de enviar.",
+    "No se incluyen afiliados no auditados."
+  ],
+  "queue": [
+    {
+      "id": "2026-12-ARC-TEC-001-facebook",
+      "month": "2026-12",
+      "productId": "ARC-TEC-001",
+      "channel": "facebook",
+      "title": "Diagnosticar antes de reemplazar",
+      "text": "Un síntoma no identifica por sí solo la pieza averiada. Registrar el modelo, las condiciones y las comprobaciones ayuda a organizar el diagnóstico. Nuestra guía introductoria de seis páginas contiene cinco casos orientativos, lista de recepción y matriz de síntomas e hipótesis. Consulta qué incluye y las condiciones de compra: https://go.hotmart.com/Y108383080U",
+      "mediaBrief": null,
+      "mediaRequired": null,
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-MODA-001-facebook",
+      "month": "2026-12",
+      "productId": "ARC-MODA-001",
+      "channel": "facebook",
+      "title": "De las referencias a una colección",
+      "text": "Una colección comienza con una idea, referencias visuales y decisiones coherentes de color y silueta. Explora 50 láminas conceptuales generadas con IA, diez lecciones escritas introductorias, ejercicios y cuaderno de proyectos. Material PDF; no incluye patrones imprimibles ni videoclases. https://go.hotmart.com/F108405517N",
+      "mediaBrief": null,
+      "mediaRequired": null,
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-TEC-001-bluesky",
+      "month": "2026-12",
+      "productId": "ARC-TEC-001",
+      "channel": "bluesky",
+      "title": "Diagnóstico con método",
+      "text": "Antes de cambiar piezas, registra el síntoma y las pruebas realizadas. Guía introductoria de neveras No Frost y lavadoras: cinco casos orientativos y herramientas de registro. https://go.hotmart.com/Y108383080U",
+      "mediaBrief": null,
+      "mediaRequired": null,
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-MODA-001-bluesky",
+      "month": "2026-12",
+      "productId": "ARC-MODA-001",
+      "channel": "bluesky",
+      "title": "Organiza tu colección",
+      "text": "Explora conceptos de moda generados con IA y practica la organización de una colección. PDF con láminas visuales, lecciones escritas y ejercicios; no incluye patrones. https://go.hotmart.com/F108405517N",
+      "mediaBrief": null,
+      "mediaRequired": null,
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-TEC-001-youtube",
+      "month": "2026-12",
+      "productId": "ARC-TEC-001",
+      "channel": "youtube",
+      "title": "Tres datos antes de diagnosticar | ARNOL RC",
+      "text": "Guía introductoria para organizar el diagnóstico de neveras No Frost y lavadoras. Consulta contenido y precio vigente en Hotmart: https://go.hotmart.com/Y108383080U",
+      "mediaBrief": {
+        "format": "9:16",
+        "durationSeconds": 30,
+        "scenes": [
+          "0–5 s: título; tres datos antes de diagnosticar",
+          "5–20 s: modelo, síntoma y comprobaciones documentadas; ilustraciones originales sin equipos energizados",
+          "20–30 s: descripción fiel de la guía y nombre de la tienda"
+        ],
+        "narration": "Antes de cambiar una pieza, registra el modelo del equipo, el síntoma y las comprobaciones realizadas. Un síntoma no demuestra por sí solo qué componente está averiado. Nuestra guía introductoria reúne cinco casos orientativos y herramientas para organizar tu diagnóstico. Consulta ARNOL RC.",
+        "cta": "Enlace en el perfil del canal, si está configurado; no prometer un enlace pulsable en Shorts."
+      },
+      "mediaRequired": "video_vertical",
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-MODA-001-youtube",
+      "month": "2026-12",
+      "productId": "ARC-MODA-001",
+      "channel": "youtube",
+      "title": "Tres elementos para una colección coherente | ARNOL RC",
+      "text": "Explora nuestra biblioteca visual de moda en PDF. Incluye 50 láminas conceptuales con IA y diez lecciones escritas introductorias. No incluye patrones imprimibles. https://go.hotmart.com/F108405517N",
+      "mediaBrief": {
+        "format": "9:16",
+        "durationSeconds": 30,
+        "scenes": [
+          "0–5 s: título",
+          "5–20 s: paletas, siluetas y referencias visuales originales",
+          "20–30 s: descripción del PDF y nombre de la tienda"
+        ],
+        "narration": "Elige una paleta, define siluetas y organiza referencias antes de desarrollar una colección. Nuestra biblioteca visual presenta cincuenta láminas de conceptos generados con inteligencia artificial y diez lecciones escritas introductorias. No incluye patrones imprimibles. Conoce el material en ARNOL RC.",
+        "cta": "Enlace en el perfil del canal, si está configurado."
+      },
+      "mediaRequired": "video_vertical",
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-TEC-001-tiktok",
+      "month": "2026-12",
+      "productId": "ARC-TEC-001",
+      "channel": "tiktok",
+      "title": "¿Cambiar piezas o investigar síntomas?",
+      "text": "Organiza tus hipótesis antes de intervenir un equipo. Guía digital introductoria ARNOL RC. Consulta nuestro catálogo. #Refrigeración #Lavadoras",
+      "mediaBrief": {
+        "format": "9:16",
+        "durationSeconds": 25,
+        "scenes": [
+          "0–4 s: pregunta",
+          "4–17 s: ficha de síntomas original y registro de pruebas",
+          "17–25 s: descripción del PDF"
+        ],
+        "narration": "¿Cambiar piezas o investigar síntomas? Registra el problema, anota tus hipótesis y comprueba cada una según el manual del fabricante. Conoce nuestra guía introductoria de diagnóstico de neveras y lavadoras.",
+        "disclosure": "Marca propia; activar identificación comercial y etiqueta IA si corresponde."
+      },
+      "mediaRequired": "video_vertical",
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-MODA-001-tiktok",
+      "month": "2026-12",
+      "productId": "ARC-MODA-001",
+      "channel": "tiktok",
+      "title": "Tu colección comienza con una idea",
+      "text": "Explora referencias visuales y organiza tus ideas de moda. Biblioteca digital ARNOL RC: láminas con IA y lecciones escritas. #DiseñoDeModa",
+      "mediaBrief": {
+        "format": "9:16",
+        "durationSeconds": 25,
+        "scenes": [
+          "0–4 s: pregunta visual",
+          "4–17 s: tarjetas originales de paletas y siluetas",
+          "17–25 s: descripción del PDF"
+        ],
+        "narration": "Tu colección comienza con una idea. Organiza colores, referencias y siluetas para explorar propuestas coherentes. Descubre nuestra biblioteca visual con conceptos generados con inteligencia artificial y ejercicios escritos.",
+        "disclosure": "Marca propia; activar identificación comercial y etiqueta IA si corresponde."
+      },
+      "mediaRequired": "video_vertical",
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-TEC-001-pinterest",
+      "month": "2026-12",
+      "productId": "ARC-TEC-001",
+      "channel": "pinterest",
+      "title": "Lista de registro para diagnóstico técnico",
+      "text": "Guía PDF introductoria con cinco casos orientativos y matriz de síntomas e hipótesis. Material educativo para técnicos y aprendices. Consulta condiciones: https://go.hotmart.com/Y108383080U",
+      "mediaBrief": {
+        "format": "2:3",
+        "headline": "Registra antes de diagnosticar",
+        "body": "Modelo • Síntoma • Pruebas documentadas",
+        "board": "ARNOL RC - Formación Técnica",
+        "pinLink": "https://go.hotmart.com/Y108383080U"
+      },
+      "mediaRequired": "imagen_vertical",
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    },
+    {
+      "id": "2026-12-ARC-MODA-001-pinterest",
+      "month": "2026-12",
+      "productId": "ARC-MODA-001",
+      "channel": "pinterest",
+      "title": "Paleta, silueta y referencias de moda",
+      "text": "Biblioteca visual de 50 conceptos generados con IA y diez lecciones escritas introductorias. PDF sin patrones imprimibles. https://go.hotmart.com/F108405517N",
+      "mediaBrief": {
+        "format": "2:3",
+        "headline": "De la idea a la colección",
+        "body": "Paleta • Silueta • Referencias",
+        "board": "ARNOL RC - Moda y Diseño",
+        "pinLink": "https://go.hotmart.com/F108405517N"
+      },
+      "mediaRequired": "imagen_vertical",
+      "status": "draft",
+      "autoPublish": false,
+      "spendCOP": 0,
+      "requiresQuotaCheck": true
+    }
+  ]
+}

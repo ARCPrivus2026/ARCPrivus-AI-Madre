@@ -1,0 +1,97 @@
+{
+  "asOf": "2026-11-24T23:24:00-05:00",
+  "source": "Metricool getScheduledPosts readback",
+  "brandId": "8326010",
+  "timezone": "America/Bogota",
+  "november": {
+    "entries": 16,
+    "distributions": 20,
+    "published": 1,
+    "pending": 19
+  },
+  "december": {
+    "entries": 10,
+    "distributions": 10,
+    "pending": 10,
+    "monthlyLimitReference": 20,
+    "theoreticalReserve": 10,
+    "quotaVerified": false,
+    "posts": [
+      {
+        "id": 441189848,
+        "date": "2026-12-01T09:00:00",
+        "network": "facebook",
+        "status": "PENDING"
+      },
+      {
+        "id": 441189865,
+        "date": "2026-12-03T18:00:00",
+        "network": "facebook",
+        "status": "PENDING"
+      },
+      {
+        "id": 441189890,
+        "date": "2026-12-04T12:00:00",
+        "network": "bluesky",
+        "status": "PENDING"
+      },
+      {
+        "id": 441190001,
+        "date": "2026-12-05T18:00:00",
+        "network": "youtube",
+        "status": "PENDING"
+      },
+      {
+        "id": 441189908,
+        "date": "2026-12-08T12:00:00",
+        "network": "bluesky",
+        "status": "PENDING"
+      },
+      {
+        "id": 441190015,
+        "date": "2026-12-10T18:00:00",
+        "network": "youtube",
+        "status": "PENDING"
+      },
+      {
+        "id": 441190030,
+        "date": "2026-12-12T18:00:00",
+        "network": "tiktok",
+        "status": "PENDING"
+      },
+      {
+        "id": 441190050,
+        "date": "2026-12-15T18:00:00",
+        "network": "tiktok",
+        "status": "PENDING"
+      },
+      {
+        "id": 441190069,
+        "date": "2026-12-16T12:30:00",
+        "network": "pinterest",
+        "status": "PENDING"
+      },
+      {
+        "id": 441190086,
+        "date": "2026-12-18T12:30:00",
+        "network": "pinterest",
+        "status": "PENDING"
+      }
+    ]
+  },
+  "monitor": {
+    "taskId": "6b057a416b208191bb31c62e76950bf1",
+    "enabled": true,
+    "next": "2026-11-25T20:00:00-05:00",
+    "endDate": "2026-12-20"
+  },
+  "reserveReleaseCriteria": [
+    "Confirm real monthly quota and reconcile scheduled distributions.",
+    "Compare verified reach and link clicks per product and network; flag missing or delayed metrics.",
+    "Do not infer sales attribution from clicks or dates alone.",
+    "Use only active reviewed products and authorized original media.",
+    "Obtain authorization before adding posts. If evidence insufficient, retain reserve."
+  ],
+  "providerWritesInThisReview": 0,
+  "additionalSpendCOP": 0
+}
