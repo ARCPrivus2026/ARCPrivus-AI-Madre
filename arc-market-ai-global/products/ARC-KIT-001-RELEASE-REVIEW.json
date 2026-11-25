@@ -1,0 +1,44 @@
+{
+  "id": "ARC-KIT-001",
+  "edition": "1.0-review",
+  "name": "ARNOL RC — Kit profesional de gestión del taller",
+  "status": "pilot_review_required",
+  "approved": false,
+  "priceProposalCOP": 34900,
+  "priceConfirmed": false,
+  "deliverable": {
+    "filename": "ARNOL_RC_KIT_PROFESIONAL_TALLER_ARC_KIT_001.zip",
+    "sha256": "d8783513a65ea13f08807a9acbd3108316838e0780971ed41a7fb64abc12a5c6",
+    "storage": "Generated conversation artifact; ZIP not committed",
+    "files": [
+      {
+        "id": "ARC-TEC-002",
+        "name": "ARNOL_RC_Cuaderno_Tecnico_ARC_TEC_002.pdf",
+        "pages": 11,
+        "sha256": "cf5ea305a91aa4a89d6e4c6d8dcc0ab6877eebec62450b8be69fa6aaad0e4a0a"
+      },
+      {
+        "id": "ARC-BIZ-001",
+        "name": "ARNOL_RC_Calculadora_Rentabilidad_Tecnica_ARC_BIZ_001.xlsx",
+        "sheets": 3,
+        "formulas": 172,
+        "sha256": "c9f606eef9d50e097dfdf41468b6ab044a2231680d73c8d0fdf96b6548b9da3e"
+      },
+      {
+        "name": "ARNOL_RC_Guia_Kit_Taller_ARC_KIT_001.pdf",
+        "pages": 3,
+        "sha256": "2d1137aab5ddedab59bf4b39f8a151894d2fd340aad11bdb2ee317a857b74677"
+      }
+    ]
+  },
+  "description": "Kit digital para técnicos de línea blanca: recepción, diagnóstico por evidencias, presupuesto, reparación, control de garantías y cotización en Excel. Incluye siete fichas imprimibles, dos casos prácticos y guía de uso integrado. No incluye el producto de diagnóstico vendido por separado, videos, certificación ni asesoría individual.",
+  "requirements": [
+    "Revisión técnica del contenido",
+    "Piloto de cinco órdenes",
+    "Verificar compatibilidad Excel del comprador y entrega ZIP",
+    "Aprobar precio y condiciones",
+    "Registrar en Hotmart, verificar compra y entrega"
+  ],
+  "publication": false,
+  "spendCOP": 0
+}
