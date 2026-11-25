@@ -1,0 +1,28 @@
+{
+  "id": "ARC-IA-001",
+  "name": "ARNOL RC — Inteligencia artificial para emprendedores",
+  "edition": "1.0-review",
+  "status": "pilot_review_required",
+  "approved": false,
+  "deliverable": {
+    "filename": "ARNOL_RC_Academia_IA_Emprendedores_ARC_IA_001.pdf",
+    "pages": 14,
+    "sha256": "d67ee9089abd0410339c9200c3dc6d9dc47fad5789205f17d331d10800e7941e",
+    "storage": "Conversation artifact, PDF not committed",
+    "lessons": 10,
+    "reusablePrompts": 10,
+    "finalProject": true,
+    "worksheet": true
+  },
+  "description": "Curso escrito introductorio en español: instrucciones a IA, validación de necesidades, diseño de ofertas, producto digital original, página de venta, guion audiovisual, marketing orgánico, automatización supervisada, costos y medición. Ejercicios y proyecto final. No incluye videos, certificación, asesoría individual ni garantía de ingresos.",
+  "proposedPriceCOP": 24900,
+  "priceConfirmed": false,
+  "releaseRequirements": [
+    "Revisión pedagógica y técnica",
+    "Prueba de ejercicios con usuarios voluntarios",
+    "Confirmar precio, condiciones y derechos",
+    "Registrar y verificar entrega en Hotmart"
+  ],
+  "published": false,
+  "spendCOP": 0
+}
